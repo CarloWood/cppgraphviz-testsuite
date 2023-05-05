@@ -1,15 +1,15 @@
 #pragma once
 
-#include <utils/UniqueID.h>     // Add https://github.com/CarloWood/ai-utils.git to the root of your project.
+#include "ID.hpp"
+#include "Node.hpp"
+#include "Edge.hpp"
+#include <map>
 #include <iosfwd>
-#include <cstdint>
 
 namespace cppgraphviz {
 
 class Graph
 {
-  using ID_type = uint32_t;
-
  private:
   // Configuration.
   bool digraph_ = false;
@@ -17,7 +17,10 @@ class Graph
   // The unique dot ID of this graph.
   utils::UniqueID<ID_type> dot_id_ = s_unique_id_context.get_id();
 
-  static utils::UniqueIDContext<ID_type> s_unique_id_context;
+  // The list of all nodes of this graph, by ID.
+  std::map<ID_type, Node> nodes_;
+  // The list of all edges of this graph, by ID.
+  std::map<ID_type, Edge> edges_;
 
  public:
   Graph(bool strict = false) : strict_(strict) { }
@@ -26,6 +29,7 @@ class Graph
   Graph(bool digraph, bool strict = false) : digraph_(digraph), strict_(strict) { }
 
  public:
+  //---------------------------------------------------------------------------
   void set_digraph(bool digraph = true) { digraph_ = digraph; }
   void set_strict(bool strict = true) { strict_ = strict; }
 
@@ -35,6 +39,11 @@ class Graph
   // Accessors.
   bool is_digraph() const { return digraph_; }
   bool is_strict() const { return strict_; }
+  ID_type id() const { return dot_id_; }
+
+  //---------------------------------------------------------------------------
+  void add_node(Node const& node);
+  void add_edge(Edge const& edge);
 };
 
 class Digraph : public Graph {
