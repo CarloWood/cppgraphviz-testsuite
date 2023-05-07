@@ -1,14 +1,16 @@
 add_library(libcppgraphviz
   ID.cxx
   ID.hpp
+  Edge.cxx
+  Edge.hpp
   Graph.cxx
   Graph.hpp
+  Attribute.cxx
+  Attribute.hpp
   AttributeList.cxx
   AttributeList.hpp
   Node.hpp
-  Edge.hpp
   GraphItem.hpp
-  Attribute.hpp
 )
 
 # Required include search-paths.

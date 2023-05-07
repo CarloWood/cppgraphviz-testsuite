@@ -6,7 +6,7 @@ namespace cppgraphviz {
 
 void AttributeList::add(Attribute const& attribute)
 {
-  attributes_.push_back(attribute);
+  attributes_.insert(attribute);
 }
 
 void AttributeList::print_on(std::ostream& os) const

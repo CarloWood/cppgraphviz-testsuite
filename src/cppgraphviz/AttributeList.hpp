@@ -2,17 +2,19 @@
 
 #include "Attribute.hpp"
 #include <iosfwd>
-#include <vector>
+#include <set>
 
 namespace cppgraphviz {
 
 class AttributeList
 {
  private:
-  std::vector<Attribute> attributes_;
+  std::set<Attribute> attributes_;
 
  public:
   void add(Attribute const& attribute);
+
+  operator bool() const { return !attributes_.empty(); }
 
   void print_on(std::ostream& os) const;
 };
