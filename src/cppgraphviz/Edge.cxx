@@ -4,10 +4,10 @@
 
 namespace cppgraphviz {
 
-void EdgeData::set_nodes(Node const& from, Node const& to)
+void EdgeData::set_nodes(Port const& from, Port const& to)
 {
-  from_ = from.data({}).id();
-  to_ = to.data({}).id();
+  from_ = from;
+  to_ = to;
 }
 
 } // namespace cppgraphviz

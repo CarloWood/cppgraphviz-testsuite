@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GraphItem.hpp"
+#include <map>
 
 namespace cppgraphviz {
 

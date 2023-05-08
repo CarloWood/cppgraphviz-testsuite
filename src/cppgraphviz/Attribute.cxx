@@ -3,6 +3,7 @@
 #include <cctype>
 #include <algorithm>
 #include <string_view>
+#include <iostream>
 
 namespace cppgraphviz {
 

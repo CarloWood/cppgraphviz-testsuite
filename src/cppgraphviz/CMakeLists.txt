@@ -1,6 +1,6 @@
 add_library(libcppgraphviz
-  ID.cxx
-  ID.hpp
+  DotID.cxx
+  DotID.hpp
   Edge.cxx
   Edge.hpp
   Graph.cxx
@@ -9,6 +9,10 @@ add_library(libcppgraphviz
   Attribute.hpp
   AttributeList.cxx
   AttributeList.hpp
+  TableNode.cxx
+  TableNode.hpp
+  Port.cxx
+  Port.hpp
   Node.hpp
   GraphItem.hpp
 )
@@ -20,3 +24,6 @@ target_include_directories(libcppgraphviz
     "${CMAKE_CURRENT_SOURCE_DIR}"
     "${CWDS_INTERFACE_INCLUDE_DIRECTORIES}" # For sys.h and debug.h.
 )
+
+# Make sure we compile with debug support.
+target_link_libraries(libcppgraphviz PRIVATE ${AICXX_OBJECTS_LIST})

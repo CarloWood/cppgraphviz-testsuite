@@ -1,12 +1,22 @@
 #include "sys.h"
 #include "AttributeList.hpp"
 #include <iostream>
+#include "debug.h"
 
 namespace cppgraphviz {
 
-void AttributeList::add(Attribute const& attribute)
+bool AttributeList::has_key(std::string const& key) const
 {
-  attributes_.insert(attribute);
+  auto iter = attributes_.find(Attribute{key});
+  return iter != attributes_.end();
+}
+
+std::string const& AttributeList::get_value(std::string const& key) const
+{
+  auto iter = attributes_.find(Attribute{key});
+  // Only call get_value if has_key returns true.
+  ASSERT(iter != attributes_.end());
+  return iter->value();
 }
 
 void AttributeList::print_on(std::ostream& os) const

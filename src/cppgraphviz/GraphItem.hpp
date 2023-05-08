@@ -11,7 +11,9 @@ namespace cppgraphviz {
 class GraphData;
 class NodeData;
 class EdgeData;
-class TableNode;
+class TableNodeData;
+class Port;
+class TableElement;
 
 // Base class of GraphData, EdgeData and NodeData.
 //
@@ -45,14 +47,16 @@ class GraphItem
   AttributeList& attribute_list() { return data_->attribute_list(); }
 
   // Short-cut for convenience.
-  void add_attribute(Attribute const& attribute) { data_->attribute_list().add(attribute); }
+  void add_attribute(Attribute&& attribute) { data_->attribute_list().add(std::move(attribute)); }
 
-  // Accessors for GraphData, NodeData and EdgeData.
-  Data const& data(utils::Badge<GraphData, NodeData, EdgeData, TableNode>) const { return *data_; }
-  Data& data(utils::Badge<GraphData, NodeData, EdgeData, TableNode>) { return *data_; }
+  // Accessors for GraphData, NodeData, EdgeData and TableNodeData.
+  Data const& data(utils::Badge<GraphData, NodeData, EdgeData, TableNodeData>) const { return *data_; }
+  Data& data(utils::Badge<GraphData, NodeData, EdgeData, TableNodeData>) { return *data_; }
 
  protected:
-  // Accessors for Graph, Node and Edge.
+  // Accessors for Graph, Node, Edge, Port and TableElement.
+  friend class Port;
+  friend class TableElement;
   Data const& data() const { return *data_; }
   Data& data() { return *data_; }
 };

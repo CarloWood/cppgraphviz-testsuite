@@ -1,32 +1,58 @@
 #pragma once
 
-#include "GraphItemID.hpp"
-#include <utils/UniqueID.h>
-#include <functional>
-#include <vector>
+#include "GraphItem.hpp"
+#include "TableElement.hpp"
+#include "Port.hpp"
+#include <map>
 
 namespace cppgraphviz {
 
-using TableNodeData = GraphItemID;
+template <typename T>
+concept ConceptIndexableContainer = requires(T t)
+{
+  { t.ibegin() } -> std::same_as<typename T::index_type>;
+  { t.iend() } -> std::same_as<typename T::index_type>;
+  { std::declval<T>()[std::declval<typename T::index_type>()] } -> std::same_as<typename T::reference>;
+  { std::declval<T const>()[std::declval<typename T::index_type>()] } -> std::same_as<typename T::const_reference>;
+};
 
-class TableNode : GraphItemID
+class TableNodeData : public GraphItemData
 {
  private:
-  // List of all nodes in the table.
-  std::vector<TableNodeData> nodes_;
+  std::vector<TableElement> elements_;
 
  public:
-  TableNode(utils::UniqueID<ID_type> dot_id, std::function<Node const&(size_t)> at, size_t size) : GraphItemID(dot_id)
+
+  void add_elements(std::function<Node (size_t)> at, size_t size)
   {
     for (size_t i = 0; i < size; ++i)
-      nodes_.emplace_back(at(i).data({}));
+      elements_.push_back(at(i));
   }
 
-  template<typename Table>
-  TableNode(utils::UniqueID<ID_type> dot_id, Table const& table) :
-    TableNode(dot_id, [&](size_t i){ return table[typename Table::index_type{i}]; }, table.size())
+  template<ConceptIndexableContainer Container>
+  void add_elements(Container const& container)
   {
+    add_elements([&](size_t i){ return container[typename Container::index_type{i}]; }, container.size());
   }
+
+  void write_html_to(std::ostream& os, std::string const& indentation) const;
+
+  Port at(size_t index) const
+  {
+    return {dot_id(), index};
+  }
+};
+
+class TableNode : public GraphItem<TableNodeData>
+{
+ public:
+  template<ConceptIndexableContainer Container>
+  void add_elements(Container const& container)
+  {
+    data().add_elements(container);
+  }
+
+  Port operator[](size_t index) const { return data().at(index); }
 };
 
 } // namespace cppgraphviz

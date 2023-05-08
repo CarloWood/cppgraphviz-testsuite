@@ -3,6 +3,7 @@
 #include "cppgraphviz/Graph.hpp"
 #include "cppgraphviz/Node.hpp"
 #include "cppgraphviz/Edge.hpp"
+#include "cppgraphviz/TableNode.hpp"
 #include <utils/Vector.h>
 #include <iostream>
 
@@ -47,6 +48,7 @@ int main()
 
   cppgraphviz::Node n11;
   n11.add_attribute({"label", "n11"});
+  n11.add_attribute({"color", "purple"});
 
   cppgraphviz::Edge e3(n10, n11);
   e3.add_attribute({"label", "e3"});
@@ -70,8 +72,28 @@ int main()
   g1.add_attribute({"fillcolor", "gray"});
   g1.add_attribute({"bgcolor", "lightgrey"});
 
+  cppgraphviz::Edge e5;
+  g0.add_edge(e5);
   utils::Vector<A, AIndex> v1 = { {3}, {4}, {5} };
-  g0.add_table(v1);
+  std::array<char const*, 3> label = { "hello", "world", "foobar" };
+  for (auto i = v1.ibegin(); i != v1.iend(); ++i)
+    v1[i].add_attribute({"label", label[i.get_value()]});
+  AIndex last = v1.iend() - 1;
+  v1[last].add_attribute({"bgcolor", "yellow"});
+  AIndex second = last - 1;
+
+  cppgraphviz::TableNode table;
+  table.add_attribute({"bgcolor", "lightblue"});
+  table.add_attribute({"color", "purple"});
+//  table.add_attribute({"fontname", "Arial"});
+//  table.add_attribute({"fontsize", "18"});
+  table.add_attribute({"fontcolor", "blue"});
+  v1[second].add_attribute({"fontname", "Times New Roman"});
+  v1[second].add_attribute({"fontsize", "12"});
+  v1[second].add_attribute({"fontcolor", "red"});
+  table.add_elements(v1);
+  g0.add_table_node(table);
+  e5.set_nodes(n11, table[1]);
 
   g0.write_dot(std::cout);
 }

@@ -12,7 +12,18 @@ class AttributeList
   std::set<Attribute> attributes_;
 
  public:
-  void add(Attribute const& attribute);
+  void add(Attribute&& attribute)
+  {
+    attributes_.insert(std::move(attribute));
+  }
+
+  bool has_key(std::string const& key) const;
+  std::string const& get_value(std::string const& key) const;
+
+  std::string const& get(std::string const& key, std::string const& default_value) const
+  {
+    return has_key(key) ? get_value(key) : default_value;
+  }
 
   operator bool() const { return !attributes_.empty(); }
 
