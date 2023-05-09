@@ -5,7 +5,7 @@
 #include "Port.hpp"
 #include <map>
 
-namespace cppgraphviz {
+namespace cppgraphviz::dot {
 
 template <typename T>
 concept ConceptIndexableContainer = requires(T t)
@@ -55,4 +55,4 @@ class TableNode : public GraphItem<TableNodeData>
   Port operator[](size_t index) const { return data().at(index); }
 };
 
-} // namespace cppgraphviz
+} // namespace cppgraphviz::dot

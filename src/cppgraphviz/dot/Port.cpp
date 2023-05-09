@@ -3,7 +3,7 @@
 #include "Node.hpp"
 #include <iostream>
 
-namespace cppgraphviz {
+namespace cppgraphviz::dot {
 
 Port::Port(Node const& node) : id_(node.data().dot_id())
 {
@@ -16,4 +16,4 @@ void Port::write_to(std::ostream& os) const
     os << ':' << port_.value();
 }
 
-} // namespace cppgraphviz
+} // namespace cppgraphviz::dot

@@ -6,7 +6,7 @@
 #include <utils/Badge.h>
 #include <boost/intrusive_ptr.hpp>
 
-namespace cppgraphviz {
+namespace cppgraphviz::dot {
 
 class GraphData;
 class NodeData;
@@ -67,4 +67,4 @@ GraphItem<Data>::GraphItem()
   data_ = new Data;
 }
 
-} // namespace cppgraphviz
+} // namespace cppgraphviz::dot

@@ -4,7 +4,7 @@
 #include <iosfwd>
 #include <set>
 
-namespace cppgraphviz {
+namespace cppgraphviz::dot {
 
 class AttributeList
 {
@@ -36,4 +36,4 @@ inline std::ostream& operator<<(std::ostream& os, AttributeList const& attribute
   return os;
 }
 
-} // namespace cppgraphviz
+} // namespace cppgraphviz::dot

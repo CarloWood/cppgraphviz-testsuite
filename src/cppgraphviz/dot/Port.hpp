@@ -4,7 +4,7 @@
 #include <optional>
 #include <iosfwd>
 
-namespace cppgraphviz {
+namespace cppgraphviz::dot {
 
 class NodeData;
 using Node = GraphItem<NodeData>;
@@ -34,4 +34,4 @@ inline std::ostream& operator<<(std::ostream& os, Port const& port)
   return os;
 }
 
-} // namespace cppgraphviz
+} // namespace cppgraphviz::dot

@@ -4,7 +4,7 @@
 #include <string>
 #include <iosfwd>
 
-namespace cppgraphviz {
+namespace cppgraphviz::dot {
 
 class Attribute
 {
@@ -36,4 +36,4 @@ inline std::ostream& operator<<(std::ostream& os, Attribute const& attribute)
   return os;
 }
 
-} // namespace cppgraphviz
+} // namespace cppgraphviz::dot

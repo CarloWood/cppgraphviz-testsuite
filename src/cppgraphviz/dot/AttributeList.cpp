@@ -3,7 +3,7 @@
 #include <iostream>
 #include "debug.h"
 
-namespace cppgraphviz {
+namespace cppgraphviz::dot {
 
 bool AttributeList::has_key(std::string const& key) const
 {
@@ -29,4 +29,4 @@ void AttributeList::print_on(std::ostream& os) const
   }
 }
 
-} // namespace cppgraphviz
+} // namespace cppgraphviz::dot

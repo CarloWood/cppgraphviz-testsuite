@@ -8,7 +8,7 @@
 #include <map>
 #include <iosfwd>
 
-namespace cppgraphviz {
+namespace cppgraphviz::dot {
 
 class Graph;
 
@@ -109,4 +109,4 @@ class Digraph : public Graph {
   Digraph(bool strict = false) : Graph(true, strict) { }
 };
 
-} // namespace cppgraphviz
+} // namespace cppgraphviz::dot

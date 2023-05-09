@@ -3,7 +3,7 @@
 #include "GraphItem.hpp"
 #include <map>
 
-namespace cppgraphviz {
+namespace cppgraphviz::dot {
 
 // A graph node currently only has an id and an attribute list,
 // both of which are provided by GraphItemData.
@@ -15,4 +15,4 @@ class NodeData : public GraphItemData
 // therefore it can be a simple `using` alias declaration.
 using Node = GraphItem<NodeData>;
 
-} // namespace cppgraphviz
+} // namespace cppgraphviz::dot

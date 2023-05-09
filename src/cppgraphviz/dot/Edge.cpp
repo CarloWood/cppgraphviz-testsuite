@@ -2,7 +2,7 @@
 #include "Edge.hpp"
 #include "Node.hpp"
 
-namespace cppgraphviz {
+namespace cppgraphviz::dot {
 
 void EdgeData::set_nodes(Port const& from, Port const& to)
 {
@@ -10,4 +10,4 @@ void EdgeData::set_nodes(Port const& from, Port const& to)
   to_ = to;
 }
 
-} // namespace cppgraphviz
+} // namespace cppgraphviz::dot

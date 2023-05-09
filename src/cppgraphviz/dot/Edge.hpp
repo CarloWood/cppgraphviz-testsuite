@@ -3,7 +3,7 @@
 #include "GraphItem.hpp"
 #include "Port.hpp"
 
-namespace cppgraphviz {
+namespace cppgraphviz::dot {
 
 class EdgeData : public GraphItemData
 {
@@ -37,4 +37,4 @@ class Edge : public GraphItem<EdgeData>
 
 static_assert(sizeof(Edge) == sizeof(GraphItem<EdgeData>), "Edge may not have any additional members!");
 
-} // namespace cppgraphviz
+} // namespace cppgraphviz::dot

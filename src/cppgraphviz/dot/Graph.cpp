@@ -3,7 +3,7 @@
 #include <iostream>
 #include "debug.h"
 
-namespace cppgraphviz {
+namespace cppgraphviz::dot {
 
 void GraphData::add_graph(Graph const& graph)
 {
@@ -138,4 +138,4 @@ void GraphData::write_body_to(std::ostream& os, std::string indentation) const
   }
 }
 
-} // namespace cppgraphviz
+} // namespace cppgraphviz::dot

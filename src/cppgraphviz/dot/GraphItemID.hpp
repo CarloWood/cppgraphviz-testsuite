@@ -3,7 +3,7 @@
 #include "DotID.hpp"
 #include "AttributeList.hpp"
 
-namespace cppgraphviz {
+namespace cppgraphviz::dot {
 
 class GraphItemID
 {
@@ -22,4 +22,4 @@ class GraphItemID
   AttributeList& attribute_list() { return attribute_list_; }
 };
 
-} // namespace cppgraphviz
+} // namespace cppgraphviz::dot

@@ -6,7 +6,7 @@
 #include <string>
 #include <functional>
 
-namespace cppgraphviz {
+namespace cppgraphviz::dot {
 
 class TableElement
 {
@@ -32,4 +32,4 @@ class TableElement
   }
 };
 
-} // namespace cppgraphviz
+} // namespace cppgraphviz::dot

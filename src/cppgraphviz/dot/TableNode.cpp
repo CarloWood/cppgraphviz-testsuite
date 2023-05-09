@@ -3,7 +3,7 @@
 #include <iostream>
 #include <map>
 
-namespace cppgraphviz {
+namespace cppgraphviz::dot {
 
 namespace {
 
@@ -87,4 +87,4 @@ void TableNodeData::write_html_to(std::ostream& os, std::string const& indentati
         indentation << ">];\n";
 }
 
-} // namespace cppgraphviz
+} // namespace cppgraphviz::dot

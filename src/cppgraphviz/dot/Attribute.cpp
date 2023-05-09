@@ -5,7 +5,7 @@
 #include <string_view>
 #include <iostream>
 
-namespace cppgraphviz {
+namespace cppgraphviz::dot {
 
 // Returns true if this string can be used as ID without quotes.
 bool is_valid_ID(std::string const& s)
@@ -90,4 +90,4 @@ void Attribute::print_on(std::ostream& os) const
   os << quoted(key_, no_quotes_required) << '=' << quoted(value_);
 }
 
-} // namespace cppgraphviz
+} // namespace cppgraphviz::dot

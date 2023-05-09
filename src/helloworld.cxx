@@ -7,14 +7,16 @@
 #include <utils/Vector.h>
 #include <iostream>
 
-struct A : cppgraphviz::Node
+namespace dot = cppgraphviz::dot;
+
+struct A : dot::Node
 {
   int m_;
 
   A(int m) : m_(m) { }
 };
 
-struct B : cppgraphviz::Node
+struct B : dot::Node
 {
   int m_;
 
@@ -27,8 +29,8 @@ int main()
 {
   Debug(NAMESPACE_DEBUG::init());
 
-  cppgraphviz::Digraph g0;
-  cppgraphviz::Node n;
+  dot::Digraph g0;
+  dot::Node n;
 
   g0.add_node(n);
 
@@ -36,10 +38,10 @@ int main()
   n.add_attribute({"fillcolor", "green"});
   n.add_attribute({"shape", "hexagon"});
 
-  cppgraphviz::Node n2;
+  dot::Node n2;
   n2.add_attribute({"label", "n2"});
-  cppgraphviz::Edge e1(n, n);
-  cppgraphviz::Edge e2(n2, n);
+  dot::Edge e1(n, n);
+  dot::Edge e2(n2, n);
 
   g0.add_edge(e1);
   g0.add_edge(e2);
@@ -50,24 +52,24 @@ int main()
 
   g0.add_node(n2);
 
-  cppgraphviz::Node n10;
+  dot::Node n10;
   n10.add_attribute({"label", "n10"});
 
-  cppgraphviz::Node n11;
+  dot::Node n11;
   n11.add_attribute({"label", "n11"});
   n11.add_attribute({"color", "purple"});
 
-  cppgraphviz::Edge e3(n10, n11);
+  dot::Edge e3(n10, n11);
   e3.add_attribute({"label", "e3"});
 
-  cppgraphviz::Graph g1;
+  dot::Graph g1;
   g1.add_attribute({"label", "g1"});
   g1.add_node(n10);
   g1.add_node(n11);
   g1.add_edge(e3);
 
   g0.add_graph(g1);
-  cppgraphviz::Edge e4;
+  dot::Edge e4;
   g0.add_edge(e4);
   e4.set_nodes(n2, n10);
 
@@ -79,7 +81,7 @@ int main()
   g1.add_attribute({"fillcolor", "gray"});
   g1.add_attribute({"bgcolor", "lightgrey"});
 
-  cppgraphviz::Edge e5;
+  dot::Edge e5;
   g0.add_edge(e5);
   utils::Vector<A, AIndex> v1 = { {3}, {4}, {5} };
   std::array<char const*, 3> label = { "hello", "world", "foobar" };
@@ -89,7 +91,7 @@ int main()
   v1[last].add_attribute({"bgcolor", "yellow"});
   AIndex second = last - 1;
 
-  cppgraphviz::TableNode tableA;
+  dot::TableNode tableA;
   tableA.add_attribute({"bgcolor", "lightblue"});
   tableA.add_attribute({"color", "purple"});
 //  tableA.add_attribute({"fontname", "Arial"});
@@ -104,7 +106,7 @@ int main()
 
   utils::Vector<B, AIndex> v2 = { {6}, {7}, {8} };
   std::array<char const*, 3> label2 = { "first", "second", "third" };
-  cppgraphviz::TableNode tableB;
+  dot::TableNode tableB;
   tableB.add_elements(v2);
   for (auto i = v2.ibegin(); i != v2.iend(); ++i)
     v2[i].add_attribute({"label", label2[i.get_value()]});
