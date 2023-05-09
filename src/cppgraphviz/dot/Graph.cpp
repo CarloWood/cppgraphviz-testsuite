@@ -14,6 +14,7 @@ void GraphData::add_graph(Graph const& graph)
   GraphItem<GraphData>& subgraph = ibp.first->second;
   // The subgraph must be of the same type as this graph.
   subgraph.data({}).set_digraph(digraph_);
+  subgraph.data({}).set_rankdir(rankdir_);
 }
 
 void GraphData::add_node(Node const& node)
@@ -65,6 +66,21 @@ void GraphData::set_digraph(bool digraph)
   }
 }
 
+void GraphData::set_rankdir(RankDir rankdir)
+{
+  if (rankdir_ != rankdir)
+  {
+    rankdir_ = rankdir;
+    // Recursively change all subgraphs.
+    for (auto& graph_pair : graphs_)
+    {
+      GraphItem<GraphData>& graph = graph_pair.second;
+      GraphData& graph_data = graph.data({});
+      graph_data.set_rankdir(rankdir);
+    }
+  }
+}
+
 void GraphData::write_dot(std::ostream& os) const
 {
   // [ strict ] (graph | digraph) [ ID ] '{' stmt_list '}'
@@ -73,6 +89,20 @@ void GraphData::write_dot(std::ostream& os) const
   if (digraph_)
     os << "di";
   os << "graph " << dot_id() << " {\n";
+  if (rankdir_ != TB)
+  {
+    os << "  rankdir=";
+    if (rankdir_ == LR)
+      os << "LR";
+    else if (rankdir_ == BT)
+      os << "BT";
+    else
+      os << "RL";
+    os << '\n';
+  }
+  os << "  compound=true\n";
+  if (concentrate_)
+    os << "  concentrate=true\n";
 
   write_body_to(os);
 
@@ -121,7 +151,7 @@ void GraphData::write_body_to(std::ostream& os, std::string indentation) const
   {
     GraphItem<GraphData> const& graph = graph_pair.second;
     GraphData const& graph_data = graph.data({});
-    os << indentation << "subgraph cluster_" << graph_data.dot_id() << " {\n";
+    os << indentation << "subgraph " << graph_data.dot_id() << " {\n";
     graph_data.write_body_to(os, indentation);
     os << indentation << "}\n";
   }

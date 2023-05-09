@@ -40,12 +40,12 @@ void TableNodeData::write_html_to(std::ostream& os, std::string const& indentati
   bool table_has_fontcolor = attribute_list().has_key("fontcolor");
   bool table_has_font = table_has_fontname || table_has_fontsize || table_has_fontcolor;
 
-  os << indentation << dot_id() << " [shape=none, margin=0.1, label=<\n" <<
+  os << indentation << dot_id() << " [shape=none, margin=0, label=<\n" <<
         indentation << "  <TABLE BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\" CELLPADDING=\"4\"";
   if (table_has_color)
     os << " COLOR=\"" << attribute_list().get_value("color") << '"';
-  os << ">\n" <<
-        indentation << "    <TR><TD BORDER=\"0\"></TD></TR>\n";
+  os << ">\n";
+  //os << indentation << "    <TR><TD BORDER=\"0\"></TD></TR>\n";
   for (int port = 0; port < elements_.size(); ++port)
   {
     AttributeList const& eal = elements_[port].attribute_list();
@@ -84,7 +84,7 @@ void TableNodeData::write_html_to(std::ostream& os, std::string const& indentati
     os << "</TD></TR>\n";
   }
   os << indentation << "  </TABLE>\n" <<
-        indentation << ">];\n";
+        indentation << ">]\n";
 }
 
 } // namespace cppgraphviz::dot
