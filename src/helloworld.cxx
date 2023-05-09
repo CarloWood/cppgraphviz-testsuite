@@ -1,9 +1,9 @@
 #include "sys.h"
 #include "debug.h"
-#include "cppgraphviz/Graph.hpp"
-#include "cppgraphviz/Node.hpp"
-#include "cppgraphviz/Edge.hpp"
-#include "cppgraphviz/TableNode.hpp"
+#include "cppgraphviz/dot/Graph.hpp"
+#include "cppgraphviz/dot/Node.hpp"
+#include "cppgraphviz/dot/Edge.hpp"
+#include "cppgraphviz/dot/TableNode.hpp"
 #include <utils/Vector.h>
 #include <iostream>
 
