@@ -14,6 +14,13 @@ struct A : cppgraphviz::Node
   A(int m) : m_(m) { }
 };
 
+struct B : cppgraphviz::Node
+{
+  int m_;
+
+  B(int m) : m_(m) { }
+};
+
 using AIndex = utils::VectorIndex<A>;
 
 int main()
@@ -82,18 +89,26 @@ int main()
   v1[last].add_attribute({"bgcolor", "yellow"});
   AIndex second = last - 1;
 
-  cppgraphviz::TableNode table;
-  table.add_attribute({"bgcolor", "lightblue"});
-  table.add_attribute({"color", "purple"});
-//  table.add_attribute({"fontname", "Arial"});
-//  table.add_attribute({"fontsize", "18"});
-  table.add_attribute({"fontcolor", "blue"});
+  cppgraphviz::TableNode tableA;
+  tableA.add_attribute({"bgcolor", "lightblue"});
+  tableA.add_attribute({"color", "purple"});
+//  tableA.add_attribute({"fontname", "Arial"});
+//  tableA.add_attribute({"fontsize", "18"});
+  tableA.add_attribute({"fontcolor", "blue"});
   v1[second].add_attribute({"fontname", "Times New Roman"});
   v1[second].add_attribute({"fontsize", "12"});
   v1[second].add_attribute({"fontcolor", "red"});
-  table.add_elements(v1);
-  g0.add_table_node(table);
-  e5.set_nodes(n11, table[1]);
+  tableA.add_elements(v1);
+  g0.add_table_node(tableA);
+  e5.set_nodes(n11, tableA[1]);
+
+  utils::Vector<B, AIndex> v2 = { {6}, {7}, {8} };
+  std::array<char const*, 3> label2 = { "first", "second", "third" };
+  cppgraphviz::TableNode tableB;
+  tableB.add_elements(v2);
+  for (auto i = v2.ibegin(); i != v2.iend(); ++i)
+    v2[i].add_attribute({"label", label2[i.get_value()]});
+  g0.add_table_node(tableB);
 
   g0.write_dot(std::cout);
 }

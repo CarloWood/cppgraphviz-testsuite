@@ -1,8 +1,35 @@
 #include "sys.h"
 #include "TableNode.hpp"
 #include <iostream>
+#include <map>
 
 namespace cppgraphviz {
+
+namespace {
+
+std::string html_escape(std::string const& input)
+{
+  std::map<char, std::string> html_entities{
+    {'&', "&amp;"},
+    {'<', "&lt;"},
+    {'>', "&gt;"},
+    {'"', "&quot;"},
+    {'\'', "&#39;"}
+  };
+
+  std::string escaped_string;
+  for (char c : input)
+  {
+    auto it = html_entities.find(c);
+    if (it != html_entities.end())
+      escaped_string += it->second;
+    else
+      escaped_string += c;
+  }
+  return escaped_string;
+}
+
+} // namespace
 
 void TableNodeData::write_html_to(std::ostream& os, std::string const& indentation) const
 {
@@ -51,7 +78,7 @@ void TableNodeData::write_html_to(std::ostream& os, std::string const& indentati
         os << " COLOR=\"" << attribute_list().get_value("fontcolor") << "\"";
       os << '>';
     }
-    os << elements_[port].label();
+    os << html_escape(elements_[port].label());
     if (has_font)
       os << "</FONT>";
     os << "</TD></TR>\n";
