@@ -40,7 +40,15 @@ class GraphItem
   boost::intrusive_ptr<Data> data_;
 
  public:
+  // Create a new Data object.
   GraphItem();
+  // Make a copy of the GraphItem base class of other.
+  GraphItem(GraphItem const& other) = default;
+  // Move constructor.
+  GraphItem(GraphItem&& other) = default;
+  // Increment reference count of data and become a pointer to it.
+  GraphItem(Data const* data) : data_(data) { }
+
   virtual ~GraphItem() = default;
 
   // Give access to the attribute list of the item, allowing the user to add attributes.

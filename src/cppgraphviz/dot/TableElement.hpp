@@ -15,8 +15,9 @@ class TableElement
 
  public:
   TableElement(Node const& node) : node_(node) { }
+  TableElement(Node&& node) : node_(std::move(node)) { }
 
-  std::string label() const
+  std::string_view label() const
   {
     return node_.data().attribute_list().get("label", "<no label>");
   }

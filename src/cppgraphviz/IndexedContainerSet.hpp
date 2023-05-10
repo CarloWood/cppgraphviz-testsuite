@@ -4,13 +4,41 @@
 
 namespace cppgraphviz {
 
+template<typename Index>
+class IndexedContainerSet;
+
+template<typename Index>
+class RankdirGraphData : public dot::GraphData
+{
+ private:
+  IndexedContainerSet<Index>* owner_;
+
+  void set_rankdir(dot::RankDir rankdir) const final;
+
+ public:
+  void set_owner(IndexedContainerSet<Index>* owner)
+  {
+    owner_ = owner;
+  }
+};
+
+template<typename Index>
+class RankdirGraph : public dot::GraphTemplate<RankdirGraphData<Index>>
+{
+ public:
+  void set_owner(IndexedContainerSet<Index>* owner)
+  {
+    this->data().set_owner(owner);
+  }
+};
+
 // A cluster graph containing one or more indexed containers that use Index as index type.
 template<typename Index>
 class IndexedContainerSet
 {
  private:
-  dot::Graph outer_subgraph_;   // This subgraph wraps the inner subgraph.
-  dot::Graph inner_subgraph_;   // This subgraph contains the dot::TableNode's that represent the indexed containers.
+  RankdirGraph<Index> outer_subgraph_;  // This subgraph wraps the inner subgraph.
+  dot::Graph inner_subgraph_;           // This subgraph contains the dot::TableNode's that represent the indexed containers.
 
  private:
   void initialize()
@@ -20,9 +48,9 @@ class IndexedContainerSet
     outer_subgraph_.add_attribute({"color", "lightblue"});
     outer_subgraph_.add_graph(inner_subgraph_);
     inner_subgraph_.add_attribute({"cluster", "false"});
-    dot::RankDir rankdir = outer_subgraph_.get_rankdir();
-    if (rankdir == dot::TB || rankdir == dot::BT)
-      inner_subgraph_.add_attribute({"rank", "same"});
+    // We have to assume the default rankdir=TB and will adjust if set_rankdir is called with LR or RL.
+    inner_subgraph_.add_attribute({"rank", "same"});
+    outer_subgraph_.set_owner(this);
   }
 
  public:
@@ -45,12 +73,33 @@ class IndexedContainerSet
   }
 
   void add_to_graph(dot::GraphData& graph_data) const;
+
+  void rankdir_changed(dot::RankDir new_rankdir)
+  {
+    dot::RankDir old_rankdir = outer_subgraph_.get_rankdir();
+    bool old_is_vertical = old_rankdir == dot::TB || old_rankdir == dot::BT;
+    bool new_is_vertical = new_rankdir == dot::TB || new_rankdir == dot::BT;
+    if (old_is_vertical != new_is_vertical)
+    {
+      if (new_is_vertical)
+        inner_subgraph_.add_attribute({"rank", "same"});
+      else
+        inner_subgraph_.attribute_list().remove("rank");
+    }
+  }
 };
 
 template<typename Index>
 void IndexedContainerSet<Index>::add_to_graph(dot::GraphData& graph_data) const
 {
   graph_data.add_graph(outer_subgraph_);
+}
+
+template<typename Index>
+void RankdirGraphData<Index>::set_rankdir(dot::RankDir rankdir) const
+{
+  owner_->rankdir_changed(rankdir);
+  dot::GraphData::set_rankdir(rankdir);
 }
 
 } // namespace cppgraphviz

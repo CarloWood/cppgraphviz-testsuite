@@ -100,14 +100,14 @@ int main()
   v1[second].add_attribute({"fontname", "Times New Roman"});
   v1[second].add_attribute({"fontsize", "12"});
   v1[second].add_attribute({"fontcolor", "red"});
-  tableA.add_elements(v1);
+  tableA.link_container(v1);
   g0.add_table_node(tableA);
   e5.set_nodes(n11, tableA[1]);
 
   utils::Vector<B, AIndex> v2 = { {6}, {7}, {8} };
   std::array<char const*, 3> label2 = { "first", "second", "third" };
   dot::TableNode tableB;
-  tableB.add_elements(v2);
+  tableB.link_container(v2);
   for (auto i = v2.ibegin(); i != v2.iend(); ++i)
     v2[i].add_attribute({"label", label2[i.get_value()]});
   g0.add_table_node(tableB);

@@ -5,13 +5,12 @@
 
 namespace cppgraphviz::dot {
 
-void GraphData::add_graph(Graph const& graph)
+void GraphData::add_graph(GraphData const* graph_data)
 {
-  GraphData const& graph_data = graph.data({});
-  auto ibp = graphs_.try_emplace(graph_data.dot_id(), graph);
+  auto ibp = graphs_.try_emplace(graph_data->dot_id(), graph_data);
   // Do not add the same graph twice.
   ASSERT(ibp.second);
-  GraphItem<GraphData>& subgraph = ibp.first->second;
+  GraphItem<GraphData const>& subgraph = ibp.first->second;
   // The subgraph must be of the same type as this graph.
   subgraph.data({}).set_digraph(digraph_);
   subgraph.data({}).set_rankdir(rankdir_);
@@ -51,7 +50,7 @@ void GraphData::add_edge_attribute(Attribute&& attribute)
   edge_attribute_list_.add(std::move(attribute));
 }
 
-void GraphData::set_digraph(bool digraph)
+void GraphData::set_digraph(bool digraph) const
 {
   if (digraph_ != digraph)
   {
@@ -59,14 +58,14 @@ void GraphData::set_digraph(bool digraph)
     // Recursively change all subgraphs.
     for (auto& graph_pair : graphs_)
     {
-      GraphItem<GraphData>& graph = graph_pair.second;
-      GraphData& graph_data = graph.data({});
+      GraphItem<GraphData const> const& graph = graph_pair.second;
+      GraphData const& graph_data = graph.data({});
       graph_data.set_digraph(digraph);
     }
   }
 }
 
-void GraphData::set_rankdir(RankDir rankdir)
+void GraphData::set_rankdir(RankDir rankdir) const
 {
   if (rankdir_ != rankdir)
   {
@@ -74,8 +73,8 @@ void GraphData::set_rankdir(RankDir rankdir)
     // Recursively change all subgraphs.
     for (auto& graph_pair : graphs_)
     {
-      GraphItem<GraphData>& graph = graph_pair.second;
-      GraphData& graph_data = graph.data({});
+      GraphItem<GraphData const> const& graph = graph_pair.second;
+      GraphData const& graph_data = graph.data({});
       graph_data.set_rankdir(rankdir);
     }
   }
@@ -149,7 +148,7 @@ void GraphData::write_body_to(std::ostream& os, std::string indentation) const
   // Write all subgraph's.
   for (auto const& graph_pair : graphs_)
   {
-    GraphItem<GraphData> const& graph = graph_pair.second;
+    GraphItem<GraphData const> const& graph = graph_pair.second;
     GraphData const& graph_data = graph.data({});
     os << indentation << "subgraph " << graph_data.dot_id() << " {\n";
     graph_data.write_body_to(os, indentation);

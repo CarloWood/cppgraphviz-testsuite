@@ -7,7 +7,7 @@ namespace cppgraphviz::dot {
 
 namespace {
 
-std::string html_escape(std::string const& input)
+std::string html_escape(std::string_view input)
 {
   std::map<char, std::string> html_entities{
     {'&', "&amp;"},
@@ -46,9 +46,11 @@ void TableNodeData::write_html_to(std::ostream& os, std::string const& indentati
     os << " COLOR=\"" << attribute_list().get_value("color") << '"';
   os << ">\n";
   //os << indentation << "    <TR><TD BORDER=\"0\"></TD></TR>\n";
-  for (int port = 0; port < elements_.size(); ++port)
+  size_t size = container_size_();
+  for (size_t port = 0; port < size; ++port)
   {
-    AttributeList const& eal = elements_[port].attribute_list();
+    TableElement table_element = container_reference_(port);
+    AttributeList const& eal = table_element.attribute_list();
     os << indentation << "    <TR><TD PORT=\"" << port << "\"";
     if (eal.has_key("bgcolor"))
       os << " BGCOLOR=\"" << eal.get_value("bgcolor") << '"';
@@ -78,7 +80,7 @@ void TableNodeData::write_html_to(std::ostream& os, std::string const& indentati
         os << " COLOR=\"" << attribute_list().get_value("fontcolor") << "\"";
       os << '>';
     }
-    os << html_escape(elements_[port].label());
+    os << html_escape(table_element.label());
     if (has_font)
       os << "</FONT>";
     os << "</TD></TR>\n";

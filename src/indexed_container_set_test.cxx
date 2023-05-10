@@ -36,7 +36,6 @@ int main()
 
   dot::Digraph g0;
   g0.set_concentrate(true);
-  g0.set_rankdir(dot::LR);
 
   utils::Vector<A, AIndex> container_of_A = { 2, 3, 5 };
   utils::Vector<B, AIndex> container_of_B = { 11, 13, 17 };
@@ -54,11 +53,10 @@ int main()
   g0.add_edge(e1);
 
   container_of_A.push_back(7);
+  table_A.copy_elements(container_of_A);
+  table_B.link_container(container_of_B);
   container_of_B.push_back(19);
-  table_A.add_elements(container_of_A);
-  table_B.add_elements(container_of_B);
 
   e1.set_nodes(table_A[1], table_B[2]);
-
   g0.write_dot(std::cout);
 }
