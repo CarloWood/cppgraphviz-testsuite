@@ -1,54 +1,64 @@
 #pragma once
 
-#include "ID.hpp"
 #include "AttributeList.hpp"
+#include "GraphItemID.hpp"
 #include <utils/AIRefCount.h>
 #include <utils/Badge.h>
 #include <boost/intrusive_ptr.hpp>
 
 namespace cppgraphviz {
 
-class Graph;
-class Edge;
+class GraphData;
+class NodeData;
+class EdgeData;
+class TableNodeData;
+class Port;
+class TableElement;
 
-class GraphItemData : public AIRefCount
+// Base class of GraphData, EdgeData and NodeData.
+//
+// This class provides a unique id for each graph (item) and a general attribute list.
+class GraphItemData : public AIRefCount, public GraphItemID
 {
- private:
-  // The unique dot ID of this item.
-  utils::UniqueID<ID_type> dot_id_ = s_unique_id_context.get_id();
-  // Attribute list of this item.
-  AttributeList attribute_list_;
-
  public:
-  GraphItemData() = default;
+  GraphItemData() : GraphItemID(s_unique_id_context.get_id()) { }
   GraphItemData(GraphItemData const& other) = delete;
   GraphItemData(GraphItemData&& other) = delete;
-
-  // Accessors.
-  ID_type id() const { return dot_id_; }
-  AttributeList const& attribute_list() const { return attribute_list_; }
-  AttributeList& attribute_list() { return attribute_list_; }
 };
 
+// A wrapper around a boost::intrusive_ptr.
+// GraphItem's can be cheaply moved and even copied: changes made
+// to one GraphItem affect all other GraphItem that are/were copies.
+//
+// The (shaded) data that a GraphItem points to (Data) will be
+// either GraphData, NodeData or EdgeData.
 template<typename Data>
 class GraphItem
 {
  private:
-  // Use a smart pointer to the actual data, so that  GraphItem remains movable and copyable.
+  // Use a smart pointer to the actual data, so that GraphItem remains movable and copyable.
   boost::intrusive_ptr<Data> data_;
 
  public:
   GraphItem();
+  virtual ~GraphItem() = default;
 
-  // Give access to the attribute list of the node, allowing the user to add attributes.
+  // Give access to the attribute list of the item, allowing the user to add attributes.
   AttributeList& attribute_list() { return data_->attribute_list(); }
 
   // Short-cut for convenience.
-  void add_attribute(Attribute const& attribute) { data_->attribute_list().add(attribute); }
+  void add_attribute(Attribute&& attribute) { data_->attribute_list().add(std::move(attribute)); }
 
-  // Accessors for Graph.
-  Data const& data(utils::Badge<Graph, Edge>) const { return *data_; }
-  Data& data(utils::Badge<Graph, Edge>) { return *data_; }
+  // Accessors for GraphData, NodeData, EdgeData and TableNodeData.
+  Data const& data(utils::Badge<GraphData, NodeData, EdgeData, TableNodeData>) const { return *data_; }
+  Data& data(utils::Badge<GraphData, NodeData, EdgeData, TableNodeData>) { return *data_; }
+
+ protected:
+  // Accessors for Graph, Node, Edge, Port and TableElement.
+  friend class Port;
+  friend class TableElement;
+  Data const& data() const { return *data_; }
+  Data& data() { return *data_; }
 };
 
 template<typename Data>
@@ -58,4 +68,3 @@ GraphItem<Data>::GraphItem()
 }
 
 } // namespace cppgraphviz
-

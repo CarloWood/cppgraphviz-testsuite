@@ -2,7 +2,7 @@
 
 #include <string_view>
 #include <string>
-#include <iostream>
+#include <iosfwd>
 
 namespace cppgraphviz {
 
@@ -10,17 +10,24 @@ class Attribute
 {
  private:
   std::string key_;
-  std::string value_;
+  mutable std::string value_;
 
  public:
-  Attribute(std::string_view key, std::string_view value) :
-    key_(key), value_(value) { }
+  // Construct a 'key' Attribute, for searching.
+  Attribute(std::string_view key) : key_(key) { }
+  // Construct an Attribute with key and value.
+  Attribute(std::string_view key, std::string_view value) : key_(key), value_(value) { }
 
-  void print_on(std::ostream& os) const
+  // Attribute is stored in a std::set.
+  friend bool operator<(Attribute const& lhs, Attribute const& rhs)
   {
-    // ID '=' ID
-    os << '"' << key_ << '"' << '=' << '"' << value_ << '"';
+    return lhs.key_ < rhs.key_;
   }
+
+  // Accessor.
+  std::string const& value() const { return value_; }
+
+  void print_on(std::ostream& os) const;
 };
 
 inline std::ostream& operator<<(std::ostream& os, Attribute const& attribute)
