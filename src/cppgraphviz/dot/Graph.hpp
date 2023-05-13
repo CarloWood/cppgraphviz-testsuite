@@ -46,11 +46,11 @@ class GraphData : public GraphItemData
   // The list of all (sub)graphs of this graph, by ID.
   std::map<DotID_type, GraphItem<GraphData const>> graphs_;
   // The list of all nodes of this graph, by ID.
-  std::map<DotID_type, GraphItem<NodeData>> nodes_;
+  std::map<DotID_type, GraphItem<NodeData const>> nodes_;
   // The list of all edges of this graph, by ID.
-  std::map<DotID_type, GraphItem<EdgeData>> edges_;
+  std::map<DotID_type, GraphItem<EdgeData const>> edges_;
   // The list of all "table nodes", by ID;
-  std::map<DotID_type, GraphItem<TableNodeData>> table_nodes_;
+  std::map<DotID_type, GraphItem<TableNodeData const>> table_nodes_;
 
  private:
   void write_body_to(std::ostream& os, std::string indentation = {}) const;
@@ -73,9 +73,14 @@ class GraphData : public GraphItemData
 
   //---------------------------------------------------------------------------
   void add_graph(GraphData const* graph_data);
-  void add_node(Node const& node);
-  void add_edge(Edge const& edge);
-  void add_table_node(TableNode const& table_node);
+  void add_node(NodeData const* node_data);
+  void add_edge(EdgeData const* edge_data);
+  void add_table_node(TableNodeData const* table_node_data);
+
+  void remove_graph(GraphData const* graph_data);
+  void remove_node(NodeData const* node_data);
+  void remove_edge(EdgeData const* edge_data);
+  void remove_table_node(TableNodeData const* table_node_data);
 
   template<ConceptIsGraphData GD>
   void add_graph(GraphItem<GD> const& graph)
@@ -83,10 +88,52 @@ class GraphData : public GraphItemData
     add_graph(&graph.data({}));
   }
 
-  template<typename T>
-  void add(T const& obj)
+  template<ConceptIsNodeData ND>
+  void add_node(GraphItem<ND> const& node)
   {
-    obj.add_to_graph(*this);
+    add_node(&node.data({}));
+  }
+
+  template<ConceptIsEdgeData ED>
+  void add_edge(GraphItem<ED> const& edge)
+  {
+    add_edge(&edge.data({}));
+  }
+
+  template<ConceptIsTableNodeData TND>
+  void add_table_node(GraphItem<TND> const& table_node)
+  {
+    add_table_node(&table_node.data({}));
+  }
+
+  template<ConceptIsGraphData GD>
+  void remove_graph(GraphItem<GD> const& graph)
+  {
+    remove_graph(&graph.data({}));
+  }
+
+  template<ConceptIsNodeData ND>
+  void remove_node(GraphItem<ND> const& node)
+  {
+    remove_node(&node.data({}));
+  }
+
+  template<ConceptIsEdgeData ED>
+  void remove_edge(GraphItem<ED> const& edge)
+  {
+    remove_edge(&edge.data({}));
+  }
+
+  template<ConceptIsTableNodeData TND>
+  void remove_table_node(GraphItem<TND> const& table_node)
+  {
+    remove_table_node(&table_node.data({}));
+  }
+
+  template<typename T>
+  void add(T& obj)
+  {
+    obj.add_to_graph(*static_cast<typename T::data_type::graph_data_type*>(this));
   }
 
   void add_node_attribute(Attribute&& attribute);
@@ -96,7 +143,7 @@ class GraphData : public GraphItemData
 template<typename T>
 concept ConceptHasAddToGraph = requires(T obj)
 {
-  obj.add_to_graph(std::declval<GraphData&>());
+  obj.add_to_graph(std::declval<typename T::data_type::graph_data_type&>());
 };
 
 template<ConceptIsGraphData GD>
@@ -135,20 +182,20 @@ class GraphTemplate : public GraphItem<GD>
   RankDir get_rankdir() const { return this->data().get_rankdir(); }
 
   //---------------------------------------------------------------------------
-  template<ConceptIsGraphData T>
-  void add_graph(GraphTemplate<T> const& graph)
-  {
-    this->data().add_graph(graph);
-  }
-
+  void add_graph(GraphTemplate<GraphData> const& graph) { this->data().add_graph(graph); }
   void add_node(Node const& node) { this->data().add_node(node); }
   void add_edge(Edge const& edge) { this->data().add_edge(edge); }
-  void add_table_node(TableNode const& table_node) { this->data().add_table_node(table_node); }
+
+  template<ConceptIsTableNodeData TND>
+  void add_table_node(TableNodeTemplate<TND> const& table_node)
+  {
+    this->data().add_table_node(table_node);
+  }
 
   // Add an arbitrary object to the graph that knows how to add itself.
   // This is just a more intuitive interface; now one can use `graph.add(obj)` instead of `obj.add_to_graph(graph_data)`.
   template<ConceptHasAddToGraph T>
-  void add(T const& obj)
+  void add(T& obj)
   {
     this->data().add(obj);
   }

@@ -21,6 +21,8 @@ class TableElement;
 class GraphItemData : public AIRefCount, public GraphItemID
 {
  public:
+  using graph_data_type = GraphData;
+
   GraphItemData() : GraphItemID(s_unique_id_context.get_id()) { }
   GraphItemData(GraphItemData const& other) = delete;
   GraphItemData(GraphItemData&& other) = delete;
@@ -35,6 +37,9 @@ class GraphItemData : public AIRefCount, public GraphItemID
 template<typename Data>
 class GraphItem
 {
+ public:
+  using data_type = Data;
+
  private:
   // Use a smart pointer to the actual data, so that GraphItem remains movable and copyable.
   boost::intrusive_ptr<Data> data_;
@@ -48,6 +53,13 @@ class GraphItem
   GraphItem(GraphItem&& other) = default;
   // Increment reference count of data and become a pointer to it.
   GraphItem(Data const* data) : data_(data) { }
+  // Allow downgrading a GraphItem to point to a base class of D.
+  template<typename D>
+  requires std::derived_from<D, Data>
+  GraphItem(GraphItem<D> const& other) : data_(other.data_) { }
+  // Accessing other.data_ requires us to be a friend.
+  template<typename D>
+  friend class GraphItem;
 
   virtual ~GraphItem() = default;
 

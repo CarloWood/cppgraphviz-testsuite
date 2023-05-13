@@ -2,8 +2,13 @@
 
 #include "GraphItem.hpp"
 #include "Port.hpp"
+#include <concepts>
+#include <type_traits>
 
 namespace cppgraphviz::dot {
+
+template<typename T>
+concept ConceptIsEdgeData = std::is_base_of_v<EdgeData, T>;
 
 class EdgeData : public GraphItemData
 {

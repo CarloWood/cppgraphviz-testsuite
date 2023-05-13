@@ -1,29 +1,48 @@
 #pragma once
 
-#include "Node.hpp"
-#include "dot/Graph.hpp"
+#include "LabelNode.hpp"
+#include "TableNode.hpp"
+#include "Graph.hpp"
 #include <type_traits>
 #include <concepts>
 
 namespace cppgraphviz {
 
 template<typename T>
-concept ConceptIsNode = std::is_base_of_v<Node, std::remove_reference_t<std::remove_pointer_t<T>>>;
+concept ConceptIsLabelNode = std::is_base_of_v<LabelNode, std::remove_reference_t<std::remove_pointer_t<T>>>;
 
-class Class
+template<typename T>
+concept ConceptIsTableNode = std::is_base_of_v<TableNode, std::remove_reference_t<std::remove_pointer_t<T>>>;
+
+class Class : public Node
 {
- private:
-  dot::Graph subgraph_;
-
  public:
-  void initialize()
+  using data_type = GraphData;
+
+ private:
+  Graph subgraph_;
+
+ private:
+  void add_to_graph_impl(GraphData* graph_data) override
   {
-    node_attributes(subgraph_.attribute_list());
+    graph_data->add_graph(subgraph_);
   }
 
-  void add_to_graph(dot::GraphData& graph_data) const
+  void remove_from_graph_impl(GraphData* graph_data) override
   {
-    graph_data.add_graph(subgraph_);
+    graph_data->remove_graph(subgraph_);
+  }
+
+ public:
+  Class() = default;
+  Class(Class&& other) = default;
+  Class(Class const& other) : Node(other) { copied(); }
+  ~Class() { destructed(); }
+
+  void initialize() override
+  {
+    // Add the attributes of subgraph_.
+    node_attributes(subgraph_.attribute_list());
   }
 
   virtual void node_attributes(dot::AttributeList& list)
@@ -37,33 +56,31 @@ class Class
     list += {{"cluster", "true"}, {"style", prev_style + "rounded"}, {"label", "<Class>"}};
   }
 
-  template<ConceptIsNode Node>
-  void add_node_member(Node& node)
+  template<ConceptIsLabelNode LN>
+  void add_node_member(LN& label_node)
   {
-    node.initialize();
-    subgraph_.add_node(node.node());
+    label_node.initialize();
+    subgraph_.add(label_node);
   }
 
-  template<ConceptIsNode... Nodes>
-  void add_node_members(Nodes&&... nodes)
+  template<ConceptIsLabelNode... LNs>
+  void add_node_members(LNs&&... label_nodes)
   {
-    (add_node_member(std::forward<Nodes>(nodes)), ...);
+    (add_node_member(std::forward<LNs>(label_nodes)), ...);
   }
 
-#if -0
   template<ConceptIsTableNode TableNode>
   void add_table_node_member(TableNode& table_node)
   {
     table_node.initialize();
-    subgraph_.add_table_node(table_node.table_node());
+    subgraph_.add_table_node(table_node);
   }
 
   template<ConceptIsTableNode... TableNodes>
-  add_table_node_members(TableNodes&&... table_nodes)
+  void add_table_node_members(TableNodes&&... table_nodes)
   {
     (add_table_node_member(std::forward<TableNodes>(table_nodes)), ...);
   }
-#endif
 };
 
 } // namespace cppgraphviz

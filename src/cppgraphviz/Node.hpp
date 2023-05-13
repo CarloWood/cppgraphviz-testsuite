@@ -1,32 +1,55 @@
 #pragma once
 
-#include "dot/Graph.hpp"
-#include <string_view>
+#include "NodeTracker.hpp"
+#include <boost/intrusive_ptr.hpp>
+#include <memory>
+#include "debug.h"
 
 namespace cppgraphviz {
+
+class GraphData;
 
 class Node
 {
  private:
-  dot::Node node_;
+  std::shared_ptr<NodeTracker> tracker_;
+  boost::intrusive_ptr<GraphData> graph_data_;
+
+#ifdef CWDEBUG
+ protected:
+  bool copied_{false};
+  bool destructed_{false};
+#endif
 
  public:
-  void initialize()
+  Node();
+  Node(Node const& other);
+  Node(Node&& other) noexcept;
+#ifdef CWDEBUG
+  virtual ~Node()
   {
-    node_attributes(node_.attribute_list());
+    // Call copied() from the copy constructor of a derived class that already has all required virtual functions defined.
+    ASSERT(!copied_);
+    // Call destructed() from the destructor of that same derived class.
+    ASSERT(destructed_);
   }
+#else
+  virtual ~Node() = default;
+#endif
 
-  void add_to_graph(dot::GraphData& graph_data) const
-  {
-    graph_data.add_node(node_);
-  }
+  void add_to_graph(GraphData& graph_data);
+  void copied();
+  void destructed();
+  void set_graph_data(boost::intrusive_ptr<GraphData> graph_data);
 
-  dot::Node const& node() const { return node_; }
+  boost::intrusive_ptr<GraphData> const& get_graph_data() const { return graph_data_; }
+  std::shared_ptr<NodeTracker> const& get_tracker() const { return tracker_; }
 
-  virtual void node_attributes(dot::AttributeList& list)
-  {
-    list.add({"label", "<unknown label>"});
-  }
+  operator NodeTracker const&() const { return *tracker_; }
+
+  virtual void initialize() = 0;
+  virtual void add_to_graph_impl(GraphData* graph_data) = 0;
+  virtual void remove_from_graph_impl(GraphData* graph_data) = 0;
 };
 
 } // namespace cppgraphviz

@@ -16,26 +16,53 @@ void GraphData::add_graph(GraphData const* graph_data)
   subgraph.data({}).set_rankdir(rankdir_);
 }
 
-void GraphData::add_node(Node const& node)
+void GraphData::add_node(NodeData const* node_data)
 {
-  NodeData const& node_data = node.data({});
-  auto ibp = nodes_.try_emplace(node_data.dot_id(), node);
+  DoutEntering(dc::notice, "GraphData::add_node(" << node_data << ") [" << this << "]");
+  auto ibp = nodes_.try_emplace(node_data->dot_id(), node_data);
   // Do not add the same node twice.
   ASSERT(ibp.second);
 }
 
-void GraphData::add_edge(Edge const& edge)
+void GraphData::remove_graph(GraphData const* graph_data)
 {
-  EdgeData const& edge_data = edge.data({});
-  auto ibp = edges_.try_emplace(edge_data.dot_id(), edge);
+  bool erased = graphs_.erase(graph_data->dot_id());
+  // That's unexpected... we shouldn't be calling remove_graph unless it is there.
+  ASSERT(erased);
+}
+
+void GraphData::remove_node(NodeData const* node_data)
+{
+  DoutEntering(dc::notice, "GraphData::remove_node(" << node_data << ") [" << this << "]");
+  bool erased = nodes_.erase(node_data->dot_id());
+  // That's unexpected... we shouldn't be calling remove_node unless it is there.
+  ASSERT(erased);
+}
+
+void GraphData::remove_edge(EdgeData const* edge_data)
+{
+  bool erased = edges_.erase(edge_data->dot_id());
+  // That's unexpected... we shouldn't be calling remove_edge unless it is there.
+  ASSERT(erased);
+}
+
+void GraphData::remove_table_node(TableNodeData const* table_node_data)
+{
+  bool erased = table_nodes_.erase(table_node_data->dot_id());
+  // That's unexpected... we shouldn't be calling remove_table_node unless it is there.
+  ASSERT(erased);
+}
+
+void GraphData::add_edge(EdgeData const* edge_data)
+{
+  auto ibp = edges_.try_emplace(edge_data->dot_id(), edge_data);
   // Do not add the same edge twice.
   ASSERT(ibp.second);
 }
 
-void GraphData::add_table_node(TableNode const& table_node)
+void GraphData::add_table_node(TableNodeData const* table_node_data)
 {
-  TableNodeData const& table_node_data = table_node.data({});
-  auto ibp = table_nodes_.try_emplace(table_node_data.dot_id(), table_node);
+  auto ibp = table_nodes_.try_emplace(table_node_data->dot_id(), table_node_data);
   // Do not add the same table_node twice.
   ASSERT(ibp.second);
 }
@@ -131,7 +158,7 @@ void GraphData::write_body_to(std::ostream& os, std::string indentation) const
   // Write all node_stmt's first.
   for (auto const& node_pair : nodes_)
   {
-    GraphItem<NodeData> const& node = node_pair.second;
+    GraphItem<NodeData const> const& node = node_pair.second;
     NodeData const& node_data = node.data({});
     // node_stmt	:	node_id [ attr_list ]
     os << indentation << node_data.dot_id() << " [" << node_data.attribute_list() << "]\n";
@@ -140,7 +167,7 @@ void GraphData::write_body_to(std::ostream& os, std::string indentation) const
   // Write all tables.
   for (auto const& table_node_pair : table_nodes_)
   {
-    GraphItem<TableNodeData> const& table_node = table_node_pair.second;
+    GraphItem<TableNodeData const> const& table_node = table_node_pair.second;
     TableNodeData const& table_node_data = table_node.data({});
     table_node_data.write_html_to(os, indentation);
   }
@@ -158,7 +185,7 @@ void GraphData::write_body_to(std::ostream& os, std::string indentation) const
   // Write all edge_stmt's.
   for (auto const& edge_pair : edges_)
   {
-    GraphItem<EdgeData> const& edge = edge_pair.second;
+    GraphItem<EdgeData const> const& edge = edge_pair.second;
     EdgeData const& edge_data = edge.data({});
     // edge_stmt	:	(node_id | subgraph) edgeRHS [ attr_list ]
     // edgeRHS	:	edgeop (node_id | subgraph) [ edgeRHS ]

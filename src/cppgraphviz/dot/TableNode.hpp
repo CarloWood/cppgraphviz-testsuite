@@ -24,6 +24,9 @@ concept ConceptSizeTIndexableContainer = requires(T t)
   { std::declval<T const>()[std::declval<size_t>()] } -> std::same_as<typename T::const_reference>;
 };
 
+template<typename T>
+concept ConceptIsTableNodeData = std::is_base_of_v<TableNodeData, T>;
+
 class TableNodeData : public GraphItemData
 {
  private:
@@ -34,17 +37,18 @@ class TableNodeData : public GraphItemData
  public:
   // This stores a reference to the container; it may not be moved after this call.
   template<ConceptIndexableContainer Container>
-  void link_container(Container const& container)
+  void link_container(Container& container)
   {
-    container_size_ = [&](){ return container.size(); };
-    container_reference_ = [&](size_t index){ return container[typename Container::index_type{index}]; };
+    container_size_ = [&]() -> size_t { return container.size(); };
+    container_reference_ = [&](size_t index) -> TableElement {
+      return container[static_cast<typename Container::index_type>(index)]; };
   }
 
   template<ConceptSizeTIndexableContainer Container>
-  void link_container(Container const& container)
+  void link_container(Container& container)
   {
-    container_size_ = [&](){ return container.size(); };
-    container_reference_ = [&](size_t index){ return container[index]; };
+    container_size_ = [&]() -> size_t { return container.size(); };
+    container_reference_ = [&](size_t index) -> TableElement { return container[index]; };
   }
 
   void copy_elements(std::function<Node (size_t)> at, size_t size)
@@ -57,7 +61,7 @@ class TableNodeData : public GraphItemData
   template<ConceptIndexableContainer Container>
   void copy_elements(Container const& container)
   {
-    copy_elements([&](size_t i){ return container[typename Container::index_type{i}]; }, container.size());
+    copy_elements([&](size_t i){ return container[static_cast<typename Container::index_type>(i)]; }, container.size());
   }
 
   void write_html_to(std::ostream& os, std::string const& indentation) const;
@@ -66,33 +70,42 @@ class TableNodeData : public GraphItemData
   {
     return {dot_id(), index};
   }
+
+  void for_all_elements(std::function<void(NodeData&)> callback)
+  {
+    for (size_t i = 0; i < container_size_(); ++i)
+      callback(container_reference_(i).node().data({}));
+  }
 };
 
-class TableNode : public GraphItem<TableNodeData>
+template<ConceptIsTableNodeData TND>
+class TableNodeTemplate : public GraphItem<TND>
 {
  public:
   // The link_container member functions store a reference to `container`,
   // which may therefore not be moved anymore after this call.
 
   template<ConceptIndexableContainer Container>
-  void link_container(Container const& container)
+  void link_container(Container& container)
   {
-    data().link_container(container);
+    this->data().link_container(container);
   }
 
   template<ConceptSizeTIndexableContainer Container>
-  void link_container(Container const& container)
+  void link_container(Container& container)
   {
-    data().link_container(container);
+    this->data().link_container(container);
   }
 
   template<ConceptIndexableContainer Container>
   void copy_elements(Container const& container)
   {
-    data().copy_elements(container);
+    this->data().copy_elements(container);
   }
 
-  Port operator[](size_t index) const { return data().at(index); }
+  Port operator[](size_t index) const { return this->data().at(index); }
 };
+
+using TableNode = TableNodeTemplate<TableNodeData>;
 
 } // namespace cppgraphviz::dot

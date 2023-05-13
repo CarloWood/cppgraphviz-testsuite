@@ -14,7 +14,7 @@ class TableElement
   Node node_;
 
  public:
-  TableElement(Node const& node) : node_(node) { }
+  TableElement(Node& node) : node_(node) { }
   TableElement(Node&& node) : node_(std::move(node)) { }
 
   std::string_view label() const
@@ -28,6 +28,11 @@ class TableElement
   }
 
   Node const& node() const
+  {
+    return node_;
+  }
+
+  Node& node()
   {
     return node_;
   }

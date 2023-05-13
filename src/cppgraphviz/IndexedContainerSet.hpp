@@ -1,11 +1,14 @@
 #pragma once
 
 #include "dot/Graph.hpp"
+#include "dot/TableNode.hpp"
 
 namespace cppgraphviz {
 
 template<typename Index>
 class IndexedContainerSet;
+
+namespace detail {
 
 template<typename Index>
 class RankdirGraphData : public dot::GraphData
@@ -32,13 +35,18 @@ class RankdirGraph : public dot::GraphTemplate<RankdirGraphData<Index>>
   }
 };
 
+} // namespace detail
+
 // A cluster graph containing one or more indexed containers that use Index as index type.
 template<typename Index>
 class IndexedContainerSet
 {
+ public:
+  using data_type = dot::GraphData;
+
  private:
-  RankdirGraph<Index> outer_subgraph_;  // This subgraph wraps the inner subgraph.
-  dot::Graph inner_subgraph_;           // This subgraph contains the dot::TableNode's that represent the indexed containers.
+  detail::RankdirGraph<Index> outer_subgraph_;  // This subgraph wraps the inner subgraph.
+  dot::Graph inner_subgraph_;                   // This subgraph contains the dot::TableNode's that represent the indexed containers.
 
  private:
   void initialize()
@@ -62,17 +70,19 @@ class IndexedContainerSet
     outer_subgraph_.add_attribute({"label", label});
   }
 
-  void add_container(dot::TableNode const& container)
+  template<dot::ConceptIsTableNodeData TND>
+  void add_container(dot::TableNodeTemplate<TND> const& container)
   {
     inner_subgraph_.add_table_node(container);
   }
 
-  void add_container(dot::TableNode&& container)
+  template<dot::ConceptIsTableNodeData TND>
+  void add_container(dot::TableNodeTemplate<TND>&& container)
   {
     inner_subgraph_.add_table_node(std::move(container));
   }
 
-  void add_to_graph(dot::GraphData& graph_data) const;
+  void add_to_graph(dot::GraphData& graph_data);
 
   void rankdir_changed(dot::RankDir new_rankdir)
   {
@@ -90,10 +100,12 @@ class IndexedContainerSet
 };
 
 template<typename Index>
-void IndexedContainerSet<Index>::add_to_graph(dot::GraphData& graph_data) const
+void IndexedContainerSet<Index>::add_to_graph(dot::GraphData& graph_data)
 {
   graph_data.add_graph(outer_subgraph_);
 }
+
+namespace detail {
 
 template<typename Index>
 void RankdirGraphData<Index>::set_rankdir(dot::RankDir rankdir) const
@@ -101,5 +113,7 @@ void RankdirGraphData<Index>::set_rankdir(dot::RankDir rankdir) const
   owner_->rankdir_changed(rankdir);
   dot::GraphData::set_rankdir(rankdir);
 }
+
+} // namespace detail
 
 } // namespace cppgraphviz
