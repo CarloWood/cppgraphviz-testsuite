@@ -12,12 +12,12 @@ class LabelNodeData : public dot::NodeData
   using graph_data_type = GraphData;
 };
 
-class LabelNode : public Node, public dot::GraphItem<LabelNodeData>
+class LabelNode : public Node, public dot::GraphItemPtr<LabelNodeData>
 {
  public:
   LabelNode() = default;
   LabelNode(LabelNode&& label_node) = default;
-  LabelNode(LabelNode const& label_node) : Node(label_node), dot::GraphItem<LabelNodeData>() { copied(); }
+  LabelNode(LabelNode const& label_node) : Node(label_node), dot::GraphItemPtr<LabelNodeData>() { copied(); }
   ~LabelNode() { destructed(); }
 
   void initialize() override

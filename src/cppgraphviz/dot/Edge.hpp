@@ -10,7 +10,7 @@ namespace cppgraphviz::dot {
 template<typename T>
 concept ConceptIsEdgeData = std::is_base_of_v<EdgeData, T>;
 
-class EdgeData : public GraphItemData
+class EdgeData : public GraphItem
 {
  private:
   // The nodes of this edge.
@@ -25,7 +25,7 @@ class EdgeData : public GraphItemData
 };
 
 // This class may not have any additional members.
-class Edge : public GraphItem<EdgeData>
+class Edge : public GraphItemPtr<EdgeData>
 {
  public:
   Edge() = default;
@@ -40,6 +40,6 @@ class Edge : public GraphItem<EdgeData>
   Port to_port() const { return data().to_port(); }
 };
 
-static_assert(sizeof(Edge) == sizeof(GraphItem<EdgeData>), "Edge may not have any additional members!");
+static_assert(sizeof(Edge) == sizeof(GraphItemPtr<EdgeData>), "Edge may not have any additional members!");
 
 } // namespace cppgraphviz::dot

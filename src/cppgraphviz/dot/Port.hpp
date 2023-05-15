@@ -1,13 +1,14 @@
 #pragma once
 
-#include "GraphItem.hpp"
+#include "GraphItemPtr.hpp"
+#include "DotID.hpp"
 #include <optional>
 #include <iosfwd>
 
 namespace cppgraphviz::dot {
 
 class NodeData;
-using Node = GraphItem<NodeData>;
+using Node = GraphItemPtr<NodeData>;
 
 class Port
 {

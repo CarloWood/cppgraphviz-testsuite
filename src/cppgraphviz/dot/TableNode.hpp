@@ -27,7 +27,7 @@ concept ConceptSizeTIndexableContainer = requires(T t)
 template<typename T>
 concept ConceptIsTableNodeData = std::is_base_of_v<TableNodeData, T>;
 
-class TableNodeData : public GraphItemData
+class TableNodeData : public GraphItem
 {
  private:
   std::vector<TableElement> copied_elements_;
@@ -79,7 +79,7 @@ class TableNodeData : public GraphItemData
 };
 
 template<ConceptIsTableNodeData TND>
-class TableNodeTemplate : public GraphItem<TND>
+class TableNodeTemplate : public GraphItemPtr<TND>
 {
  public:
   // The link_container member functions store a reference to `container`,

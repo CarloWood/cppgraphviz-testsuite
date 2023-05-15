@@ -10,7 +10,7 @@ void GraphData::add_graph(GraphData const* graph_data)
   auto ibp = graphs_.try_emplace(graph_data->dot_id(), graph_data);
   // Do not add the same graph twice.
   ASSERT(ibp.second);
-  GraphItem<GraphData const>& subgraph = ibp.first->second;
+  GraphItemPtr<GraphData const>& subgraph = ibp.first->second;
   // The subgraph must be of the same type as this graph.
   subgraph.data({}).set_digraph(digraph_);
   subgraph.data({}).set_rankdir(rankdir_);
@@ -85,7 +85,7 @@ void GraphData::set_digraph(bool digraph) const
     // Recursively change all subgraphs.
     for (auto& graph_pair : graphs_)
     {
-      GraphItem<GraphData const> const& graph = graph_pair.second;
+      GraphItemPtr<GraphData const> const& graph = graph_pair.second;
       GraphData const& graph_data = graph.data({});
       graph_data.set_digraph(digraph);
     }
@@ -100,7 +100,7 @@ void GraphData::set_rankdir(RankDir rankdir) const
     // Recursively change all subgraphs.
     for (auto& graph_pair : graphs_)
     {
-      GraphItem<GraphData const> const& graph = graph_pair.second;
+      GraphItemPtr<GraphData const> const& graph = graph_pair.second;
       GraphData const& graph_data = graph.data({});
       graph_data.set_rankdir(rankdir);
     }
@@ -158,7 +158,7 @@ void GraphData::write_body_to(std::ostream& os, std::string indentation) const
   // Write all node_stmt's first.
   for (auto const& node_pair : nodes_)
   {
-    GraphItem<NodeData const> const& node = node_pair.second;
+    GraphItemPtr<NodeData const> const& node = node_pair.second;
     NodeData const& node_data = node.data({});
     // node_stmt	:	node_id [ attr_list ]
     os << indentation << node_data.dot_id() << " [" << node_data.attribute_list() << "]\n";
@@ -167,7 +167,7 @@ void GraphData::write_body_to(std::ostream& os, std::string indentation) const
   // Write all tables.
   for (auto const& table_node_pair : table_nodes_)
   {
-    GraphItem<TableNodeData const> const& table_node = table_node_pair.second;
+    GraphItemPtr<TableNodeData const> const& table_node = table_node_pair.second;
     TableNodeData const& table_node_data = table_node.data({});
     table_node_data.write_html_to(os, indentation);
   }
@@ -175,7 +175,7 @@ void GraphData::write_body_to(std::ostream& os, std::string indentation) const
   // Write all subgraph's.
   for (auto const& graph_pair : graphs_)
   {
-    GraphItem<GraphData const> const& graph = graph_pair.second;
+    GraphItemPtr<GraphData const> const& graph = graph_pair.second;
     GraphData const& graph_data = graph.data({});
     os << indentation << "subgraph " << graph_data.dot_id() << " {\n";
     graph_data.write_body_to(os, indentation);
@@ -185,7 +185,7 @@ void GraphData::write_body_to(std::ostream& os, std::string indentation) const
   // Write all edge_stmt's.
   for (auto const& edge_pair : edges_)
   {
-    GraphItem<EdgeData const> const& edge = edge_pair.second;
+    GraphItemPtr<EdgeData const> const& edge = edge_pair.second;
     EdgeData const& edge_data = edge.data({});
     // edge_stmt	:	(node_id | subgraph) edgeRHS [ attr_list ]
     // edgeRHS	:	edgeop (node_id | subgraph) [ edgeRHS ]

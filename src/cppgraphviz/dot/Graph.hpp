@@ -25,12 +25,12 @@ class GraphTemplate;
 class GraphData;
 using Graph = GraphTemplate<GraphData>;
 
-// GraphData is derived from GraphItemData for its id and (optional) attribute list.
+// GraphData is derived from GraphItem for its id and (optional) attribute list.
 // A graph can be directional or not, and/or strict (only allowing one edge between
 // nodes (two for a digraph)).
 //
 // A graph contains a list of nodes, edges and (optionally) other (sub)graphs.
-class GraphData : public GraphItemData
+class GraphData : public GraphItem
 {
  private:
   // Configuration.
@@ -39,18 +39,18 @@ class GraphData : public GraphItemData
   bool strict_ = false;
   bool concentrate_ = false;
 
-  // Default node and edge attributes. The default (sub)graph attributes are stored in GraphItemData.
+  // Default node and edge attributes. The default (sub)graph attributes are stored in GraphItem.
   AttributeList node_attribute_list_;
   AttributeList edge_attribute_list_;
 
   // The list of all (sub)graphs of this graph, by ID.
-  std::map<DotID_type, GraphItem<GraphData const>> graphs_;
+  std::map<DotID_type, GraphItemPtr<GraphData const>> graphs_;
   // The list of all nodes of this graph, by ID.
-  std::map<DotID_type, GraphItem<NodeData const>> nodes_;
+  std::map<DotID_type, GraphItemPtr<NodeData const>> nodes_;
   // The list of all edges of this graph, by ID.
-  std::map<DotID_type, GraphItem<EdgeData const>> edges_;
+  std::map<DotID_type, GraphItemPtr<EdgeData const>> edges_;
   // The list of all "table nodes", by ID;
-  std::map<DotID_type, GraphItem<TableNodeData const>> table_nodes_;
+  std::map<DotID_type, GraphItemPtr<TableNodeData const>> table_nodes_;
 
  private:
   void write_body_to(std::ostream& os, std::string indentation = {}) const;
@@ -83,49 +83,49 @@ class GraphData : public GraphItemData
   void remove_table_node(TableNodeData const* table_node_data);
 
   template<ConceptIsGraphData GD>
-  void add_graph(GraphItem<GD> const& graph)
+  void add_graph(GraphItemPtr<GD> const& graph)
   {
     add_graph(&graph.data({}));
   }
 
   template<ConceptIsNodeData ND>
-  void add_node(GraphItem<ND> const& node)
+  void add_node(GraphItemPtr<ND> const& node)
   {
     add_node(&node.data({}));
   }
 
   template<ConceptIsEdgeData ED>
-  void add_edge(GraphItem<ED> const& edge)
+  void add_edge(GraphItemPtr<ED> const& edge)
   {
     add_edge(&edge.data({}));
   }
 
   template<ConceptIsTableNodeData TND>
-  void add_table_node(GraphItem<TND> const& table_node)
+  void add_table_node(GraphItemPtr<TND> const& table_node)
   {
     add_table_node(&table_node.data({}));
   }
 
   template<ConceptIsGraphData GD>
-  void remove_graph(GraphItem<GD> const& graph)
+  void remove_graph(GraphItemPtr<GD> const& graph)
   {
     remove_graph(&graph.data({}));
   }
 
   template<ConceptIsNodeData ND>
-  void remove_node(GraphItem<ND> const& node)
+  void remove_node(GraphItemPtr<ND> const& node)
   {
     remove_node(&node.data({}));
   }
 
   template<ConceptIsEdgeData ED>
-  void remove_edge(GraphItem<ED> const& edge)
+  void remove_edge(GraphItemPtr<ED> const& edge)
   {
     remove_edge(&edge.data({}));
   }
 
   template<ConceptIsTableNodeData TND>
-  void remove_table_node(GraphItem<TND> const& table_node)
+  void remove_table_node(GraphItemPtr<TND> const& table_node)
   {
     remove_table_node(&table_node.data({}));
   }
@@ -147,7 +147,7 @@ concept ConceptHasAddToGraph = requires(T obj)
 };
 
 template<ConceptIsGraphData GD>
-class GraphTemplate : public GraphItem<GD>
+class GraphTemplate : public GraphItemPtr<GD>
 {
  public:
   GraphTemplate(bool strict = false)
@@ -204,7 +204,7 @@ class GraphTemplate : public GraphItem<GD>
   void add_edge_attribute(Attribute&& attribute) { this->data().add_edge_attribute(std::move(attribute)); }
 };
 
-static_assert(sizeof(Graph) == sizeof(GraphItem<GraphData>), "Graph may not have any member variables of its own!");
+static_assert(sizeof(Graph) == sizeof(GraphItemPtr<GraphData>), "Graph may not have any member variables of its own!");
 
 class Digraph : public Graph {
  public:
