@@ -41,13 +41,13 @@ class GraphGraph : public GraphItem
   AttributeList edge_attribute_list_;
 
   // The list of all (sub)graphs of this graph, by ID.
-  std::map<DotID_type, ConstGraphItemPtrTemplate<GraphGraph>> graphs_;
+  std::map<DotID_type, ConstGraphItemPtr> graphs_;
   // The list of all nodes of this graph, by ID.
-  std::map<DotID_type, ConstGraphItemPtrTemplate<GraphNode>> nodes_;
+  std::map<DotID_type, ConstGraphItemPtr> nodes_;
   // The list of all edges of this graph, by ID.
-  std::map<DotID_type, ConstGraphItemPtrTemplate<GraphEdge>> edges_;
+  std::map<DotID_type, ConstGraphItemPtr> edges_;
   // The list of all "table nodes", by ID;
-  std::map<DotID_type, ConstGraphItemPtrTemplate<TableGraphNode>> table_nodes_;
+  std::map<DotID_type, ConstGraphItemPtr> table_nodes_;
 
  private:
   void write_body_to(std::ostream& os, std::string indentation = {}) const;
@@ -69,60 +69,52 @@ class GraphGraph : public GraphItem
   RankDir get_rankdir() const { return rankdir_; }
 
   //---------------------------------------------------------------------------
-  void add_graph_graph(GraphGraph const* graph_graph);
-  void add_graph_node(GraphNode const* graph_node);
-  void add_graph_edge(GraphEdge const* graph_edge);
-  void add_table_graph_node(TableGraphNode const* table_graph_node);
+  void add_graph_graph(GraphItem const* graph_graph);
+  void add_graph_node(GraphItem const* graph_node);
+  void add_graph_edge(GraphItem const* graph_edge);
+  void add_table_graph_node(GraphItem const* table_graph_node);
 
-  void remove_graph_graph(GraphGraph const* graph_graph);
-  void remove_graph_node(GraphNode const* graph_node);
-  void remove_graph_edge(GraphEdge const* graph_edge);
-  void remove_table_graph_node(TableGraphNode const* table_graph_node);
+  void remove_graph_graph(GraphItem const* graph_graph);
+  void remove_graph_node(GraphItem const* graph_node);
+  void remove_graph_edge(GraphItem const* graph_edge);
+  void remove_table_graph_node(GraphItem const* table_graph_node);
 
-  template<ConceptIsGraphGraph GG>
-  void add_graph(GraphItemPtrTemplate<GG> const& graph)
+  void add_graph(GraphItemPtr const& graph)
   {
     add_graph_graph(&graph.item());
   }
 
-  template<ConceptIsGraphNode GN>
-  void add_node(GraphItemPtrTemplate<GN> const& node)
+  void add_node(GraphItemPtr const& node)
   {
     add_graph_node(&node.item());
   }
 
-  template<ConceptIsGraphEdge GE>
-  void add_edge(GraphItemPtrTemplate<GE> const& edge)
+  void add_edge(GraphItemPtr const& edge)
   {
     add_graph_edge(&edge.item());
   }
 
-  template<ConceptIsTableGraphNode TGN>
-  void add_table_node(GraphItemPtrTemplate<TGN> const& table_node)
+  void add_table_node(GraphItemPtr const& table_node)
   {
     add_table_graph_node(&table_node.item());
   }
 
-  template<ConceptIsGraphGraph GG>
-  void remove_graph(GraphItemPtrTemplate<GG> const& graph)
+  void remove_graph(GraphItemPtr const& graph)
   {
     remove_graph_graph(&graph.item());
   }
 
-  template<ConceptIsGraphNode GN>
-  void remove_node(GraphItemPtrTemplate<GN> const& node)
+  void remove_node(GraphItemPtr const& node)
   {
     remove_graph_node(&node.item());
   }
 
-  template<ConceptIsGraphEdge GE>
-  void remove_edge(GraphItemPtrTemplate<GE> const& edge)
+  void remove_edge(GraphItemPtr const& edge)
   {
     remove_graph_edge(&edge.item());
   }
 
-  template<ConceptIsTableGraphNode TGN>
-  void remove_table_node(GraphItemPtrTemplate<TGN> const& table_node)
+  void remove_table_node(GraphItemPtr const& table_node)
   {
     remove_table_graph_node(&table_node.item());
   }
