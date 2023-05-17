@@ -18,8 +18,10 @@ target_sources(dot_ObjLib
     Port.hpp
     TableNode.cpp
     TableNode.hpp
-    GraphItem.hpp
+    Node.cpp
     Node.hpp
+    GraphItem.hpp
+    item_types.hpp
 )
 
 # Required include search-paths.

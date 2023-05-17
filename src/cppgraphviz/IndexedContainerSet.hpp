@@ -47,7 +47,7 @@ class IndexedContainerSet
     outer_subgraph_->add_attribute({"cluster", "true"});
     outer_subgraph_->add_attribute({"style", "rounded"});
     outer_subgraph_->add_attribute({"color", "lightblue"});
-    outer_subgraph_->add_graph(inner_subgraph_);
+    outer_subgraph_->add_item(inner_subgraph_);
     inner_subgraph_->add_attribute({"cluster", "false"});
     // We have to assume the default rankdir=TB and will adjust if set_rankdir is called with LR or RL.
     inner_subgraph_->add_attribute({"rank", "same"});
@@ -65,12 +65,12 @@ class IndexedContainerSet
 
   void add_container(dot::TableNode const& container)
   {
-    inner_subgraph_->add_table_node(container);
+    inner_subgraph_->add_item(container);
   }
 
   void add_container(dot::TableNode&& container)
   {
-    inner_subgraph_->add_table_node(std::move(container));
+    inner_subgraph_->add_item(std::move(container));
   }
 
   void add_to_graph(dot::GraphGraph& graph_graph);
@@ -93,7 +93,7 @@ class IndexedContainerSet
 template<typename Index>
 void IndexedContainerSet<Index>::add_to_graph(dot::GraphGraph& graph_graph)
 {
-  graph_graph.add_graph(outer_subgraph_);
+  graph_graph.add_item(outer_subgraph_);
 }
 
 namespace detail {

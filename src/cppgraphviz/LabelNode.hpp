@@ -35,12 +35,12 @@ class LabelNode : public Node, public dot::GraphItemPtrTemplate<LabelNodeData>
  private:
   void add_to_graph_impl(GraphData* graph_data) override
   {
-    graph_data->add_node(*this);
+    graph_data->add_item(*this);
   }
 
   void remove_from_graph_impl(GraphData* graph_data) override
   {
-    graph_data->remove_node(*this);
+    graph_data->remove_item(*this);
   }
 };
 

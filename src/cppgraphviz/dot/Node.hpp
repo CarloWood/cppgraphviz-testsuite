@@ -11,6 +11,8 @@ namespace cppgraphviz::dot {
 // both of which are provided by GraphItem.
 class GraphNode : public GraphItem
 {
+  item_type_type item_type() const override { return item_type_node; }
+  void write_dot_to(std::ostream& os, std::string& indentation) const override;
 };
 
 template<typename T>

@@ -4,6 +4,7 @@
 #include "Node.hpp"
 #include "Edge.hpp"
 #include "TableNode.hpp"
+#include <utils/iomanip.h>
 #include <string>
 #include <map>
 #include <iosfwd>
@@ -41,13 +42,7 @@ class GraphGraph : public GraphItem
   AttributeList edge_attribute_list_;
 
   // The list of all (sub)graphs of this graph, by ID.
-  std::map<DotID_type, ConstGraphItemPtr> graphs_;
-  // The list of all nodes of this graph, by ID.
-  std::map<DotID_type, ConstGraphItemPtr> nodes_;
-  // The list of all edges of this graph, by ID.
-  std::map<DotID_type, ConstGraphItemPtr> edges_;
-  // The list of all "table nodes", by ID;
-  std::map<DotID_type, ConstGraphItemPtr> table_nodes_;
+  std::map<DotID_type, ConstGraphItemPtr> items_;
 
  private:
   void write_body_to(std::ostream& os, std::string indentation = {}) const;
@@ -69,54 +64,17 @@ class GraphGraph : public GraphItem
   RankDir get_rankdir() const { return rankdir_; }
 
   //---------------------------------------------------------------------------
-  void add_graph_graph(GraphItem const* graph_graph);
-  void add_graph_node(GraphItem const* graph_node);
-  void add_graph_edge(GraphItem const* graph_edge);
-  void add_table_graph_node(GraphItem const* table_graph_node);
+  void add_graph_item(GraphItem const* graph_item);
+  void remove_graph_item(GraphItem const* graph_item);
 
-  void remove_graph_graph(GraphItem const* graph_graph);
-  void remove_graph_node(GraphItem const* graph_node);
-  void remove_graph_edge(GraphItem const* graph_edge);
-  void remove_table_graph_node(GraphItem const* table_graph_node);
-
-  void add_graph(GraphItemPtr const& graph)
+  void add_item(GraphItemPtr const& item_ptr)
   {
-    add_graph_graph(&graph.item());
+    add_graph_item(&item_ptr.item());
   }
 
-  void add_node(GraphItemPtr const& node)
+  void remove_item(GraphItemPtr const& item_ptr)
   {
-    add_graph_node(&node.item());
-  }
-
-  void add_edge(GraphItemPtr const& edge)
-  {
-    add_graph_edge(&edge.item());
-  }
-
-  void add_table_node(GraphItemPtr const& table_node)
-  {
-    add_table_graph_node(&table_node.item());
-  }
-
-  void remove_graph(GraphItemPtr const& graph)
-  {
-    remove_graph_graph(&graph.item());
-  }
-
-  void remove_node(GraphItemPtr const& node)
-  {
-    remove_graph_node(&node.item());
-  }
-
-  void remove_edge(GraphItemPtr const& edge)
-  {
-    remove_graph_edge(&edge.item());
-  }
-
-  void remove_table_node(GraphItemPtr const& table_node)
-  {
-    remove_table_graph_node(&table_node.item());
+    remove_graph_item(&item_ptr.item());
   }
 
   template<typename T>
@@ -127,6 +85,9 @@ class GraphGraph : public GraphItem
 
   void add_node_attribute(Attribute&& attribute);
   void add_edge_attribute(Attribute&& attribute);
+
+  item_type_type item_type() const override { return item_type_graph; }
+  void write_dot_to(std::ostream& os, std::string& indentation) const override;
 };
 
 template<typename T>
@@ -157,5 +118,18 @@ struct Digraph : public Graph
 {
   Digraph(bool strict = false) : Graph(true, strict) { }
 };
+
+class DigraphIomanip : public utils::iomanip::Sticky
+{
+ private:
+  static utils::iomanip::Index s_index;
+
+ public:
+  DigraphIomanip() : Sticky(s_index, 1L) { }
+
+  static long get_iword_value(std::ostream& os) { return get_iword_from(os, s_index); }
+};
+
+extern DigraphIomanip digraph;
 
 } // namespace cppgraphviz::dot

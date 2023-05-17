@@ -56,7 +56,7 @@ int main()
   g0->add(test1);
 
   dot::Edge e1;
-  g0->add_edge(e1);
+  g0->add_item(e1);
   e1->set_nodes(table_A[1], table_B[2]);
 
   g0->write_dot(std::cout);

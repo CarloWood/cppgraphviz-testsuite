@@ -75,6 +75,9 @@ class TableGraphNode : public GraphItem
     for (size_t i = 0; i < container_size_(); ++i)
       callback(container_reference_(i).node().item());
   }
+
+  item_type_type item_type() const override { return item_type_table_node; }
+  void write_dot_to(std::ostream& os, std::string& indentation) const override;
 };
 
 template<typename T>

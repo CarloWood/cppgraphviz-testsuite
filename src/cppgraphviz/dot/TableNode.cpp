@@ -89,4 +89,9 @@ void TableGraphNode::write_html_to(std::ostream& os, std::string const& indentat
         indentation << ">]\n";
 }
 
+void TableGraphNode::write_dot_to(std::ostream& os, std::string& indentation) const
+{
+  write_html_to(os, indentation);
+}
+
 } // namespace cppgraphviz::dot

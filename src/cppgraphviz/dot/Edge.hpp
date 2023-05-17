@@ -19,6 +19,9 @@ class GraphEdge : public GraphItem
 
   Port const& from_port() const { return from_; }
   Port const& to_port() const { return to_; }
+
+  item_type_type item_type() const override { return item_type_edge; }
+  void write_dot_to(std::ostream& os, std::string& indentation) const override;
 };
 
 template<typename T>
