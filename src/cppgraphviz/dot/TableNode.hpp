@@ -80,27 +80,8 @@ class TableGraphNode : public GraphItem
 template<typename T>
 concept ConceptIsTableGraphNode = std::is_base_of_v<TableGraphNode, T>;
 
-class TableNode : public GraphItemPtrTemplate<TableGraphNode>
+struct TableNode : public GraphItemPtrTemplate<TableGraphNode>
 {
- public:
-  template<ConceptIndexableContainer Container>
-  void link_container(Container& container)
-  {
-    item().link_container(container);
-  }
-
-  template<ConceptSizeTIndexableContainer Container>
-  void link_container(Container& container)
-  {
-    item().link_container(container);
-  }
-
-  template<ConceptIndexableContainer Container>
-  void copy_elements(Container const& container)
-  {
-    item().copy_elements(container);
-  }
-
   Port operator[](size_t index) const { return item().at(index); }
 };
 

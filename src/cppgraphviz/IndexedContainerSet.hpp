@@ -26,14 +26,7 @@ class RankdirGraphData : public dot::GraphGraph
 };
 
 template<typename Index>
-class RankdirGraph : public dot::GraphTemplate<RankdirGraphData<Index>>
-{
- public:
-  void set_owner(IndexedContainerSet<Index>* owner)
-  {
-    this->item().set_owner(owner);
-  }
-};
+using RankdirGraph = dot::GraphItemPtrTemplate<RankdirGraphData<Index>>;
 
 } // namespace detail
 
@@ -51,14 +44,14 @@ class IndexedContainerSet
  private:
   void initialize()
   {
-    outer_subgraph_.add_attribute({"cluster", "true"});
-    outer_subgraph_.add_attribute({"style", "rounded"});
-    outer_subgraph_.add_attribute({"color", "lightblue"});
-    outer_subgraph_.add_graph(inner_subgraph_);
-    inner_subgraph_.add_attribute({"cluster", "false"});
+    outer_subgraph_->add_attribute({"cluster", "true"});
+    outer_subgraph_->add_attribute({"style", "rounded"});
+    outer_subgraph_->add_attribute({"color", "lightblue"});
+    outer_subgraph_->add_graph(inner_subgraph_);
+    inner_subgraph_->add_attribute({"cluster", "false"});
     // We have to assume the default rankdir=TB and will adjust if set_rankdir is called with LR or RL.
-    inner_subgraph_.add_attribute({"rank", "same"});
-    outer_subgraph_.set_owner(this);
+    inner_subgraph_->add_attribute({"rank", "same"});
+    outer_subgraph_->set_owner(this);
   }
 
  public:
@@ -67,32 +60,32 @@ class IndexedContainerSet
 
   void set_label(std::string const& label)
   {
-    outer_subgraph_.add_attribute({"label", label});
+    outer_subgraph_->add_attribute({"label", label});
   }
 
   void add_container(dot::TableNode const& container)
   {
-    inner_subgraph_.add_table_node(container);
+    inner_subgraph_->add_table_node(container);
   }
 
   void add_container(dot::TableNode&& container)
   {
-    inner_subgraph_.add_table_node(std::move(container));
+    inner_subgraph_->add_table_node(std::move(container));
   }
 
   void add_to_graph(dot::GraphGraph& graph_graph);
 
   void rankdir_changed(dot::RankDir new_rankdir)
   {
-    dot::RankDir old_rankdir = outer_subgraph_.get_rankdir();
+    dot::RankDir old_rankdir = outer_subgraph_->get_rankdir();
     bool old_is_vertical = old_rankdir == dot::TB || old_rankdir == dot::BT;
     bool new_is_vertical = new_rankdir == dot::TB || new_rankdir == dot::BT;
     if (old_is_vertical != new_is_vertical)
     {
       if (new_is_vertical)
-        inner_subgraph_.add_attribute({"rank", "same"});
+        inner_subgraph_->add_attribute({"rank", "same"});
       else
-        inner_subgraph_.attribute_list().remove("rank");
+        inner_subgraph_->attribute_list().remove("rank");
     }
   }
 };

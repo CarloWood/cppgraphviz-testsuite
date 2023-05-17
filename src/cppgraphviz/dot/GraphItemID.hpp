@@ -20,6 +20,9 @@ class GraphItemID
   DotID_type dot_id() const { return dot_id_; }
   AttributeList const& attribute_list() const { return attribute_list_; }
   AttributeList& attribute_list() { return attribute_list_; }
+
+  // Shortcut for convenience.
+  void add_attribute(Attribute&& attribute) { attribute_list_.add(std::move(attribute)); }
 };
 
 } // namespace cppgraphviz::dot

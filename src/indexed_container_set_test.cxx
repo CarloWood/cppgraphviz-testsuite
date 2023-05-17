@@ -13,7 +13,7 @@ struct A : dot::Node
   {
     std::ostringstream oss;
     oss << "A:" << m << "";
-    add_attribute({"label", oss.str()});
+    item().add_attribute({"label", oss.str()});
   }
 };
 
@@ -24,7 +24,7 @@ struct B : dot::Node
   {
     std::ostringstream oss;
     oss << "B:" << m << "";
-    add_attribute({"label", oss.str()});
+    item().add_attribute({"label", oss.str()});
   }
 };
 
@@ -43,21 +43,21 @@ int main()
   dot::TableNode table_B;
 
 //  container_of_A.push_back(7);
-  table_A.copy_elements(container_of_A);
-  table_B.link_container(container_of_B);
+  table_A->copy_elements(container_of_A);
+  table_B->link_container(container_of_B);
 //  container_of_B.push_back(19);
 
   dot::Digraph g0;
-  g0.set_concentrate(true);
+  g0->set_concentrate(true);
 
   IndexedContainerSet<AIndex> test1("AIndex");
   test1.add_container(table_A);
   test1.add_container(table_B);
-  g0.add(test1);
+  g0->add(test1);
 
   dot::Edge e1;
-  g0.add_edge(e1);
-  e1.set_nodes(table_A[1], table_B[2]);
+  g0->add_edge(e1);
+  e1->set_nodes(table_A[1], table_B[2]);
 
-  g0.write_dot(std::cout);
+  g0->write_dot(std::cout);
 }

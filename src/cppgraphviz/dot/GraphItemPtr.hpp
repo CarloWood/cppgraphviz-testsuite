@@ -62,9 +62,6 @@ class GraphItemPtr : public ConstGraphItemPtr
   using ConstGraphItemPtr::attribute_list;
   AttributeList& attribute_list() { return shared_item_ptr_->attribute_list(); }
 
-  // Shortcut for convenience.
-  void add_attribute(Attribute&& attribute) { shared_item_ptr_->attribute_list().add(std::move(attribute)); }
-
   // Accessors.
   using ConstGraphItemPtr::item;
   GraphItem& item() { return *shared_item_ptr_; }
@@ -80,6 +77,9 @@ struct GraphItemPtrTemplate : GraphItemPtr
   // Accessors.
   T const& item() const { return static_cast<T const&>(*this->shared_item_ptr_); }
   T& item() { return static_cast<T&>(*this->shared_item_ptr_); }
+
+  T const* operator->() const { return static_cast<T const*>(this->shared_item_ptr_.get()); }
+  T* operator->() { return static_cast<T*>(this->shared_item_ptr_.get()); }
 };
 
 template<typename T>
@@ -93,6 +93,8 @@ struct ConstGraphItemPtrTemplate : ConstGraphItemPtr
 
   // Accessor.
   T const& item() const { return static_cast<T const&>(*shared_item_ptr_); }
+
+  T const* operator->() const { return static_cast<T const*>(this->shared_item_ptr_.get()); }
 };
 
 } // namespace cppgraphviz::dot

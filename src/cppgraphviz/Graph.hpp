@@ -88,8 +88,6 @@ class GraphData : public dot::GraphGraph
   }
 };
 
-class Graph : public dot::GraphTemplate<GraphData>
-{
-};
+using Graph = dot::GraphItemPtrTemplate<GraphData>;
 
 } // namespace cppgraphviz

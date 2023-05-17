@@ -5,7 +5,7 @@
 
 namespace cppgraphviz::dot {
 
-void GraphGraph::add_graph(GraphGraph const* graph_graph)
+void GraphGraph::add_graph_graph(GraphGraph const* graph_graph)
 {
   auto ibp = graphs_.try_emplace(graph_graph->dot_id(), graph_graph);
   // Do not add the same graph twice.
@@ -16,37 +16,37 @@ void GraphGraph::add_graph(GraphGraph const* graph_graph)
   subgraph.item().set_rankdir(rankdir_);
 }
 
-void GraphGraph::remove_graph(GraphGraph const* graph_graph)
+void GraphGraph::remove_graph_graph(GraphGraph const* graph_graph)
 {
   bool erased = graphs_.erase(graph_graph->dot_id());
   // That's unexpected... we shouldn't be calling remove_graph unless it is there.
   ASSERT(erased);
 }
 
-void GraphGraph::add_node(GraphNode const* graph_node)
+void GraphGraph::add_graph_node(GraphNode const* graph_node)
 {
-  DoutEntering(dc::notice, "GraphGraph::add_node(" << graph_node << ") [" << this << "]");
+  DoutEntering(dc::notice, "GraphGraph::add_graph_node(" << graph_node << ") [" << this << "]");
   auto ibp = nodes_.try_emplace(graph_node->dot_id(), graph_node);
   // Do not add the same node twice.
   ASSERT(ibp.second);
 }
 
-void GraphGraph::remove_node(GraphNode const* graph_node)
+void GraphGraph::remove_graph_node(GraphNode const* graph_node)
 {
-  DoutEntering(dc::notice, "GraphGraph::remove_node(" << graph_node << ") [" << this << "]");
+  DoutEntering(dc::notice, "GraphGraph::remove_graph_node(" << graph_node << ") [" << this << "]");
   bool erased = nodes_.erase(graph_node->dot_id());
   // That's unexpected... we shouldn't be calling remove_node unless it is there.
   ASSERT(erased);
 }
 
-void GraphGraph::add_edge(GraphEdge const* graph_edge)
+void GraphGraph::add_graph_edge(GraphEdge const* graph_edge)
 {
   auto ibp = edges_.try_emplace(graph_edge->dot_id(), graph_edge);
   // Do not add the same edge twice.
   ASSERT(ibp.second);
 }
 
-void GraphGraph::remove_edge(GraphEdge const* graph_edge)
+void GraphGraph::remove_graph_edge(GraphEdge const* graph_edge)
 {
   bool erased = edges_.erase(graph_edge->dot_id());
   // That's unexpected... we shouldn't be calling remove_edge unless it is there.

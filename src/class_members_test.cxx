@@ -90,7 +90,7 @@ struct D : Class
   D(IndexedContainerSet<AIndex>& as_container_set) : as_container_set_(as_container_set)
   {
     // as_ --> TableNode --> IndexContainerSet --> Graph
-    as_table_node_.link_container(as_);
+    as_table_node_->link_container(as_);
     as_container_set_.add_container(as_table_node_);
     Class::add_table_node_member(as_table_node_);
     // Also add normal member b_.
@@ -152,7 +152,7 @@ int main()
 //    g0.add(b3);
     Dout(dc::notice, "Destructing b3");
   }
-  g0.add(b);
+  g0->add(b);
 
   {
     Dout(dc::notice, "Constructing b4");
@@ -166,7 +166,7 @@ int main()
 //  g0.add(d);
 //  g0.add(container_set);
   Dout(dc::notice, "Adding c to g0");
-  g0.add(c);
+  g0->add(c);
 
   Dout(dc::notice, "Calling initialize");
   b.initialize();       // Calls Node::initialize()
@@ -175,7 +175,7 @@ int main()
 //  d.initialize();
 
   Dout(dc::notice, "Calling write_dot");
-  g0.write_dot(std::cout);
+  g0->write_dot(std::cout);
 
   Dout(dc::notice, "Leaving main.");
 }
