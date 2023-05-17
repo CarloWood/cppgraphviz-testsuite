@@ -100,10 +100,9 @@ class GraphGraph : public GraphItem
     add_edge(&edge.item());
   }
 
-  template<ConceptIsTableGraphNode TGN>
-  void add_table_graph_node(GraphItemPtrTemplate<TGN> const& table_graph_node)
+  void add_table_node(TableNode const& table_node)
   {
-    add_table_graph_node(&table_graph_node.item());
+    add_table_graph_node(&table_node.item());
   }
 
   template<ConceptIsGraphGraph GG>
@@ -186,10 +185,9 @@ class GraphTemplate : public GraphItemPtrTemplate<GG>
   void add_node(Node const& node) { this->item().add_node(node); }
   void add_edge(Edge const& edge) { this->item().add_edge(edge); }
 
-  template<ConceptIsTableGraphNode TGN>
-  void add_table_graph_node(TableNodeTemplate<TGN> const& table_graph_node)
+  void add_table_node(TableNode const& table_node)
   {
-    this->item().add_table_graph_node(table_graph_node);
+    this->item().add_table_node(table_node);
   }
 
   // Add an arbitrary object to the graph that knows how to add itself.

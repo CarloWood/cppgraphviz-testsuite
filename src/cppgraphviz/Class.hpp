@@ -73,7 +73,7 @@ class Class : public Node
   void add_table_node_member(TableNode& table_node)
   {
     table_node.initialize();
-    subgraph_.add_table_graph_node(table_node);
+    subgraph_.add_table_node(table_node);
   }
 
   template<ConceptIsTableNode... TableNodes>

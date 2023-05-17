@@ -17,8 +17,6 @@ template<typename T>
 concept ConceptIsGraphNode = std::is_base_of_v<GraphNode, T>;
 
 // A Node is just a pointer to GraphNode.
-class Node : public GraphItemPtrTemplate<GraphNode>
-{
-};
+using Node = GraphItemPtrTemplate<GraphNode>;
 
 } // namespace cppgraphviz::dot

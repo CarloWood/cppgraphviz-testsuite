@@ -70,16 +70,14 @@ class IndexedContainerSet
     outer_subgraph_.add_attribute({"label", label});
   }
 
-  template<dot::ConceptIsTableGraphNode TGN>
-  void add_container(dot::TableNodeTemplate<TGN> const& container)
+  void add_container(dot::TableNode const& container)
   {
-    inner_subgraph_.add_table_graph_node(container);
+    inner_subgraph_.add_table_node(container);
   }
 
-  template<dot::ConceptIsTableGraphNode TGN>
-  void add_container(dot::TableNodeTemplate<TGN>&& container)
+  void add_container(dot::TableNode&& container)
   {
-    inner_subgraph_.add_table_graph_node(std::move(container));
+    inner_subgraph_.add_table_node(std::move(container));
   }
 
   void add_to_graph(dot::GraphGraph& graph_graph);

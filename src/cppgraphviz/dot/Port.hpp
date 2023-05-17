@@ -2,12 +2,11 @@
 
 #include "GraphItemPtr.hpp"
 #include "DotID.hpp"
+#include "Node.hpp"
 #include <optional>
 #include <iosfwd>
 
 namespace cppgraphviz::dot {
-
-class Node;
 
 class Port
 {

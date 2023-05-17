@@ -32,7 +32,9 @@ class TableGraphNode : public GraphItem
   std::function<TableElement(size_t)> container_reference_;
 
  public:
-  // This stores a reference to the container; it may not be moved after this call.
+  // The link_container member functions store a reference to `container`,
+  // which may therefore not be moved anymore after this call.
+
   template<ConceptIndexableContainer Container>
   void link_container(Container& container)
   {
@@ -78,34 +80,28 @@ class TableGraphNode : public GraphItem
 template<typename T>
 concept ConceptIsTableGraphNode = std::is_base_of_v<TableGraphNode, T>;
 
-template<ConceptIsTableGraphNode TGN>
-class TableNodeTemplate : public GraphItemPtrTemplate<TGN>
+class TableNode : public GraphItemPtrTemplate<TableGraphNode>
 {
  public:
-  // The link_container member functions store a reference to `container`,
-  // which may therefore not be moved anymore after this call.
-
   template<ConceptIndexableContainer Container>
   void link_container(Container& container)
   {
-    this->item().link_container(container);
+    item().link_container(container);
   }
 
   template<ConceptSizeTIndexableContainer Container>
   void link_container(Container& container)
   {
-    this->item().link_container(container);
+    item().link_container(container);
   }
 
   template<ConceptIndexableContainer Container>
   void copy_elements(Container const& container)
   {
-    this->item().copy_elements(container);
+    item().copy_elements(container);
   }
 
-  Port operator[](size_t index) const { return this->item().at(index); }
+  Port operator[](size_t index) const { return item().at(index); }
 };
-
-using TableNode = TableNodeTemplate<TableGraphNode>;
 
 } // namespace cppgraphviz::dot
