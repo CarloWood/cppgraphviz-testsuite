@@ -5,7 +5,7 @@
 
 namespace cppgraphviz::dot {
 
-Port::Port(Node const& node) : id_(node.data().dot_id())
+Port::Port(Node const& node) : id_(node.item().dot_id())
 {
 }
 

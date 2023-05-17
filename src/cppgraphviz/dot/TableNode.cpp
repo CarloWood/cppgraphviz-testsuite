@@ -31,7 +31,7 @@ std::string html_escape(std::string_view input)
 
 } // namespace
 
-void TableNodeData::write_html_to(std::ostream& os, std::string const& indentation) const
+void TableGraphNode::write_html_to(std::ostream& os, std::string const& indentation) const
 {
   bool table_has_bgcolor = attribute_list().has_key("bgcolor");
   bool table_has_color = attribute_list().has_key("color");

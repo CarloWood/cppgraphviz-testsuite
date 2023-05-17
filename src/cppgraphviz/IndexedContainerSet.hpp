@@ -11,7 +11,7 @@ class IndexedContainerSet;
 namespace detail {
 
 template<typename Index>
-class RankdirGraphData : public dot::GraphData
+class RankdirGraphData : public dot::GraphGraph
 {
  private:
   IndexedContainerSet<Index>* owner_;
@@ -31,7 +31,7 @@ class RankdirGraph : public dot::GraphTemplate<RankdirGraphData<Index>>
  public:
   void set_owner(IndexedContainerSet<Index>* owner)
   {
-    this->data().set_owner(owner);
+    this->item().set_owner(owner);
   }
 };
 
@@ -42,7 +42,7 @@ template<typename Index>
 class IndexedContainerSet
 {
  public:
-  using data_type = dot::GraphData;
+  using item_type = dot::GraphGraph;
 
  private:
   detail::RankdirGraph<Index> outer_subgraph_;  // This subgraph wraps the inner subgraph.
@@ -70,19 +70,19 @@ class IndexedContainerSet
     outer_subgraph_.add_attribute({"label", label});
   }
 
-  template<dot::ConceptIsTableNodeData TND>
-  void add_container(dot::TableNodeTemplate<TND> const& container)
+  template<dot::ConceptIsTableGraphNode TGN>
+  void add_container(dot::TableNodeTemplate<TGN> const& container)
   {
-    inner_subgraph_.add_table_node(container);
+    inner_subgraph_.add_table_graph_node(container);
   }
 
-  template<dot::ConceptIsTableNodeData TND>
-  void add_container(dot::TableNodeTemplate<TND>&& container)
+  template<dot::ConceptIsTableGraphNode TGN>
+  void add_container(dot::TableNodeTemplate<TGN>&& container)
   {
-    inner_subgraph_.add_table_node(std::move(container));
+    inner_subgraph_.add_table_graph_node(std::move(container));
   }
 
-  void add_to_graph(dot::GraphData& graph_data);
+  void add_to_graph(dot::GraphGraph& graph_graph);
 
   void rankdir_changed(dot::RankDir new_rankdir)
   {
@@ -100,9 +100,9 @@ class IndexedContainerSet
 };
 
 template<typename Index>
-void IndexedContainerSet<Index>::add_to_graph(dot::GraphData& graph_data)
+void IndexedContainerSet<Index>::add_to_graph(dot::GraphGraph& graph_graph)
 {
-  graph_data.add_graph(outer_subgraph_);
+  graph_graph.add_graph(outer_subgraph_);
 }
 
 namespace detail {
@@ -111,7 +111,7 @@ template<typename Index>
 void RankdirGraphData<Index>::set_rankdir(dot::RankDir rankdir) const
 {
   owner_->rankdir_changed(rankdir);
-  dot::GraphData::set_rankdir(rankdir);
+  dot::GraphGraph::set_rankdir(rankdir);
 }
 
 } // namespace detail

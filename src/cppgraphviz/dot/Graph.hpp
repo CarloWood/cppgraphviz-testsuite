@@ -18,19 +18,19 @@ enum RankDir {
 };
 
 template<typename T>
-concept ConceptIsGraphData = std::is_base_of_v<GraphData, T>;
+concept ConceptIsGraphGraph = std::is_base_of_v<GraphGraph, T>;
 
-template<ConceptIsGraphData GD>
+template<ConceptIsGraphGraph GG>
 class GraphTemplate;
-class GraphData;
-using Graph = GraphTemplate<GraphData>;
+class GraphGraph;
+using Graph = GraphTemplate<GraphGraph>;
 
-// GraphData is derived from GraphItem for its id and (optional) attribute list.
+// GraphGraph is derived from GraphItem for its id and (optional) attribute list.
 // A graph can be directional or not, and/or strict (only allowing one edge between
 // nodes (two for a digraph)).
 //
 // A graph contains a list of nodes, edges and (optionally) other (sub)graphs.
-class GraphData : public GraphItem
+class GraphGraph : public GraphItem
 {
  private:
   // Configuration.
@@ -44,13 +44,13 @@ class GraphData : public GraphItem
   AttributeList edge_attribute_list_;
 
   // The list of all (sub)graphs of this graph, by ID.
-  std::map<DotID_type, GraphItemPtr<GraphData const>> graphs_;
+  std::map<DotID_type, ConstGraphItemPtrTemplate<GraphGraph>> graphs_;
   // The list of all nodes of this graph, by ID.
-  std::map<DotID_type, GraphItemPtr<NodeData const>> nodes_;
+  std::map<DotID_type, ConstGraphItemPtrTemplate<GraphNode>> nodes_;
   // The list of all edges of this graph, by ID.
-  std::map<DotID_type, GraphItemPtr<EdgeData const>> edges_;
+  std::map<DotID_type, ConstGraphItemPtrTemplate<GraphEdge>> edges_;
   // The list of all "table nodes", by ID;
-  std::map<DotID_type, GraphItemPtr<TableNodeData const>> table_nodes_;
+  std::map<DotID_type, ConstGraphItemPtrTemplate<TableGraphNode>> table_nodes_;
 
  private:
   void write_body_to(std::ostream& os, std::string indentation = {}) const;
@@ -72,68 +72,68 @@ class GraphData : public GraphItem
   RankDir get_rankdir() const { return rankdir_; }
 
   //---------------------------------------------------------------------------
-  void add_graph(GraphData const* graph_data);
-  void add_node(NodeData const* node_data);
-  void add_edge(EdgeData const* edge_data);
-  void add_table_node(TableNodeData const* table_node_data);
+  void add_graph(GraphGraph const* graph_graph);
+  void add_node(GraphNode const* graph_node);
+  void add_edge(GraphEdge const* graph_edge);
+  void add_table_graph_node(TableGraphNode const* table_graph_node);
 
-  void remove_graph(GraphData const* graph_data);
-  void remove_node(NodeData const* node_data);
-  void remove_edge(EdgeData const* edge_data);
-  void remove_table_node(TableNodeData const* table_node_data);
+  void remove_graph(GraphGraph const* graph_graph);
+  void remove_node(GraphNode const* graph_node);
+  void remove_edge(GraphEdge const* graph_edge);
+  void remove_table_graph_node(TableGraphNode const* table_graph_node);
 
-  template<ConceptIsGraphData GD>
-  void add_graph(GraphItemPtr<GD> const& graph)
+  template<ConceptIsGraphGraph GG>
+  void add_graph(GraphItemPtrTemplate<GG> const& graph)
   {
-    add_graph(&graph.data({}));
+    add_graph(&graph.item());
   }
 
-  template<ConceptIsNodeData ND>
-  void add_node(GraphItemPtr<ND> const& node)
+  template<ConceptIsGraphNode GN>
+  void add_node(GraphItemPtrTemplate<GN> const& node)
   {
-    add_node(&node.data({}));
+    add_node(&node.item());
   }
 
-  template<ConceptIsEdgeData ED>
-  void add_edge(GraphItemPtr<ED> const& edge)
+  template<ConceptIsGraphEdge GE>
+  void add_edge(GraphItemPtrTemplate<GE> const& edge)
   {
-    add_edge(&edge.data({}));
+    add_edge(&edge.item());
   }
 
-  template<ConceptIsTableNodeData TND>
-  void add_table_node(GraphItemPtr<TND> const& table_node)
+  template<ConceptIsTableGraphNode TGN>
+  void add_table_graph_node(GraphItemPtrTemplate<TGN> const& table_graph_node)
   {
-    add_table_node(&table_node.data({}));
+    add_table_graph_node(&table_graph_node.item());
   }
 
-  template<ConceptIsGraphData GD>
-  void remove_graph(GraphItemPtr<GD> const& graph)
+  template<ConceptIsGraphGraph GG>
+  void remove_graph(GraphItemPtrTemplate<GG> const& graph)
   {
-    remove_graph(&graph.data({}));
+    remove_graph(&graph.item());
   }
 
-  template<ConceptIsNodeData ND>
-  void remove_node(GraphItemPtr<ND> const& node)
+  template<ConceptIsGraphNode GN>
+  void remove_node(GraphItemPtrTemplate<GN> const& node)
   {
-    remove_node(&node.data({}));
+    remove_node(&node.item());
   }
 
-  template<ConceptIsEdgeData ED>
-  void remove_edge(GraphItemPtr<ED> const& edge)
+  template<ConceptIsGraphEdge GE>
+  void remove_edge(GraphItemPtrTemplate<GE> const& edge)
   {
-    remove_edge(&edge.data({}));
+    remove_edge(&edge.item());
   }
 
-  template<ConceptIsTableNodeData TND>
-  void remove_table_node(GraphItemPtr<TND> const& table_node)
+  template<ConceptIsTableGraphNode TGN>
+  void remove_table_graph_node(GraphItemPtrTemplate<TGN> const& table_graph_node)
   {
-    remove_table_node(&table_node.data({}));
+    remove_table_graph_node(&table_graph_node.item());
   }
 
   template<typename T>
   void add(T& obj)
   {
-    obj.add_to_graph(*static_cast<typename T::data_type::graph_data_type*>(this));
+    obj.add_to_graph(*static_cast<typename T::item_type::graph_graph_type*>(this));
   }
 
   void add_node_attribute(Attribute&& attribute);
@@ -143,68 +143,68 @@ class GraphData : public GraphItem
 template<typename T>
 concept ConceptHasAddToGraph = requires(T obj)
 {
-  obj.add_to_graph(std::declval<typename T::data_type::graph_data_type&>());
+  obj.add_to_graph(std::declval<typename T::item_type::graph_graph_type&>());
 };
 
-template<ConceptIsGraphData GD>
-class GraphTemplate : public GraphItemPtr<GD>
+template<ConceptIsGraphGraph GG>
+class GraphTemplate : public GraphItemPtrTemplate<GG>
 {
  public:
   GraphTemplate(bool strict = false)
   {
-    this->data().set_strict(strict);
+    this->item().set_strict(strict);
   }
 
  protected:
   GraphTemplate(bool digraph, bool strict = false)
   {
-    this->data().set_digraph(digraph);
-    this->data().set_strict(strict);
+    this->item().set_digraph(digraph);
+    this->item().set_strict(strict);
   }
 
  public:
   //---------------------------------------------------------------------------
-  void set_digraph(bool digraph = true) { this->data().set_digraph(digraph); }
-  void set_rankdir(RankDir rankdir) { this->data().set_rankdir(rankdir); }
-  void set_strict(bool strict = true) { this->data().set_strict(strict); }
-  void set_concentrate(bool concentrate = true) { this->data().set_concentrate(concentrate); }
+  void set_digraph(bool digraph = true) { this->item().set_digraph(digraph); }
+  void set_rankdir(RankDir rankdir) { this->item().set_rankdir(rankdir); }
+  void set_strict(bool strict = true) { this->item().set_strict(strict); }
+  void set_concentrate(bool concentrate = true) { this->item().set_concentrate(concentrate); }
 
   // Write graph to os in dot format.
   void write_dot(std::ostream& os) const
   {
-    this->data().write_dot(os);
+    this->item().write_dot(os);
   }
 
   // Accessors.
-  bool is_digraph() const { return this->data().is_digraph(); }
-  bool is_strict() const { return this->data().is_strict(); }
-  bool is_concentrate() const { return this->data().is_concentrate(); }
-  RankDir get_rankdir() const { return this->data().get_rankdir(); }
+  bool is_digraph() const { return this->item().is_digraph(); }
+  bool is_strict() const { return this->item().is_strict(); }
+  bool is_concentrate() const { return this->item().is_concentrate(); }
+  RankDir get_rankdir() const { return this->item().get_rankdir(); }
 
   //---------------------------------------------------------------------------
-  void add_graph(GraphTemplate<GraphData> const& graph) { this->data().add_graph(graph); }
-  void add_node(Node const& node) { this->data().add_node(node); }
-  void add_edge(Edge const& edge) { this->data().add_edge(edge); }
+  void add_graph(GraphTemplate<GraphGraph> const& graph) { this->item().add_graph(graph); }
+  void add_node(Node const& node) { this->item().add_node(node); }
+  void add_edge(Edge const& edge) { this->item().add_edge(edge); }
 
-  template<ConceptIsTableNodeData TND>
-  void add_table_node(TableNodeTemplate<TND> const& table_node)
+  template<ConceptIsTableGraphNode TGN>
+  void add_table_graph_node(TableNodeTemplate<TGN> const& table_graph_node)
   {
-    this->data().add_table_node(table_node);
+    this->item().add_table_graph_node(table_graph_node);
   }
 
   // Add an arbitrary object to the graph that knows how to add itself.
-  // This is just a more intuitive interface; now one can use `graph.add(obj)` instead of `obj.add_to_graph(graph_data)`.
+  // This is just a more intuitive interface; now one can use `graph.add(obj)` instead of `obj.add_to_graph(graph_graph)`.
   template<ConceptHasAddToGraph T>
   void add(T& obj)
   {
-    this->data().add(obj);
+    this->item().add(obj);
   }
 
-  void add_node_attribute(Attribute&& attribute) { this->data().add_node_attribute(std::move(attribute)); }
-  void add_edge_attribute(Attribute&& attribute) { this->data().add_edge_attribute(std::move(attribute)); }
+  void add_node_attribute(Attribute&& attribute) { this->item().add_node_attribute(std::move(attribute)); }
+  void add_edge_attribute(Attribute&& attribute) { this->item().add_edge_attribute(std::move(attribute)); }
 };
 
-static_assert(sizeof(Graph) == sizeof(GraphItemPtr<GraphData>), "Graph may not have any member variables of its own!");
+static_assert(sizeof(Graph) == sizeof(GraphItemPtrTemplate<GraphGraph>), "Graph may not have any member variables of its own!");
 
 class Digraph : public Graph {
  public:

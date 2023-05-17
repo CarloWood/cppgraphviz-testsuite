@@ -17,7 +17,7 @@ concept ConceptIsTableNode = std::is_base_of_v<TableNode, std::remove_reference_
 class Class : public Node
 {
  public:
-  using data_type = GraphData;
+  using item_type = GraphData;
 
  private:
   Graph subgraph_;
@@ -73,7 +73,7 @@ class Class : public Node
   void add_table_node_member(TableNode& table_node)
   {
     table_node.initialize();
-    subgraph_.add_table_node(table_node);
+    subgraph_.add_table_graph_node(table_node);
   }
 
   template<ConceptIsTableNode... TableNodes>

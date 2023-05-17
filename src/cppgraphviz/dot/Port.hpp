@@ -7,8 +7,7 @@
 
 namespace cppgraphviz::dot {
 
-class NodeData;
-using Node = GraphItemPtr<NodeData>;
+class Node;
 
 class Port
 {

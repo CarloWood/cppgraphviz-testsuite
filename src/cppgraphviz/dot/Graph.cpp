@@ -5,79 +5,79 @@
 
 namespace cppgraphviz::dot {
 
-void GraphData::add_graph(GraphData const* graph_data)
+void GraphGraph::add_graph(GraphGraph const* graph_graph)
 {
-  auto ibp = graphs_.try_emplace(graph_data->dot_id(), graph_data);
+  auto ibp = graphs_.try_emplace(graph_graph->dot_id(), graph_graph);
   // Do not add the same graph twice.
   ASSERT(ibp.second);
-  GraphItemPtr<GraphData const>& subgraph = ibp.first->second;
+  ConstGraphItemPtrTemplate<GraphGraph>& subgraph = ibp.first->second;
   // The subgraph must be of the same type as this graph.
-  subgraph.data({}).set_digraph(digraph_);
-  subgraph.data({}).set_rankdir(rankdir_);
+  subgraph.item().set_digraph(digraph_);
+  subgraph.item().set_rankdir(rankdir_);
 }
 
-void GraphData::add_node(NodeData const* node_data)
+void GraphGraph::remove_graph(GraphGraph const* graph_graph)
 {
-  DoutEntering(dc::notice, "GraphData::add_node(" << node_data << ") [" << this << "]");
-  auto ibp = nodes_.try_emplace(node_data->dot_id(), node_data);
-  // Do not add the same node twice.
-  ASSERT(ibp.second);
-}
-
-void GraphData::remove_graph(GraphData const* graph_data)
-{
-  bool erased = graphs_.erase(graph_data->dot_id());
+  bool erased = graphs_.erase(graph_graph->dot_id());
   // That's unexpected... we shouldn't be calling remove_graph unless it is there.
   ASSERT(erased);
 }
 
-void GraphData::remove_node(NodeData const* node_data)
+void GraphGraph::add_node(GraphNode const* graph_node)
 {
-  DoutEntering(dc::notice, "GraphData::remove_node(" << node_data << ") [" << this << "]");
-  bool erased = nodes_.erase(node_data->dot_id());
+  DoutEntering(dc::notice, "GraphGraph::add_node(" << graph_node << ") [" << this << "]");
+  auto ibp = nodes_.try_emplace(graph_node->dot_id(), graph_node);
+  // Do not add the same node twice.
+  ASSERT(ibp.second);
+}
+
+void GraphGraph::remove_node(GraphNode const* graph_node)
+{
+  DoutEntering(dc::notice, "GraphGraph::remove_node(" << graph_node << ") [" << this << "]");
+  bool erased = nodes_.erase(graph_node->dot_id());
   // That's unexpected... we shouldn't be calling remove_node unless it is there.
   ASSERT(erased);
 }
 
-void GraphData::remove_edge(EdgeData const* edge_data)
+void GraphGraph::add_edge(GraphEdge const* graph_edge)
 {
-  bool erased = edges_.erase(edge_data->dot_id());
-  // That's unexpected... we shouldn't be calling remove_edge unless it is there.
-  ASSERT(erased);
-}
-
-void GraphData::remove_table_node(TableNodeData const* table_node_data)
-{
-  bool erased = table_nodes_.erase(table_node_data->dot_id());
-  // That's unexpected... we shouldn't be calling remove_table_node unless it is there.
-  ASSERT(erased);
-}
-
-void GraphData::add_edge(EdgeData const* edge_data)
-{
-  auto ibp = edges_.try_emplace(edge_data->dot_id(), edge_data);
+  auto ibp = edges_.try_emplace(graph_edge->dot_id(), graph_edge);
   // Do not add the same edge twice.
   ASSERT(ibp.second);
 }
 
-void GraphData::add_table_node(TableNodeData const* table_node_data)
+void GraphGraph::remove_edge(GraphEdge const* graph_edge)
 {
-  auto ibp = table_nodes_.try_emplace(table_node_data->dot_id(), table_node_data);
-  // Do not add the same table_node twice.
+  bool erased = edges_.erase(graph_edge->dot_id());
+  // That's unexpected... we shouldn't be calling remove_edge unless it is there.
+  ASSERT(erased);
+}
+
+void GraphGraph::add_table_graph_node(TableGraphNode const* table_graph_node)
+{
+  auto ibp = table_nodes_.try_emplace(table_graph_node->dot_id(), table_graph_node);
+  // Do not add the same table_graph_node twice.
   ASSERT(ibp.second);
 }
 
-void GraphData::add_node_attribute(Attribute&& attribute)
+void GraphGraph::remove_table_graph_node(TableGraphNode const* table_graph_node)
+{
+  bool erased = table_nodes_.erase(table_graph_node->dot_id());
+  // That's unexpected... we shouldn't be calling remove_table_graph_node unless it is there.
+  ASSERT(erased);
+}
+
+void GraphGraph::add_node_attribute(Attribute&& attribute)
 {
   node_attribute_list_.add(std::move(attribute));
 }
 
-void GraphData::add_edge_attribute(Attribute&& attribute)
+void GraphGraph::add_edge_attribute(Attribute&& attribute)
 {
   edge_attribute_list_.add(std::move(attribute));
 }
 
-void GraphData::set_digraph(bool digraph) const
+void GraphGraph::set_digraph(bool digraph) const
 {
   if (digraph_ != digraph)
   {
@@ -85,14 +85,14 @@ void GraphData::set_digraph(bool digraph) const
     // Recursively change all subgraphs.
     for (auto& graph_pair : graphs_)
     {
-      GraphItemPtr<GraphData const> const& graph = graph_pair.second;
-      GraphData const& graph_data = graph.data({});
-      graph_data.set_digraph(digraph);
+      ConstGraphItemPtrTemplate<GraphGraph> const& graph = graph_pair.second;
+      GraphGraph const& graph_graph = graph.item();
+      graph_graph.set_digraph(digraph);
     }
   }
 }
 
-void GraphData::set_rankdir(RankDir rankdir) const
+void GraphGraph::set_rankdir(RankDir rankdir) const
 {
   if (rankdir_ != rankdir)
   {
@@ -100,14 +100,14 @@ void GraphData::set_rankdir(RankDir rankdir) const
     // Recursively change all subgraphs.
     for (auto& graph_pair : graphs_)
     {
-      GraphItemPtr<GraphData const> const& graph = graph_pair.second;
-      GraphData const& graph_data = graph.data({});
-      graph_data.set_rankdir(rankdir);
+      ConstGraphItemPtrTemplate<GraphGraph> const& graph = graph_pair.second;
+      GraphGraph const& graph_graph = graph.item();
+      graph_graph.set_rankdir(rankdir);
     }
   }
 }
 
-void GraphData::write_dot(std::ostream& os) const
+void GraphGraph::write_dot(std::ostream& os) const
 {
   // [ strict ] (graph | digraph) [ ID ] '{' stmt_list '}'
   if (strict_)
@@ -136,7 +136,7 @@ void GraphData::write_dot(std::ostream& os) const
   os << '}' << std::endl;
 }
 
-void GraphData::write_body_to(std::ostream& os, std::string indentation) const
+void GraphGraph::write_body_to(std::ostream& os, std::string indentation) const
 {
   // stmt_list	:	[ stmt [ ';' ] stmt_list ]
   // stmt	:	node_stmt
@@ -158,39 +158,39 @@ void GraphData::write_body_to(std::ostream& os, std::string indentation) const
   // Write all node_stmt's first.
   for (auto const& node_pair : nodes_)
   {
-    GraphItemPtr<NodeData const> const& node = node_pair.second;
-    NodeData const& node_data = node.data({});
+    ConstGraphItemPtrTemplate<GraphNode> const& node = node_pair.second;
+    GraphNode const& graph_node = node.item();
     // node_stmt	:	node_id [ attr_list ]
-    os << indentation << node_data.dot_id() << " [" << node_data.attribute_list() << "]\n";
+    os << indentation << graph_node.dot_id() << " [" << graph_node.attribute_list() << "]\n";
   }
 
   // Write all tables.
   for (auto const& table_node_pair : table_nodes_)
   {
-    GraphItemPtr<TableNodeData const> const& table_node = table_node_pair.second;
-    TableNodeData const& table_node_data = table_node.data({});
-    table_node_data.write_html_to(os, indentation);
+    ConstGraphItemPtrTemplate<TableGraphNode> const& table_node = table_node_pair.second;
+    TableGraphNode const& table_graph_node = table_node.item();
+    table_graph_node.write_html_to(os, indentation);
   }
 
   // Write all subgraph's.
   for (auto const& graph_pair : graphs_)
   {
-    GraphItemPtr<GraphData const> const& graph = graph_pair.second;
-    GraphData const& graph_data = graph.data({});
-    os << indentation << "subgraph " << graph_data.dot_id() << " {\n";
-    graph_data.write_body_to(os, indentation);
+    ConstGraphItemPtrTemplate<GraphGraph> const& graph = graph_pair.second;
+    GraphGraph const& graph_graph = graph.item();
+    os << indentation << "subgraph " << graph_graph.dot_id() << " {\n";
+    graph_graph.write_body_to(os, indentation);
     os << indentation << "}\n";
   }
 
   // Write all edge_stmt's.
   for (auto const& edge_pair : edges_)
   {
-    GraphItemPtr<EdgeData const> const& edge = edge_pair.second;
-    EdgeData const& edge_data = edge.data({});
+    ConstGraphItemPtrTemplate<GraphEdge> const& edge = edge_pair.second;
+    GraphEdge const& graph_edge = edge.item();
     // edge_stmt	:	(node_id | subgraph) edgeRHS [ attr_list ]
     // edgeRHS	:	edgeop (node_id | subgraph) [ edgeRHS ]
-    os << indentation << edge_data.from_port() << (digraph_ ? " -> " : " -- ") << edge_data.to_port() <<
-      " [" << edge_data.attribute_list() << "]\n";
+    os << indentation << graph_edge.from_port() << (digraph_ ? " -> " : " -- ") << graph_edge.to_port() <<
+      " [" << graph_edge.attribute_list() << "]\n";
   }
 }
 

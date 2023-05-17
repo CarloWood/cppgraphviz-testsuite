@@ -19,12 +19,12 @@ class TableElement
 
   std::string_view label() const
   {
-    return node_.data().attribute_list().get("label", "<no label>");
+    return node_.item().attribute_list().get("label", "<no label>");
   }
 
   AttributeList const& attribute_list() const
   {
-    return node_.data().attribute_list();
+    return node_.item().attribute_list();
   }
 
   Node const& node() const

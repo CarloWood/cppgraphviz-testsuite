@@ -6,18 +6,18 @@
 
 namespace cppgraphviz {
 
-class LabelNodeData : public dot::NodeData
+class LabelNodeData : public dot::GraphNode
 {
  public:
-  using graph_data_type = GraphData;
+  using graph_graph_type = GraphData;
 };
 
-class LabelNode : public Node, public dot::GraphItemPtr<LabelNodeData>
+class LabelNode : public Node, public dot::GraphItemPtrTemplate<LabelNodeData>
 {
  public:
   LabelNode() = default;
   LabelNode(LabelNode&& label_node) = default;
-  LabelNode(LabelNode const& label_node) : Node(label_node), dot::GraphItemPtr<LabelNodeData>() { copied(); }
+  LabelNode(LabelNode const& label_node) : Node(label_node), dot::GraphItemPtrTemplate<LabelNodeData>() { copied(); }
   ~LabelNode() { destructed(); }
 
   void initialize() override

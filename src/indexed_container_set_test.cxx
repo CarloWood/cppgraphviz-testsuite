@@ -34,6 +34,7 @@ using AIndex = utils::VectorIndex<ACategory>;
 int main()
 {
   Debug(NAMESPACE_DEBUG::init());
+  Debug(libcw_do.set_ostream(&std::cerr));
 
   utils::Vector<A, AIndex> container_of_A = { 2, 3, 5 };
   utils::Array<B, 3, AIndex> container_of_B = { 11, 13, 17 };

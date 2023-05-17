@@ -28,6 +28,7 @@ using AIndex = utils::VectorIndex<A>;
 int main()
 {
   Debug(NAMESPACE_DEBUG::init());
+  Debug(libcw_do.set_ostream(&std::cerr));
 
   dot::Digraph g0;
   dot::Node n;
@@ -101,7 +102,7 @@ int main()
   v1[second].add_attribute({"fontsize", "12"});
   v1[second].add_attribute({"fontcolor", "red"});
   tableA.link_container(v1);
-  g0.add_table_node(tableA);
+  g0.add_table_graph_node(tableA);
   e5.set_nodes(n11, tableA[1]);
 
   utils::Vector<B, AIndex> v2 = { {6}, {7}, {8} };
@@ -110,7 +111,7 @@ int main()
   tableB.link_container(v2);
   for (auto i = v2.ibegin(); i != v2.iend(); ++i)
     v2[i].add_attribute({"label", label2[i.get_value()]});
-  g0.add_table_node(tableB);
+  g0.add_table_graph_node(tableB);
 
   g0.write_dot(std::cout);
 }

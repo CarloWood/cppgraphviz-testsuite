@@ -5,15 +5,15 @@
 
 namespace cppgraphviz::dot {
 
-class GraphData;
+class GraphGraph;
 
-// Base class of GraphData, EdgeData and NodeData.
+// Base class of GraphGraph, GraphEdge and GraphNode.
 //
 // This class provides a unique id for each graph (item) and a general attribute list.
 class GraphItem : public AIRefCount, public GraphItemID
 {
  public:
-  using graph_data_type = GraphData;
+  using graph_graph_type = GraphGraph;
 
   GraphItem() : GraphItemID(s_unique_id_context.get_id()) { }
   GraphItem(GraphItem const& other) = delete;

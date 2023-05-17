@@ -24,10 +24,7 @@ concept ConceptSizeTIndexableContainer = requires(T t)
   { std::declval<T const>()[std::declval<size_t>()] } -> std::same_as<typename T::const_reference>;
 };
 
-template<typename T>
-concept ConceptIsTableNodeData = std::is_base_of_v<TableNodeData, T>;
-
-class TableNodeData : public GraphItem
+class TableGraphNode : public GraphItem
 {
  private:
   std::vector<TableElement> copied_elements_;
@@ -71,15 +68,18 @@ class TableNodeData : public GraphItem
     return {dot_id(), index};
   }
 
-  void for_all_elements(std::function<void(NodeData&)> callback)
+  void for_all_elements(std::function<void(GraphNode&)> callback)
   {
     for (size_t i = 0; i < container_size_(); ++i)
-      callback(container_reference_(i).node().data({}));
+      callback(container_reference_(i).node().item());
   }
 };
 
-template<ConceptIsTableNodeData TND>
-class TableNodeTemplate : public GraphItemPtr<TND>
+template<typename T>
+concept ConceptIsTableGraphNode = std::is_base_of_v<TableGraphNode, T>;
+
+template<ConceptIsTableGraphNode TGN>
+class TableNodeTemplate : public GraphItemPtrTemplate<TGN>
 {
  public:
   // The link_container member functions store a reference to `container`,
@@ -88,24 +88,24 @@ class TableNodeTemplate : public GraphItemPtr<TND>
   template<ConceptIndexableContainer Container>
   void link_container(Container& container)
   {
-    this->data().link_container(container);
+    this->item().link_container(container);
   }
 
   template<ConceptSizeTIndexableContainer Container>
   void link_container(Container& container)
   {
-    this->data().link_container(container);
+    this->item().link_container(container);
   }
 
   template<ConceptIndexableContainer Container>
   void copy_elements(Container const& container)
   {
-    this->data().copy_elements(container);
+    this->item().copy_elements(container);
   }
 
-  Port operator[](size_t index) const { return this->data().at(index); }
+  Port operator[](size_t index) const { return this->item().at(index); }
 };
 
-using TableNode = TableNodeTemplate<TableNodeData>;
+using TableNode = TableNodeTemplate<TableGraphNode>;
 
 } // namespace cppgraphviz::dot
