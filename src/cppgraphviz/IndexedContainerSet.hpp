@@ -26,7 +26,7 @@ class RankdirGraphData : public dot::GraphGraph
 };
 
 template<typename Index>
-using RankdirGraph = dot::GraphItemPtrTemplate<RankdirGraphData<Index>>;
+using RankdirGraph = dot::ItemPtrTemplate<RankdirGraphData<Index>>;
 
 } // namespace detail
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GraphItemID.hpp"
+#include "ItemID.hpp"
 #include "item_types.hpp"
 #include <utils/AIRefCount.h>
 
@@ -11,14 +11,14 @@ class GraphGraph;
 // Base class of GraphGraph, GraphEdge and GraphNode.
 //
 // This class provides a unique id for each graph (item) and a general attribute list.
-class GraphItem : public AIRefCount, public GraphItemID
+class Item : public AIRefCount, public ItemID
 {
  public:
   using graph_graph_type = GraphGraph;
 
-  GraphItem() : GraphItemID(s_unique_id_context.get_id()) { }
-  GraphItem(GraphItem const& other) = delete;
-  GraphItem(GraphItem&& other) = delete;
+  Item() : ItemID(s_unique_id_context.get_id()) { }
+  Item(Item const& other) = delete;
+  Item(Item&& other) = delete;
 
   bool is_graph() const { return dot::is_graph(item_type()); }
 

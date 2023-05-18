@@ -17,7 +17,7 @@ class TableNodeData : public dot::TableGraphNode
   }
 };
 
-class TableNode : public dot::GraphItemPtrTemplate<TableNodeData>
+class TableNode : public dot::ItemPtrTemplate<TableNodeData>
 {
  public:
   void initialize()

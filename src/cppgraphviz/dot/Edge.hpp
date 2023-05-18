@@ -1,13 +1,13 @@
 #pragma once
 
-#include "GraphItem.hpp"
+#include "Item.hpp"
 #include "Port.hpp"
 #include <concepts>
 #include <type_traits>
 
 namespace cppgraphviz::dot {
 
-class GraphEdge : public GraphItem
+class GraphEdge : public Item
 {
  private:
   // The nodes of this edge.
@@ -28,12 +28,12 @@ template<typename T>
 concept ConceptIsGraphEdge = std::is_base_of_v<GraphEdge, T>;
 
 // This class may not have any additional members.
-struct Edge : public GraphItemPtrTemplate<GraphEdge>
+struct Edge : public ItemPtrTemplate<GraphEdge>
 {
   Edge() = default;
   Edge(Port const& from, Port const& to) { item().set_nodes(from, to); }
 };
 
-static_assert(sizeof(Edge) == sizeof(GraphItemPtr), "Edge may not have any additional members!");
+static_assert(sizeof(Edge) == sizeof(ItemPtr), "Edge may not have any additional members!");
 
 } // namespace cppgraphviz::dot

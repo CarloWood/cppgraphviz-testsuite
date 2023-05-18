@@ -23,12 +23,12 @@ class GraphGraph;
 template<typename T>
 concept ConceptIsGraphGraph = std::is_base_of_v<GraphGraph, T>;
 
-// GraphGraph is derived from GraphItem for its id and (optional) attribute list.
+// GraphGraph is derived from Item for its id and (optional) attribute list.
 // A graph can be directional or not, and/or strict (only allowing one edge between
 // nodes (two for a digraph)).
 //
 // A graph contains a list of nodes, edges and (optionally) other (sub)graphs.
-class GraphGraph : public GraphItem
+class GraphGraph : public Item
 {
  private:
   // Configuration.
@@ -37,12 +37,12 @@ class GraphGraph : public GraphItem
   bool strict_ = false;
   bool concentrate_ = false;
 
-  // Default node and edge attributes. The default (sub)graph attributes are stored in GraphItem.
+  // Default node and edge attributes. The default (sub)graph attributes are stored in Item.
   AttributeList node_attribute_list_;
   AttributeList edge_attribute_list_;
 
   // The list of all (sub)graphs of this graph, by ID.
-  std::map<DotID_type, ConstGraphItemPtr> items_;
+  std::map<DotID_type, ConstItemPtr> items_;
 
  private:
   void write_body_to(std::ostream& os, std::string indentation = {}) const;
@@ -64,15 +64,15 @@ class GraphGraph : public GraphItem
   RankDir get_rankdir() const { return rankdir_; }
 
   //---------------------------------------------------------------------------
-  void add_graph_item(GraphItem const* graph_item);
-  void remove_graph_item(GraphItem const* graph_item);
+  void add_graph_item(Item const* item);
+  void remove_graph_item(Item const* item);
 
-  void add_item(GraphItemPtr const& item_ptr)
+  void add_item(ItemPtr const& item_ptr)
   {
     add_graph_item(&item_ptr.item());
   }
 
-  void remove_item(GraphItemPtr const& item_ptr)
+  void remove_item(ItemPtr const& item_ptr)
   {
     remove_graph_item(&item_ptr.item());
   }
@@ -96,7 +96,7 @@ concept ConceptHasAddToGraph = requires(T obj)
   obj.add_to_graph(std::declval<typename T::item_type::graph_graph_type&>());
 };
 
-class Graph : public GraphItemPtrTemplate<GraphGraph>
+class Graph : public ItemPtrTemplate<GraphGraph>
 {
  public:
   Graph(bool strict = false)
@@ -112,7 +112,7 @@ class Graph : public GraphItemPtrTemplate<GraphGraph>
   }
 };
 
-static_assert(sizeof(Graph) == sizeof(GraphItemPtr), "Graph may not have any member variables of its own!");
+static_assert(sizeof(Graph) == sizeof(ItemPtr), "Graph may not have any member variables of its own!");
 
 struct Digraph : public Graph
 {

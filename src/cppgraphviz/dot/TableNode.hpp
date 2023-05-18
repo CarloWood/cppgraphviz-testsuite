@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GraphItem.hpp"
+#include "Item.hpp"
 #include "TableElement.hpp"
 #include "Port.hpp"
 #include <map>
@@ -24,7 +24,7 @@ concept ConceptSizeTIndexableContainer = requires(T t)
   { std::declval<T const>()[std::declval<size_t>()] } -> std::same_as<typename T::const_reference>;
 };
 
-class TableGraphNode : public GraphItem
+class TableGraphNode : public Item
 {
  private:
   std::vector<TableElement> copied_elements_;
@@ -83,7 +83,7 @@ class TableGraphNode : public GraphItem
 template<typename T>
 concept ConceptIsTableGraphNode = std::is_base_of_v<TableGraphNode, T>;
 
-struct TableNode : public GraphItemPtrTemplate<TableGraphNode>
+struct TableNode : public ItemPtrTemplate<TableGraphNode>
 {
   Port operator[](size_t index) const { return item().at(index); }
 };

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GraphItemPtr.hpp"
+#include "ItemPtr.hpp"
 #include "DotID.hpp"
 #include "Node.hpp"
 #include <optional>

@@ -5,7 +5,7 @@
 
 namespace cppgraphviz::dot {
 
-class GraphItemID
+class ItemID
 {
  private:
   // The unique dot ID of this item.
@@ -14,7 +14,7 @@ class GraphItemID
   AttributeList attribute_list_;
 
  public:
-  GraphItemID(DotID_type dot_id) : dot_id_(dot_id) { }
+  ItemID(DotID_type dot_id) : dot_id_(dot_id) { }
 
   // Accessors.
   DotID_type dot_id() const { return dot_id_; }

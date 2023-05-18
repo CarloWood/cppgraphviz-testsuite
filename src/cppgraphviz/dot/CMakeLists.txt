@@ -20,7 +20,7 @@ target_sources(dot_ObjLib
     TableNode.hpp
     Node.cpp
     Node.hpp
-    GraphItem.hpp
+    Item.hpp
     item_types.hpp
 )
 
