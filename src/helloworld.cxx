@@ -33,7 +33,7 @@ int main()
   dot::Digraph g0;
   dot::Node n;
 
-  g0->add_item(n);
+  g0->add(n);
 
   n->add_attribute({"style", "filled"});
   n->add_attribute({"fillcolor", "green"});
@@ -44,14 +44,14 @@ int main()
   dot::Edge e1(n, n);
   dot::Edge e2(n2, n);
 
-  g0->add_item(e1);
-  g0->add_item(e2);
+  g0->add(e1);
+  g0->add(e2);
 
   e1->add_attribute({"label", "e1"});
   e2->add_attribute({"label", "e2"});
   n->add_attribute({"label", "n"});
 
-  g0->add_item(n2);
+  g0->add(n2);
 
   dot::Node n10;
   n10->add_attribute({"label", "n10"});
@@ -65,13 +65,13 @@ int main()
 
   dot::Graph g1;
   g1->add_attribute({"label", "g1"});
-  g1->add_item(n10);
-  g1->add_item(n11);
-  g1->add_item(e3);
+  g1->add(n10);
+  g1->add(n11);
+  g1->add(e3);
 
-  g0->add_item(g1);
+  g0->add(g1);
   dot::Edge e4;
-  g0->add_item(e4);
+  g0->add(e4);
   e4->set_nodes(n2, n10);
 
   // node [style="filled", fillcolor="white"]
@@ -83,7 +83,7 @@ int main()
   g1->add_attribute({"bgcolor", "lightgrey"});
 
   dot::Edge e5;
-  g0->add_item(e5);
+  g0->add(e5);
   utils::Vector<A, AIndex> v1 = { {3}, {4}, {5} };
   std::array<char const*, 3> label = { "hello", "world", "foobar" };
   for (auto i = v1.ibegin(); i != v1.iend(); ++i)
@@ -102,7 +102,7 @@ int main()
   v1[second]->add_attribute({"fontsize", "12"});
   v1[second]->add_attribute({"fontcolor", "red"});
   tableA->link_container(v1);
-  g0->add_item(tableA);
+  g0->add(tableA);
   e5->set_nodes(n11, tableA[1]);
 
   utils::Vector<B, AIndex> v2 = { {6}, {7}, {8} };
@@ -111,7 +111,7 @@ int main()
   tableB->link_container(v2);
   for (auto i = v2.ibegin(); i != v2.iend(); ++i)
     v2[i]->add_attribute({"label", label2[i.get_value()]});
-  g0->add_item(tableB);
+  g0->add(tableB);
 
   g0->write_dot(std::cout);
 }

@@ -25,7 +25,7 @@ class Class : public Node
  private:
   void add_to_graph_impl(GraphData* graph_data) override
   {
-    graph_data->add_item(subgraph_);
+    graph_data->add(subgraph_);
   }
 
   void remove_from_graph_impl(GraphData* graph_data) override
@@ -73,7 +73,7 @@ class Class : public Node
   void add_table_node_member(TableNode& table_node)
   {
     table_node.initialize();
-    subgraph_->add_item(table_node);
+    subgraph_->add(table_node);
   }
 
   template<ConceptIsTableNode... TableNodes>

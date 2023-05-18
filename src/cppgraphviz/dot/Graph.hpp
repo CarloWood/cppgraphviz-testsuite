@@ -73,7 +73,7 @@ class GraphItem : public Item
   void add_graph_item(Item const* item);
   void remove_graph_item(Item const* item);
 
-  void add_item(ItemPtr const& item_ptr)
+  void add(ItemPtr const& item_ptr)
   {
     add_graph_item(&item_ptr.item());
   }
