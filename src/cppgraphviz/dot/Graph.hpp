@@ -84,7 +84,7 @@ class GraphItem : public Item
   }
 
   template<typename T>
-  void add(T& obj)
+  void insert(T& obj)
   {
     obj.add_to_graph(*static_cast<typename T::item_type::graph_item_type*>(this));
   }

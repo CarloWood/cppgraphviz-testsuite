@@ -53,7 +53,7 @@ int main()
   IndexedContainerSet<AIndex> test1("AIndex");
   test1.add_container(table_A);
   test1.add_container(table_B);
-  g0->add(test1);
+  g0->insert(test1);
 
   dot::Edge e1;
   g0->add_item(e1);

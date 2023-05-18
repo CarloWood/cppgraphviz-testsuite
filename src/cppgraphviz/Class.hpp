@@ -60,7 +60,7 @@ class Class : public Node
   void add_node_member(LN& label_node)
   {
     label_node.initialize();
-    subgraph_->add(label_node);
+    subgraph_->insert(label_node);
   }
 
   template<ConceptIsLabelNode... LNs>

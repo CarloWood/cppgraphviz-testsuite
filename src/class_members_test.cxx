@@ -149,10 +149,10 @@ int main()
     b3.set_label("b3");
     //b3.initialize();
 //    Dout(dc::notice, "Adding b3 to g0");
-//    g0.add(b3);
+//    g0.insert(b3);
     Dout(dc::notice, "Destructing b3");
   }
-  g0->add(b);
+  g0->insert(b);
 
   {
     Dout(dc::notice, "Constructing b4");
@@ -163,10 +163,10 @@ int main()
   }
 
 //  for (auto& a : as) g0.add(a);
-//  g0.add(d);
-//  g0.add(container_set);
+//  g0.insert(d);
+//  g0.insert(container_set);
   Dout(dc::notice, "Adding c to g0");
-  g0->add(c);
+  g0->insert(c);
 
   Dout(dc::notice, "Calling initialize");
   b.initialize();       // Calls Node::initialize()
