@@ -24,7 +24,7 @@ concept ConceptSizeTIndexableContainer = requires(T t)
   { std::declval<T const>()[std::declval<size_t>()] } -> std::same_as<typename T::const_reference>;
 };
 
-class TableGraphNode : public Item
+class TableNodeItem : public Item
 {
  private:
   std::vector<TableElement> copied_elements_;
@@ -70,7 +70,7 @@ class TableGraphNode : public Item
     return {dot_id(), index};
   }
 
-  void for_all_elements(std::function<void(GraphNode&)> callback)
+  void for_all_elements(std::function<void(NodeItem&)> callback)
   {
     for (size_t i = 0; i < container_size_(); ++i)
       callback(container_reference_(i).node().item());
@@ -81,9 +81,9 @@ class TableGraphNode : public Item
 };
 
 template<typename T>
-concept ConceptIsTableGraphNode = std::is_base_of_v<TableGraphNode, T>;
+concept ConceptIsTableNodeItem = std::is_base_of_v<TableNodeItem, T>;
 
-struct TableNode : public ItemPtrTemplate<TableGraphNode>
+struct TableNode : public ItemPtrTemplate<TableNodeItem>
 {
   Port operator[](size_t index) const { return item().at(index); }
 };

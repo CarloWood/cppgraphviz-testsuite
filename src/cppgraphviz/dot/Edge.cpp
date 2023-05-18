@@ -5,13 +5,13 @@
 
 namespace cppgraphviz::dot {
 
-void GraphEdge::set_nodes(Port const& from, Port const& to)
+void EdgeItem::set_nodes(Port const& from, Port const& to)
 {
   from_ = from;
   to_ = to;
 }
 
-void GraphEdge::write_dot_to(std::ostream& os, std::string& indentation) const
+void EdgeItem::write_dot_to(std::ostream& os, std::string& indentation) const
 {
   bool digraph = DigraphIomanip::get_iword_value(os);
 

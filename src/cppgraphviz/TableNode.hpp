@@ -4,15 +4,15 @@
 
 namespace cppgraphviz {
 
-class TableNodeData : public dot::TableGraphNode
+class TableNodeData : public dot::TableNodeItem
 {
  public:
   void initialize()
   {
     for_all_elements(
-        [](dot::GraphNode& graph_node){
+        [](dot::NodeItem& node_item){
           //FIXME
-          //static_cast<GraphNode&>(graph_node).initialize();
+          //static_cast<GraphNode&>(node_item).initialize();
         });
   }
 };

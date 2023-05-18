@@ -6,10 +6,10 @@
 
 namespace cppgraphviz {
 
-class LabelNodeData : public dot::GraphNode
+class LabelNodeData : public dot::NodeItem
 {
  public:
-  using graph_graph_type = GraphData;
+  using graph_item_type = GraphData;
 };
 
 class LabelNode : public Node, public dot::ItemPtrTemplate<LabelNodeData>

@@ -7,7 +7,7 @@
 
 namespace cppgraphviz::dot {
 
-class GraphEdge : public Item
+class EdgeItem : public Item
 {
  private:
   // The nodes of this edge.
@@ -25,10 +25,10 @@ class GraphEdge : public Item
 };
 
 template<typename T>
-concept ConceptIsGraphEdge = std::is_base_of_v<GraphEdge, T>;
+concept ConceptIsEdgeItem = std::is_base_of_v<EdgeItem, T>;
 
 // This class may not have any additional members.
-struct Edge : public ItemPtrTemplate<GraphEdge>
+struct Edge : public ItemPtrTemplate<EdgeItem>
 {
   Edge() = default;
   Edge(Port const& from, Port const& to) { item().set_nodes(from, to); }

@@ -23,7 +23,7 @@ namespace cppgraphviz {
 extern char const* name_GraphData;
 #endif
 
-class GraphData : public dot::GraphGraph
+class GraphData : public dot::GraphItem
 #if TRACK_GRAPHDATA
                   , public tracked::Tracked<&name_GraphData>
 #endif
@@ -41,7 +41,7 @@ class GraphData : public dot::GraphGraph
 #endif // TRACK_GRAPHDATA
 
  public:
-  using graph_graph_type = GraphData;
+  using graph_item_type = GraphData;
 
  private:
   // A Node has a std::shared_ptr<NodeTracker> (tracker_).

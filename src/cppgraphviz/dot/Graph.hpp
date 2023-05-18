@@ -18,17 +18,23 @@ enum RankDir {
   RL
 };
 
-class GraphGraph;
+class GraphItem;
 
 template<typename T>
-concept ConceptIsGraphGraph = std::is_base_of_v<GraphGraph, T>;
+concept ConceptIsGraphItem = std::is_base_of_v<GraphItem, T>;
 
-// GraphGraph is derived from Item for its id and (optional) attribute list.
+template<typename T>
+concept ConceptHasAddToGraph = requires(T obj)
+{
+  obj.add_to_graph(std::declval<typename T::item_type::graph_item_type&>());
+};
+
+// GraphItem is derived from Item for its id and (optional) attribute list.
 // A graph can be directional or not, and/or strict (only allowing one edge between
 // nodes (two for a digraph)).
 //
 // A graph contains a list of nodes, edges and (optionally) other (sub)graphs.
-class GraphGraph : public Item
+class GraphItem : public Item
 {
  private:
   // Configuration.
@@ -80,7 +86,7 @@ class GraphGraph : public Item
   template<typename T>
   void add(T& obj)
   {
-    obj.add_to_graph(*static_cast<typename T::item_type::graph_graph_type*>(this));
+    obj.add_to_graph(*static_cast<typename T::item_type::graph_item_type*>(this));
   }
 
   void add_node_attribute(Attribute&& attribute);
@@ -90,13 +96,7 @@ class GraphGraph : public Item
   void write_dot_to(std::ostream& os, std::string& indentation) const override;
 };
 
-template<typename T>
-concept ConceptHasAddToGraph = requires(T obj)
-{
-  obj.add_to_graph(std::declval<typename T::item_type::graph_graph_type&>());
-};
-
-class Graph : public ItemPtrTemplate<GraphGraph>
+class Graph : public ItemPtrTemplate<GraphItem>
 {
  public:
   Graph(bool strict = false)

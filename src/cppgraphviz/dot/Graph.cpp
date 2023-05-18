@@ -5,38 +5,38 @@
 
 namespace cppgraphviz::dot {
 
-void GraphGraph::add_graph_item(Item const* item)
+void GraphItem::add_graph_item(Item const* item)
 {
   auto ibp = items_.try_emplace(item->dot_id(), item);
   // Do not add the same graph item twice.
   ASSERT(ibp.second);
   if (item->is_graph())
   {
-    auto& subgraph = static_cast<ConstItemPtrTemplate<GraphGraph>&>(ibp.first->second);
+    auto& subgraph = static_cast<ConstItemPtrTemplate<GraphItem>&>(ibp.first->second);
     // The subgraph must be of the same type as this graph.
     subgraph.item().set_digraph(digraph_);
     subgraph.item().set_rankdir(rankdir_);
   }
 }
 
-void GraphGraph::remove_graph_item(Item const* item)
+void GraphItem::remove_graph_item(Item const* item)
 {
   bool erased = items_.erase(item->dot_id());
   // That's unexpected... we shouldn't be calling remove_graph_item unless it is there.
   ASSERT(erased);
 }
 
-void GraphGraph::add_node_attribute(Attribute&& attribute)
+void GraphItem::add_node_attribute(Attribute&& attribute)
 {
   node_attribute_list_.add(std::move(attribute));
 }
 
-void GraphGraph::add_edge_attribute(Attribute&& attribute)
+void GraphItem::add_edge_attribute(Attribute&& attribute)
 {
   edge_attribute_list_.add(std::move(attribute));
 }
 
-void GraphGraph::set_digraph(bool digraph) const
+void GraphItem::set_digraph(bool digraph) const
 {
   if (digraph_ != digraph)
   {
@@ -47,14 +47,13 @@ void GraphGraph::set_digraph(bool digraph) const
       ConstItemPtr const& item_ptr = graph_pair.second;
       if (!item_ptr.item().is_graph())
         continue;
-      ConstItemPtrTemplate<GraphGraph> const& graph = static_cast<ConstItemPtrTemplate<GraphGraph> const&>(item_ptr);
-      GraphGraph const& graph_graph = graph.item();
-      graph_graph.set_digraph(digraph);
+      ConstItemPtrTemplate<GraphItem> const& graph = static_cast<ConstItemPtrTemplate<GraphItem> const&>(item_ptr);
+      graph->set_digraph(digraph);
     }
   }
 }
 
-void GraphGraph::set_rankdir(RankDir rankdir) const
+void GraphItem::set_rankdir(RankDir rankdir) const
 {
   if (rankdir_ != rankdir)
   {
@@ -65,14 +64,13 @@ void GraphGraph::set_rankdir(RankDir rankdir) const
       ConstItemPtr const& item_ptr = graph_pair.second;
       if (!item_ptr.item().is_graph())
         continue;
-      ConstItemPtrTemplate<GraphGraph> const& graph = static_cast<ConstItemPtrTemplate<GraphGraph> const&>(item_ptr);
-      GraphGraph const& graph_graph = graph.item();
-      graph_graph.set_rankdir(rankdir);
+      ConstItemPtrTemplate<GraphItem> const& graph = static_cast<ConstItemPtrTemplate<GraphItem> const&>(item_ptr);
+      graph->set_rankdir(rankdir);
     }
   }
 }
 
-void GraphGraph::write_dot(std::ostream& os) const
+void GraphItem::write_dot(std::ostream& os) const
 {
   // [ strict ] (graph | digraph) [ ID ] '{' stmt_list '}'
   if (strict_)
@@ -101,7 +99,7 @@ void GraphGraph::write_dot(std::ostream& os) const
   os << '}' << std::endl;
 }
 
-void GraphGraph::write_body_to(std::ostream& os, std::string indentation) const
+void GraphItem::write_body_to(std::ostream& os, std::string indentation) const
 {
   // stmt_list	:	[ stmt [ ';' ] stmt_list ]
   // stmt	:	node_stmt
@@ -139,7 +137,7 @@ void GraphGraph::write_body_to(std::ostream& os, std::string indentation) const
     os << item_type_string_pair.second;
 }
 
-void GraphGraph::write_dot_to(std::ostream& os, std::string& indentation) const
+void GraphItem::write_dot_to(std::ostream& os, std::string& indentation) const
 {
   os << indentation << "subgraph " << dot_id() << " {\n";
   write_body_to(os, indentation);

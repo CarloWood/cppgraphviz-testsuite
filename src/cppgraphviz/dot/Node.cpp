@@ -3,7 +3,7 @@
 
 namespace cppgraphviz::dot {
 
-void GraphNode::write_dot_to(std::ostream& os, std::string& indentation) const
+void NodeItem::write_dot_to(std::ostream& os, std::string& indentation) const
 {
   // node_stmt	:	node_id [ attr_list ]
   os << indentation << dot_id() << " [" << attribute_list() << "]\n";

@@ -14,7 +14,7 @@ namespace cppgraphviz::dot {
 // to one ItemPtr affect all other ItemPtr that are/were copies.
 //
 // The (shared) data that a ItemPtr points to (Item) will be
-// a base class of either GraphGraph, GraphNode or GraphEdge.
+// a base class of either GraphItem, NodeItem or EdgeItem.
 class ConstItemPtr
 {
  protected:

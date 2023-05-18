@@ -11,7 +11,7 @@ class IndexedContainerSet;
 namespace detail {
 
 template<typename Index>
-class RankdirGraphData : public dot::GraphGraph
+class RankdirGraphData : public dot::GraphItem
 {
  private:
   IndexedContainerSet<Index>* owner_;
@@ -35,7 +35,7 @@ template<typename Index>
 class IndexedContainerSet
 {
  public:
-  using item_type = dot::GraphGraph;
+  using item_type = dot::GraphItem;
 
  private:
   detail::RankdirGraph<Index> outer_subgraph_;  // This subgraph wraps the inner subgraph.
@@ -73,7 +73,7 @@ class IndexedContainerSet
     inner_subgraph_->add_item(std::move(container));
   }
 
-  void add_to_graph(dot::GraphGraph& graph_graph);
+  void add_to_graph(dot::GraphItem& graph_item);
 
   void rankdir_changed(dot::RankDir new_rankdir)
   {
@@ -91,9 +91,9 @@ class IndexedContainerSet
 };
 
 template<typename Index>
-void IndexedContainerSet<Index>::add_to_graph(dot::GraphGraph& graph_graph)
+void IndexedContainerSet<Index>::add_to_graph(dot::GraphItem& graph_item)
 {
-  graph_graph.add_item(outer_subgraph_);
+  graph_item.add_item(outer_subgraph_);
 }
 
 namespace detail {
@@ -102,7 +102,7 @@ template<typename Index>
 void RankdirGraphData<Index>::set_rankdir(dot::RankDir rankdir) const
 {
   owner_->rankdir_changed(rankdir);
-  dot::GraphGraph::set_rankdir(rankdir);
+  dot::GraphItem::set_rankdir(rankdir);
 }
 
 } // namespace detail
