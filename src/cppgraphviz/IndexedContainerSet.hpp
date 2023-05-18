@@ -74,6 +74,7 @@ class IndexedContainerSet
   }
 
   void add_to_graph(dot::GraphItem& graph_item);
+  void remove_from_graph(dot::GraphItem& graph_item);
 
   void rankdir_changed(dot::RankDir new_rankdir)
   {
@@ -94,6 +95,12 @@ template<typename Index>
 void IndexedContainerSet<Index>::add_to_graph(dot::GraphItem& graph_item)
 {
   graph_item.add(outer_subgraph_);
+}
+
+template<typename Index>
+void IndexedContainerSet<Index>::remove_from_graph(dot::GraphItem& graph_item)
+{
+  graph_item.remove(outer_subgraph_);
 }
 
 namespace detail {
