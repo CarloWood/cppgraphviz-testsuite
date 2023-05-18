@@ -29,6 +29,12 @@ concept ConceptHasAddToGraph = requires(T obj)
   obj.add_to_graph(std::declval<typename T::item_type::graph_item_type&>());
 };
 
+template<typename T>
+concept ConceptHasRemoveFromGraph = requires(T obj)
+{
+  obj.remove_from_graph(std::declval<typename T::item_type::graph_item_type&>());
+};
+
 // GraphItem is derived from Item for its id and (optional) attribute list.
 // A graph can be directional or not, and/or strict (only allowing one edge between
 // nodes (two for a digraph)).
@@ -78,15 +84,21 @@ class GraphItem : public Item
     add_graph_item(&item_ptr.item());
   }
 
-  void remove_item(ItemPtr const& item_ptr)
+  void remove(ItemPtr const& item_ptr)
   {
     remove_graph_item(&item_ptr.item());
   }
 
-  template<typename T>
+  template<ConceptHasAddToGraph T>
   void insert(T& obj)
   {
     obj.add_to_graph(*static_cast<typename T::item_type::graph_item_type*>(this));
+  }
+
+  template<ConceptHasRemoveFromGraph T>
+  void erase(T& obj)
+  {
+    obj.remove_from_graph(*static_cast<typename T::item_type::graph_item_type*>(this));
   }
 
   void add_node_attribute(Attribute&& attribute);

@@ -30,7 +30,7 @@ class Class : public Node
 
   void remove_from_graph_impl(GraphData* graph_data) override
   {
-    graph_data->remove_item(subgraph_);
+    graph_data->remove(subgraph_);
   }
 
  public:

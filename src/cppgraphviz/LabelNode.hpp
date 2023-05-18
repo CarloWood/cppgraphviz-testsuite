@@ -40,7 +40,7 @@ class LabelNode : public Node, public dot::ItemPtrTemplate<LabelNodeData>
 
   void remove_from_graph_impl(GraphData* graph_data) override
   {
-    graph_data->remove_item(*this);
+    graph_data->remove(*this);
   }
 };
 
