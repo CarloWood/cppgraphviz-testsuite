@@ -6,7 +6,7 @@
 
 using namespace cppgraphviz;
 
-struct A : dot::Node
+struct A : dot::NodePtr
 {
   int m_;
   A(int m) : m_(m)
@@ -17,7 +17,7 @@ struct A : dot::Node
   }
 };
 
-struct B : dot::Node
+struct B : dot::NodePtr
 {
   int m_;
   B(int m) : m_(m)
@@ -39,15 +39,15 @@ int main()
   utils::Vector<A, AIndex> container_of_A = { 2, 3, 5 };
   utils::Array<B, 3, AIndex> container_of_B = { 11, 13, 17 };
 
-  dot::TableNode table_A;
-  dot::TableNode table_B;
+  dot::TableNodePtr table_A;
+  dot::TableNodePtr table_B;
 
 //  container_of_A.push_back(7);
   table_A->copy_elements(container_of_A);
   table_B->link_container(container_of_B);
 //  container_of_B.push_back(19);
 
-  dot::Digraph g0;
+  dot::DigraphPtr g0;
   g0->set_concentrate(true);
 
   IndexedContainerSet<AIndex> test1("AIndex");
@@ -55,7 +55,7 @@ int main()
   test1.add_container(table_B);
   g0->insert(test1);
 
-  dot::Edge e1;
+  dot::EdgePtr e1;
   g0->add(e1);
   e1->set_nodes(table_A[1], table_B[2]);
 

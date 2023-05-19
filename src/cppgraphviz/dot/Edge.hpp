@@ -28,12 +28,12 @@ template<typename T>
 concept ConceptIsEdgeItem = std::is_base_of_v<EdgeItem, T>;
 
 // This class may not have any additional members.
-struct Edge : public ItemPtrTemplate<EdgeItem>
+struct EdgePtr : public ItemPtrTemplate<EdgeItem>
 {
-  Edge() = default;
-  Edge(Port const& from, Port const& to) { item().set_nodes(from, to); }
+  EdgePtr() = default;
+  EdgePtr(Port const& from, Port const& to) { item().set_nodes(from, to); }
 };
 
-static_assert(sizeof(Edge) == sizeof(ItemPtr), "Edge may not have any additional members!");
+static_assert(sizeof(EdgePtr) == sizeof(ItemPtr), "EdgePtr may not have any additional members!");
 
 } // namespace cppgraphviz::dot

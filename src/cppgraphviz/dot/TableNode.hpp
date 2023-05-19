@@ -50,7 +50,7 @@ class TableNodeItem : public Item
     container_reference_ = [&](size_t index) -> TableElement { return container[index]; };
   }
 
-  void copy_elements(std::function<Node (size_t)> at, size_t size)
+  void copy_elements(std::function<NodePtr (size_t)> at, size_t size)
   {
     link_container(copied_elements_);
     for (size_t i = 0; i < size; ++i)
@@ -73,7 +73,7 @@ class TableNodeItem : public Item
   void for_all_elements(std::function<void(NodeItem&)> callback)
   {
     for (size_t i = 0; i < container_size_(); ++i)
-      callback(container_reference_(i).node().item());
+      callback(container_reference_(i).node_ptr().item());
   }
 
   item_type_type item_type() const override { return item_type_table_node; }
@@ -83,7 +83,7 @@ class TableNodeItem : public Item
 template<typename T>
 concept ConceptIsTableNodeItem = std::is_base_of_v<TableNodeItem, T>;
 
-struct TableNode : public ItemPtrTemplate<TableNodeItem>
+struct TableNodePtr : public ItemPtrTemplate<TableNodeItem>
 {
   Port operator[](size_t index) const { return item().at(index); }
 };

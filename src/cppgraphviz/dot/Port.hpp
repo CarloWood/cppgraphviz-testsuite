@@ -16,7 +16,7 @@ class Port
 
  public:
   Port() = default;
-  Port(Node const& node);
+  Port(NodePtr const& node_ptr);
   Port(ID_type id, size_t port) : id_(id), port_(port) { }
 
   void set_port(ID_type id) { id_ = id; port_.reset(); }

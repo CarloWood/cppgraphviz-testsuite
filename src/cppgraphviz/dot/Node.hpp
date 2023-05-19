@@ -18,7 +18,7 @@ class NodeItem : public Item
 template<typename T>
 concept ConceptIsNodeItem = std::is_base_of_v<NodeItem, T>;
 
-// A Node is just a pointer to NodeItem.
-using Node = ItemPtrTemplate<NodeItem>;
+// A NodePtr is just a pointer to NodeItem.
+using NodePtr = ItemPtrTemplate<NodeItem>;
 
 } // namespace cppgraphviz::dot

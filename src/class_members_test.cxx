@@ -84,12 +84,12 @@ struct D : Class
   utils::Array<A, 3, AIndex> as_ = { 1, 2, 3 };
   B b_{1000};
 
-  TableNode as_table_node_;
+  TableNodePtr as_table_node_;
   IndexedContainerSet<AIndex>& as_container_set_;
 
   D(IndexedContainerSet<AIndex>& as_container_set) : as_container_set_(as_container_set)
   {
-    // as_ --> TableNode --> IndexContainerSet --> Graph
+    // as_ --> TableNode --> IndexedContainerSet --> Graph
     as_table_node_->link_container(as_);
     as_container_set_.add_container(as_table_node_);
     Class::add_table_node_member(as_table_node_);
@@ -134,7 +134,7 @@ int main()
   D d(container_set);
 #endif
 
-  Graph g0;
+  GraphPtr g0;
 
   Dout(dc::notice, "Constructing b2 from b");
   B b2(b);

@@ -11,30 +11,30 @@ namespace cppgraphviz::dot {
 class TableElement
 {
  private:
-  Node node_;
+  NodePtr node_ptr_;
 
  public:
-  TableElement(Node& node) : node_(node) { }
-  TableElement(Node&& node) : node_(std::move(node)) { }
+  TableElement(NodePtr& node_ptr) : node_ptr_(node_ptr) { }
+  TableElement(NodePtr&& node_ptr) : node_ptr_(std::move(node_ptr)) { }
 
   std::string_view label() const
   {
-    return node_.item().attribute_list().get("label", "<no label>");
+    return node_ptr_.item().attribute_list().get("label", "<no label>");
   }
 
   AttributeList const& attribute_list() const
   {
-    return node_.item().attribute_list();
+    return node_ptr_.item().attribute_list();
   }
 
-  Node const& node() const
+  NodePtr const& node_ptr() const
   {
-    return node_;
+    return node_ptr_;
   }
 
-  Node& node()
+  NodePtr& node_ptr()
   {
-    return node_;
+    return node_ptr_;
   }
 };
 

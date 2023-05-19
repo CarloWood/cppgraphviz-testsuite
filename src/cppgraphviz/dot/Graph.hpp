@@ -81,11 +81,13 @@ class GraphItem : public Item
 
   void add(ItemPtr const& item_ptr)
   {
+    DoutEntering(dc::notice, "dot::Graph::add(" << item_ptr.item().attribute_list().get_value("what") << " [" << item_ptr.item().dot_id() << "]) [" << this << " [" << attribute_list().get_value("what") << "]]");
     add_graph_item(&item_ptr.item());
   }
 
   void remove(ItemPtr const& item_ptr)
   {
+    DoutEntering(dc::notice, "dot::Graph::remove(" << item_ptr.item().attribute_list().get_value("what") << " [" << item_ptr.item().dot_id() << "]) [" << this << " [" << attribute_list().get_value("what") << "]]");
     remove_graph_item(&item_ptr.item());
   }
 
@@ -108,27 +110,27 @@ class GraphItem : public Item
   void write_dot_to(std::ostream& os, std::string& indentation) const override;
 };
 
-class Graph : public ItemPtrTemplate<GraphItem>
+class GraphPtr : public ItemPtrTemplate<GraphItem>
 {
  public:
-  Graph(bool strict = false)
+  GraphPtr(bool strict = false)
   {
     item().set_strict(strict);
   }
 
  protected:
-  Graph(bool digraph, bool strict = false)
+  GraphPtr(bool digraph, bool strict = false)
   {
     item().set_digraph(digraph);
     item().set_strict(strict);
   }
 };
 
-static_assert(sizeof(Graph) == sizeof(ItemPtr), "Graph may not have any member variables of its own!");
+static_assert(sizeof(GraphPtr) == sizeof(ItemPtr), "GraphPtr may not have any member variables of its own!");
 
-struct Digraph : public Graph
+struct DigraphPtr : public GraphPtr
 {
-  Digraph(bool strict = false) : Graph(true, strict) { }
+  DigraphPtr(bool strict = false) : GraphPtr(true, strict) { }
 };
 
 class DigraphIomanip : public utils::iomanip::Sticky

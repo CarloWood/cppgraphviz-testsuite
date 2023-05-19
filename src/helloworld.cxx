@@ -9,14 +9,14 @@
 
 namespace dot = cppgraphviz::dot;
 
-struct A : dot::Node
+struct A : dot::NodePtr
 {
   int m_;
 
   A(int m) : m_(m) { }
 };
 
-struct B : dot::Node
+struct B : dot::NodePtr
 {
   int m_;
 
@@ -30,8 +30,8 @@ int main()
   Debug(NAMESPACE_DEBUG::init());
   Debug(libcw_do.set_ostream(&std::cerr));
 
-  dot::Digraph g0;
-  dot::Node n;
+  dot::DigraphPtr g0;
+  dot::NodePtr n;
 
   g0->add(n);
 
@@ -39,10 +39,10 @@ int main()
   n->add_attribute({"fillcolor", "green"});
   n->add_attribute({"shape", "hexagon"});
 
-  dot::Node n2;
+  dot::NodePtr n2;
   n2->add_attribute({"label", "n2"});
-  dot::Edge e1(n, n);
-  dot::Edge e2(n2, n);
+  dot::EdgePtr e1(n, n);
+  dot::EdgePtr e2(n2, n);
 
   g0->add(e1);
   g0->add(e2);
@@ -53,24 +53,24 @@ int main()
 
   g0->add(n2);
 
-  dot::Node n10;
+  dot::NodePtr n10;
   n10->add_attribute({"label", "n10"});
 
-  dot::Node n11;
+  dot::NodePtr n11;
   n11->add_attribute({"label", "n11"});
   n11->add_attribute({"color", "purple"});
 
-  dot::Edge e3(n10, n11);
+  dot::EdgePtr e3(n10, n11);
   e3->add_attribute({"label", "e3"});
 
-  dot::Graph g1;
+  dot::GraphPtr g1;
   g1->add_attribute({"label", "g1"});
   g1->add(n10);
   g1->add(n11);
   g1->add(e3);
 
   g0->add(g1);
-  dot::Edge e4;
+  dot::EdgePtr e4;
   g0->add(e4);
   e4->set_nodes(n2, n10);
 
@@ -82,7 +82,7 @@ int main()
   g1->add_attribute({"fillcolor", "gray"});
   g1->add_attribute({"bgcolor", "lightgrey"});
 
-  dot::Edge e5;
+  dot::EdgePtr e5;
   g0->add(e5);
   utils::Vector<A, AIndex> v1 = { {3}, {4}, {5} };
   std::array<char const*, 3> label = { "hello", "world", "foobar" };
@@ -92,7 +92,7 @@ int main()
   v1[last]->add_attribute({"bgcolor", "yellow"});
   AIndex second = last - 1;
 
-  dot::TableNode tableA;
+  dot::TableNodePtr tableA;
   tableA->add_attribute({"bgcolor", "lightblue"});
   tableA->add_attribute({"color", "purple"});
 //  tableA->add_attribute({"fontname", "Arial"});
@@ -107,7 +107,7 @@ int main()
 
   utils::Vector<B, AIndex> v2 = { {6}, {7}, {8} };
   std::array<char const*, 3> label2 = { "first", "second", "third" };
-  dot::TableNode tableB;
+  dot::TableNodePtr tableB;
   tableB->link_container(v2);
   for (auto i = v2.ibegin(); i != v2.iend(); ++i)
     v2[i]->add_attribute({"label", label2[i.get_value()]});

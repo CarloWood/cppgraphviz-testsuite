@@ -39,7 +39,7 @@ class IndexedContainerSet
 
  private:
   detail::RankdirGraph<Index> outer_subgraph_;  // This subgraph wraps the inner subgraph.
-  dot::Graph inner_subgraph_;                   // This subgraph contains the dot::TableNode's that represent the indexed containers.
+  dot::GraphPtr inner_subgraph_;                // This subgraph references the dot::TableNode's that represent the indexed containers.
 
  private:
   void initialize()
@@ -63,12 +63,12 @@ class IndexedContainerSet
     outer_subgraph_->add_attribute({"label", label});
   }
 
-  void add_container(dot::TableNode const& container)
+  void add_container(dot::TableNodePtr const& container)
   {
     inner_subgraph_->add(container);
   }
 
-  void add_container(dot::TableNode&& container)
+  void add_container(dot::TableNodePtr&& container)
   {
     inner_subgraph_->add(std::move(container));
   }
