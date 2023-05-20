@@ -1,6 +1,6 @@
 #include "sys.h"
 #include "cppgraphviz/Graph.hpp"
-#include "cppgraphviz/LabelNode.hpp"
+#include "cppgraphviz/RectangleNode.hpp"
 
 using namespace cppgraphviz;
 
@@ -11,10 +11,14 @@ int main()
 
   Graph g0("g0");
 
-  LabelNode n0("n0");
-  g0.add_node(n0);
+  RectangleNode n0(g0, "n0");
 
-  LabelNode n1(n0, "n1");
+  Graph g1(std::move(g0), "g1");
 
-  g0.write_dot(std::cout);
+  RectangleNode n1(n0, "n1");
+
+  n0.set_label("n0");
+  n1.set_label("n1");
+
+  g1.write_dot(std::cout);
 }

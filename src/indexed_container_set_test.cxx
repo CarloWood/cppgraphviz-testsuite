@@ -40,7 +40,9 @@ int main()
   utils::Array<B, 3, AIndex> container_of_B = { 11, 13, 17 };
 
   dot::TableNodePtr table_A;
+  table_A->add_attribute({"what", "table_A"});
   dot::TableNodePtr table_B;
+  table_B->add_attribute({"what", "table_B"});
 
 //  container_of_A.push_back(7);
   table_A->copy_elements(container_of_A);
@@ -48,14 +50,16 @@ int main()
 //  container_of_B.push_back(19);
 
   dot::DigraphPtr g0;
+  g0->add_attribute({"what", "g0"});
   g0->set_concentrate(true);
 
-  IndexedContainerSet<AIndex> test1("AIndex");
+  IndexedContainerSet<AIndex> test1("AIndex", "test1");
   test1.add_container(table_A);
   test1.add_container(table_B);
   g0->insert(test1);
 
   dot::EdgePtr e1;
+  e1->add_attribute({"what", "e1"});
   g0->add(e1);
   e1->set_nodes(table_A[1], table_B[2]);
 

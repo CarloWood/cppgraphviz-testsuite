@@ -15,10 +15,17 @@ class Graph
   std::vector<std::weak_ptr<NodeTracker>> node_trackers_;
 
  public:
-  // Create a new Graph/GraphTracker pair. This Graph is not associated with a graph yet.
+  // Create a new Graph/GraphTracker pair. This is a root graph.
   Graph(char const* what) : graph_tracker_(GraphTracker::create(this))
   {
     graph_tracker_->set_what(what);
+  }
+
+  // Create a new Graph/GraphTracker pair. This is a subgraph.
+  Graph(std::weak_ptr<GraphTracker> root_graph, char const* what) : graph_tracker_(GraphTracker::create(this))
+  {
+    graph_tracker_->set_what(what);
+    //FIXME: use root_graph -- add this subgraph to a graph.
   }
 
   // Move a Graph, updating its GraphTracker.
@@ -30,6 +37,9 @@ class Graph
 
   // Copying a Graph is not allowed.
   Graph(Graph const& other) = delete;
+
+  // This must be passed to the constructor of every Node.
+  operator std::weak_ptr<GraphTracker>() const { return graph_tracker_; }
 
   void add_node(std::weak_ptr<NodeTracker> node_tracker);
   void write_dot(std::ostream& os) const;

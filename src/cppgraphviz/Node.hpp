@@ -3,9 +3,14 @@
 #include "NodeTracker.hpp"
 #include "GraphTracker.hpp"
 #include "Graph.hpp"
+#include "MemoryAreaToGraphLinker.hpp"
 #include <boost/intrusive_ptr.hpp>
 
 namespace cppgraphviz {
+
+template<typename T>
+class Class;
+class LastClassMember;
 
 class Node
 {
@@ -13,11 +18,17 @@ class Node
   std::shared_ptr<NodeTracker> node_tracker_;
   std::shared_ptr<GraphTracker> graph_tracker_;
 
+  template<typename T> friend class Class;
+  friend class LastClassMember;
+  static thread_local MemoryAreaToGraphLinker current_graph_linker_;
+
  public:
   // Create a new Node/NodeTracker pair. This Node is not associated with a graph yet.
-  Node(char const* what) : node_tracker_(NodeTracker::create(this))
+  Node(std::weak_ptr<GraphTracker> root_graph, char const* what) :
+    node_tracker_(NodeTracker::create(this)), graph_tracker_(current_graph_linker_.get_graph_tracker(std::move(root_graph), this))
   {
     node_tracker_->set_what(what);
+    get_graph().add_node(node_tracker_);
   }
 
   // Move a Node, updating its NodeTracker.
@@ -40,7 +51,14 @@ class Node
 
   operator std::weak_ptr<NodeTracker>() const { return node_tracker_; }
 
-  virtual void initialize() = 0;
+  void initialize()
+  {
+    // Add the attributes of this Node.
+    node_attributes(node_tracker_->node_ptr().attribute_list());
+  }
+
+ protected:
+  virtual void node_attributes(dot::AttributeList& list) { }
 
  private:
   friend class NodeTracker;

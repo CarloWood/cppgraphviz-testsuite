@@ -1,10 +1,16 @@
 add_library(libcppgraphviz
-  NodeTracker.cpp
-  NodeTracker.hpp
   Graph.cpp
   Graph.hpp
+  GraphTracker.hpp
   IndexedContainerSet.hpp
+  LabelNode.hpp
+  MemoryArea.hpp
+  MemoryAreaToGraphLinker.cpp
+  MemoryAreaToGraphLinker.hpp
+  Node.cpp
   Node.hpp
+  NodeTracker.cpp
+  NodeTracker.hpp
 )
 
 target_link_libraries(libcppgraphviz

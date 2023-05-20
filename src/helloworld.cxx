@@ -31,7 +31,10 @@ int main()
   Debug(libcw_do.set_ostream(&std::cerr));
 
   dot::DigraphPtr g0;
+  g0->add_attribute({"what", "g0"});
+
   dot::NodePtr n;
+  n->add_attribute({"what", "n"});
 
   g0->add(n);
 
@@ -40,9 +43,15 @@ int main()
   n->add_attribute({"shape", "hexagon"});
 
   dot::NodePtr n2;
+  n2->add_attribute({"what", "n2"});
+
   n2->add_attribute({"label", "n2"});
+
   dot::EdgePtr e1(n, n);
+  e1->add_attribute({"what", "e1"});
+
   dot::EdgePtr e2(n2, n);
+  e2->add_attribute({"what", "e2"});
 
   g0->add(e1);
   g0->add(e2);
@@ -54,16 +63,24 @@ int main()
   g0->add(n2);
 
   dot::NodePtr n10;
+  n10->add_attribute({"what", "n10"});
+
   n10->add_attribute({"label", "n10"});
 
   dot::NodePtr n11;
+  n11->add_attribute({"what", "n11"});
+
   n11->add_attribute({"label", "n11"});
   n11->add_attribute({"color", "purple"});
 
   dot::EdgePtr e3(n10, n11);
+  e3->add_attribute({"what", "e3"});
+
   e3->add_attribute({"label", "e3"});
 
   dot::GraphPtr g1;
+  g1->add_attribute({"what", "g1"});
+
   g1->add_attribute({"label", "g1"});
   g1->add(n10);
   g1->add(n11);
@@ -71,6 +88,7 @@ int main()
 
   g0->add(g1);
   dot::EdgePtr e4;
+  e4->add_attribute({"what", "e4"});
   g0->add(e4);
   e4->set_nodes(n2, n10);
 
@@ -83,16 +101,21 @@ int main()
   g1->add_attribute({"bgcolor", "lightgrey"});
 
   dot::EdgePtr e5;
+  e5->add_attribute({"what", "e5"});
   g0->add(e5);
   utils::Vector<A, AIndex> v1 = { {3}, {4}, {5} };
   std::array<char const*, 3> label = { "hello", "world", "foobar" };
   for (auto i = v1.ibegin(); i != v1.iend(); ++i)
+  {
+    v1[i]->add_attribute({"what", label[i.get_value()]});
     v1[i]->add_attribute({"label", label[i.get_value()]});
+  }
   AIndex last = v1.iend() - 1;
   v1[last]->add_attribute({"bgcolor", "yellow"});
   AIndex second = last - 1;
 
   dot::TableNodePtr tableA;
+  tableA->add_attribute({"what", "tableA"});
   tableA->add_attribute({"bgcolor", "lightblue"});
   tableA->add_attribute({"color", "purple"});
 //  tableA->add_attribute({"fontname", "Arial"});
@@ -108,9 +131,13 @@ int main()
   utils::Vector<B, AIndex> v2 = { {6}, {7}, {8} };
   std::array<char const*, 3> label2 = { "first", "second", "third" };
   dot::TableNodePtr tableB;
+  tableB->add_attribute({"what", "tableB"});
   tableB->link_container(v2);
   for (auto i = v2.ibegin(); i != v2.iend(); ++i)
+  {
+    v2[i]->add_attribute({"what", label2[i.get_value()]});
     v2[i]->add_attribute({"label", label2[i.get_value()]});
+  }
   g0->add(tableB);
 
   g0->write_dot(std::cout);
