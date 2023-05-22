@@ -56,7 +56,7 @@ class NodeTracker
     node_ptr_->attribute_list().add({"what", what});
   }
 
-  void set_graph_tracker(utils::Badge<Graph>, std::shared_ptr<GraphTracker> graph_tracker);
+  void set_parent_graph_tracker(utils::Badge<Graph>, std::shared_ptr<GraphTracker> parent_graph_tracker);
 
   // Accessors.
   operator Node const&() const { return *node_; }

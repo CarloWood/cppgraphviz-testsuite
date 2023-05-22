@@ -11,12 +11,12 @@ struct RectangleNode : LabelNode
 
   using LabelNode::LabelNode;
 
-  void node_attributes(dot::AttributeList& list) override
+  void item_attributes(dot::AttributeList& list) override
   {
     list += {"shape", "rectangle"};
     if (!label_.empty())
       list += {"label", label_};
-    LabelNode::node_attributes(list);
+    LabelNode::item_attributes(list);
   }
 
   void set_label(std::string const& label)

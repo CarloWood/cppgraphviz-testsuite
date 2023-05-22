@@ -55,7 +55,13 @@ class IndexedContainerSet
   }
 
  public:
-  IndexedContainerSet(char const* what) { initialize(); }
+  IndexedContainerSet(char const* what)
+  {
+    outer_subgraph_->add_attribute({"what", std::string{what} + ".outer_subgraph_"});
+    inner_subgraph_->add_attribute({"what", std::string{what} + ".inner_subgraph_"});
+    initialize();
+  }
+
   IndexedContainerSet(std::string const& label, char const* what)
   {
     outer_subgraph_->add_attribute({"what", std::string{what} + ".outer_subgraph_"});

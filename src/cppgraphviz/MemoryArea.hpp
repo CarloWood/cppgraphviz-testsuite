@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 namespace cppgraphviz {
 
 class MemoryArea
@@ -30,6 +32,12 @@ class MemoryArea
   bool lays_within(MemoryArea const& other) const
   {
     return begin_ >= other.begin_ && end_ <= other.end_;
+  }
+
+  friend std::ostream& operator<<(std::ostream& os, MemoryArea const& memory_area)
+  {
+    os << "[" << (void*)memory_area.begin_ << ", " << (void*)memory_area.end_ << ">";
+    return os;
   }
 };
 

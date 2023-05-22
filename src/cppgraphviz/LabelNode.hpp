@@ -9,11 +9,11 @@ class LabelNode : public Node
  public:
   using Node::Node;
 
-  void node_attributes(dot::AttributeList& list) override
+  void item_attributes(dot::AttributeList& list) override
   {
-    // Derive from LabelNode and override node_attributes to add a label, shape etc.
+    // Derive from LabelNode and override item_attributes to add a label, shape etc.
     list.add({"label", "<unknown LabelNode>"});
-    Node::node_attributes(list);
+    Node::item_attributes(list);
   }
 };
 

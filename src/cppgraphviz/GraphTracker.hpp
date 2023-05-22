@@ -49,6 +49,8 @@ class GraphTracker : std::enable_shared_from_this<GraphTracker>
     graph_ptr_->attribute_list().add({"what", what});
   }
 
+  void set_parent_graph_tracker(utils::Badge<Graph>, std::shared_ptr<GraphTracker> parent_graph_tracker);
+
   // Accessors.
   operator Graph const&() const { return *graph_; }
   operator Graph&() { return *graph_; }

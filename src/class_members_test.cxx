@@ -5,6 +5,9 @@
 #include "cppgraphviz/dot/Graph.hpp"
 #include "utils/Array.h"
 #include "debug.h"
+#ifdef CWDEBUG
+#include "cppgraphviz/debug_ostream_operators.hpp"
+#endif
 
 using namespace cppgraphviz;
 
@@ -17,11 +20,11 @@ struct A : RectangleNode
   A(A const& other, char const* what) : RectangleNode(other, what), m_(other.m_) { }
   A(A&& other, char const* what) : RectangleNode(std::move(other), what), m_(other.m_) { }
 
-  void node_attributes(dot::AttributeList& list) override
+  void item_attributes(dot::AttributeList& list) override
   {
     if (label_.empty())
       label_ = "A:" + std::to_string(m_);
-    RectangleNode::node_attributes(list);
+    RectangleNode::item_attributes(list);
   }
 };
 
@@ -34,11 +37,11 @@ struct B : RectangleNode
   B(B const& other, char const* what) : RectangleNode(other, what), m_(other.m_) { }
   B(B&& other, char const* what) : RectangleNode(std::move(other), what), m_(other.m_) { }
 
-  void node_attributes(dot::AttributeList& list) override
+  void item_attributes(dot::AttributeList& list) override
   {
     if (label_.empty())
       label_ = "B:" + std::to_string(m_);
-    RectangleNode::node_attributes(list);
+    RectangleNode::item_attributes(list);
   }
 };
 
@@ -46,16 +49,32 @@ struct C : Class<C>
 {
   A a_;
   B b_;
-  LastClassMember lcm_;
 
   C(int a, int b, std::weak_ptr<GraphTracker> root_graph, char const* what) :
-    Class<C>(root_graph, what), a_(a, root_graph, "C::a_"), b_(b, root_graph, "C::b_") { }
+    Class<C>(root_graph, what), a_(a, root_graph, "C::a_"), b_(b, root_graph, "C::b_")
+  {
+    DoutEntering(dc::notice, "C(" << a << ", " << b << ", " << root_graph << ", \"" << what << "\") [" << this << "]");
+  }
 
-  C(C const& other, char const* what) : Class<C>(other, what), a_(other.a_, "C::a_"), b_(other.b_, "C::b_") { }
-  C(C&& other, char const* what) : Class<C>(std::move(other), what), a_(std::move(other.a_), "C::a_"), b_(std::move(other.b_), "C::b_") { }
+  C(C const& other, char const* what) : Class<C>(other, what),
+    a_(other.a_, "C::a_"), b_(other.b_, "C::b_")
+  {
+    DoutEntering(dc::notice, "C(C const& " << &other << ", \"" << what << "\") [" << this << "]");
+  }
+
+  C(C&& other, char const* what) : Class<C>(std::move(other), what),
+    a_(std::move(other.a_), "C::a_"), b_(std::move(other.b_), "C::b_")
+  {
+    DoutEntering(dc::notice, "C(C&& " << &other << ", \"" << what << "\") [" << this << "]");
+  }
+
+  ~C()
+  {
+    DoutEntering(dc::notice, "~C() [" << this << "]");
+  }
 
  protected:
-  void node_attributes(dot::AttributeList& list) override
+  void item_attributes(dot::AttributeList& list) override
   {
     list += {
       {"label", "C"},
@@ -64,14 +83,14 @@ struct C : Class<C>
 //      {"style", "filled"},
 //      {"fillcolor", "yellow"},
     };
-    Class::node_attributes(list);
+    Class::item_attributes(list);
   }
 };
 
-#if -0
 struct ACategory;
 using AIndex = utils::ArrayIndex<ACategory>;
 
+#if -0
 struct D : Class<D>
 {
   utils::Array<A, 3, AIndex> as_ = { {1, "D::as_[0]"}, {2, "D::as_[1]"}, {3, "D::as_[2]"} };
@@ -79,8 +98,6 @@ struct D : Class<D>
 
   TableNodePtr as_table_node_;
   IndexedContainerSet<AIndex>& as_container_set_;
-
-  LastClassMember lcm_;
 
   D(IndexedContainerSet<AIndex>& as_container_set) : as_container_set_(as_container_set)
   {
@@ -93,13 +110,13 @@ struct D : Class<D>
   }
 
  private:
-  void node_attributes(dot::AttributeList& list) override
+  void item_attributes(dot::AttributeList& list) override
   {
     list += {
       {"label", "D"},
       {"color", "red"},
     };
-    Class::node_attributes(list);
+    Class::item_attributes(list);
   }
 };
 #endif
@@ -116,10 +133,10 @@ int main()
 
 #if -0
   IndexedContainerSet<AIndex> container_set("AIndex");
-  utils::Array<A, 3, AIndex> as = { {20, "as[0]"}, {21, "as[1]"}, {22, "as[2]"} };
+  utils::Array<A, 3, AIndex> as = { {20, g0, "as[0]"}, {21, g0, "as[1]"}, {22, g0, "as[2]"} };
 #endif
 
-  Dout(dc::notice, "Constructing b4");
+  Dout(dc::notice, "Constructing b");
   B b(20, g0, "b");
 
   Dout(dc::notice, "Constructing c");
@@ -129,6 +146,7 @@ int main()
   D d(container_set, g0, "d");
 #endif
 
+#if -0
   Dout(dc::notice, "Constructing b2 from b");
   B b2(b, "b2");
   b2.set_label("b2");
@@ -153,11 +171,7 @@ int main()
     //b4.initialize();
     Dout(dc::notice, "Destructing b4");
   }
-
-//  for (auto& a : as) g0.add(a);
-//  g0.insert(d);
-//  g0.insert(container_set);
-  Dout(dc::notice, "Adding c to g0");
+#endif
 
   Dout(dc::notice, "Calling write_dot");
   g0.write_dot(std::cout);
