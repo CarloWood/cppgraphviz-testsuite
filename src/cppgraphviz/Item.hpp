@@ -28,14 +28,15 @@ class Item
     parent_graph_tracker_(other.parent_graph_tracker_) { }
 
   // Accessors.
-  Graph& get_parent_graph() { return *parent_graph_tracker_; }
-  Graph const& get_parent_graph() const { return *parent_graph_tracker_; }
+  Graph& get_parent_graph() { return parent_graph_tracker_->get_graph(); }
+  Graph const& get_parent_graph() const { return parent_graph_tracker_->get_graph(); }
 
   bool has_parent() const { return static_cast<bool>(parent_graph_tracker_); }
 
+  virtual void initialize() = 0;
+
  private:
-  friend class NodeTracker;
-  friend class GraphTracker;
+  friend class ItemTracker;
   void set_parent_graph_tracker(std::shared_ptr<GraphTracker>&& parent_graph_tracker)
   {
     parent_graph_tracker_ = std::move(parent_graph_tracker);

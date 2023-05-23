@@ -34,14 +34,14 @@ class Node : public Item
   {
     DoutEntering(dc::notice, "Node(Node&& " << &node << ", \"" << what << "\") [" << this << "]");
     node_tracker_->set_what(what);
-    node_tracker_->set_node({}, this);
+    node_tracker_->set_item({}, this);
   }
 
   Node(Node&& node) :
     node_tracker_(std::move(node.node_tracker_)), Item(std::move(node))
   {
     DoutEntering(dc::notice, "default Node(Node&& " << &node << ") [" << this << "]");
-    node_tracker_->set_node({}, this);
+    node_tracker_->set_item({}, this);
   }
 
   // Copy a Node, creating a new NodeTracker as well.
@@ -71,7 +71,7 @@ class Node : public Item
 
   operator std::weak_ptr<NodeTracker>() const { return node_tracker_; }
 
-  void initialize()
+  void initialize() override
   {
     // Add the attributes of this Node.
     item_attributes(node_tracker_->node_ptr().attribute_list());

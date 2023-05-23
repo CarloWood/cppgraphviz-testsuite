@@ -46,7 +46,7 @@ class Graph : public Item
   {
     DoutEntering(dc::notice, "Graph(Graph&& " << &graph << ", \"" << what << "\") [" << this << "]");
     graph_tracker_->set_what(what);
-    graph_tracker_->set_graph({}, this);
+    graph_tracker_->set_item({}, this);
   }
 
   // Copying a Graph is not allowed.
@@ -72,7 +72,7 @@ class Graph : public Item
   void remove_graph(std::shared_ptr<GraphTracker>&& graph_tracker);
   void write_dot(std::ostream& os) const;
 
-  void initialize()
+  void initialize() override
   {
     // Add the attributes of this Node.
     item_attributes(graph_tracker_->graph_ptr().attribute_list());

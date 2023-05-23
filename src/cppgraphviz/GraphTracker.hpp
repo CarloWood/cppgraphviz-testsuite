@@ -1,19 +1,17 @@
 #pragma once
 
+#include "ItemTracker.hpp"
 #include "dot/Graph.hpp"
 #include <utils/Badge.h>
 #include <memory>
 
 namespace cppgraphviz {
 
+class Item;
 class Graph;
 
 // GraphTracker objects can only be created by calling the static GraphTracker::create,
 // which uses std::make_shared<GraphTracker> to create it.
-//
-// GraphTracker is derived from std::enable_shared_from_this<GraphTracker> so that we
-// can use graph_tracker_ = parent_graph_->shared_from_this(); where parent_graph_
-// is a plain GraphTracker* (that we got by calling `get()` on a shared_ptr.
 //
 // Like NodeTracker, GraphTracker contains a pointer to both, the corresponding Graph
 // object in a 1-on-1 relationship with its GraphTracker, and a pointer to the
@@ -23,24 +21,18 @@ class Graph;
 // its GraphTracker object, and whenever the Graph is moved it adjusts the Graph*
 // in its tracker by calling set_graph.
 //
-class GraphTracker : std::enable_shared_from_this<GraphTracker>
+class GraphTracker : public ItemTracker
 {
  private:
-  Graph* graph_;                // The graph that is being tracked.
   dot::GraphPtr graph_ptr_;     // Unique pointer to the corresponding dot::GraphItem.
 
  public:
   // Private constructor, called by create.
-  GraphTracker(utils::Badge<GraphTracker>, Graph* graph) : graph_(graph) { }
+  GraphTracker(utils::Badge<GraphTracker>, Graph* graph);
 
   static std::shared_ptr<GraphTracker> create(Graph* graph)
   {
     return std::make_shared<GraphTracker>(utils::Badge<GraphTracker>{}, graph);
-  }
-
-  void set_graph(utils::Badge<Graph>, Graph* graph)
-  {
-    graph_ = graph;
   }
 
   void set_what(std::string_view what)
@@ -49,11 +41,9 @@ class GraphTracker : std::enable_shared_from_this<GraphTracker>
     graph_ptr_->attribute_list().add({"what", what});
   }
 
-  void set_parent_graph_tracker(utils::Badge<Graph>, std::shared_ptr<GraphTracker> parent_graph_tracker);
-
   // Accessors.
-  operator Graph const&() const { return *graph_; }
-  operator Graph&() { return *graph_; }
+  Graph const& get_graph() const;
+  Graph& get_graph();
 
   dot::GraphPtr const& graph_ptr() const { return graph_ptr_; }
   dot::GraphPtr& graph_ptr() { return graph_ptr_; }

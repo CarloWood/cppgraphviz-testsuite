@@ -57,8 +57,8 @@ void Graph::call_initialize_on_items() const
     std::shared_ptr<NodeTracker> node_tracker = weak_node_tracker.lock();
     if (node_tracker)
     {
-      Node& node = *node_tracker;
-      node.initialize();
+      Item& item = *node_tracker;
+      item.initialize();
     }
   }
   for (std::weak_ptr<GraphTracker> const& weak_graph_tracker : graph_trackers_)
@@ -66,8 +66,8 @@ void Graph::call_initialize_on_items() const
     std::shared_ptr<GraphTracker> graph_tracker = weak_graph_tracker.lock();
     if (graph_tracker)
     {
-      Graph& graph = *graph_tracker;
-      graph.initialize();
+      Item& item = *graph_tracker;
+      item.initialize();
     }
   }
 }

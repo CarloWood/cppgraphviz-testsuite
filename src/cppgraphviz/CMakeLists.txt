@@ -6,6 +6,8 @@ add_library(libcppgraphviz
   IndexedContainerSet.hpp
   Item.cpp
   Item.hpp
+  ItemTracker.cpp
+  ItemTracker.hpp
   LabelNode.hpp
   MemoryArea.hpp
   MemoryAreaToGraphLinker.cpp

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ItemTracker.hpp"
 #include "dot/Node.hpp"
 #include <utils/Badge.h>
 #include <memory>
@@ -8,6 +9,7 @@ namespace cppgraphviz {
 
 class Graph;
 class GraphPtr;
+class Item;
 class Node;
 class GraphTracker;
 
@@ -30,24 +32,18 @@ class GraphTracker;
 // std::shared_ptr<NodeTracker> is still called a node_tracker
 // though).
 
-class NodeTracker
+class NodeTracker : public ItemTracker
 {
  private:
-  Node* node_;                  // The node that is being tracked.
   dot::NodePtr node_ptr_;       // Unique pointer to the corresponding dot::NodeItem.
 
  public:
   // Private constructor, called by create.
-  NodeTracker(utils::Badge<NodeTracker>, Node* node) : node_(node) { }
+  NodeTracker(utils::Badge<NodeTracker>, Node* node);
 
   static std::shared_ptr<NodeTracker> create(Node* node)
   {
     return std::make_shared<NodeTracker>(utils::Badge<NodeTracker>{}, node);
-  }
-
-  void set_node(utils::Badge<Node>, Node* node)
-  {
-    node_ = node;
   }
 
   void set_what(std::string_view what)
@@ -56,11 +52,9 @@ class NodeTracker
     node_ptr_->attribute_list().add({"what", what});
   }
 
-  void set_parent_graph_tracker(utils::Badge<Graph>, std::shared_ptr<GraphTracker> parent_graph_tracker);
-
   // Accessors.
-  operator Node const&() const { return *node_; }
-  operator Node&() { return *node_; }
+  Node const& get_node() const;
+  Node& get_node();
 
   dot::NodePtr const& node_ptr() const { return node_ptr_; }
   dot::NodePtr& node_ptr() { return node_ptr_; }

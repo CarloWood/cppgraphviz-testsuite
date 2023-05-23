@@ -4,9 +4,18 @@
 
 namespace cppgraphviz {
 
-void NodeTracker::set_parent_graph_tracker(utils::Badge<Graph>, std::shared_ptr<GraphTracker> parent_graph_tracker)
+NodeTracker::NodeTracker(utils::Badge<NodeTracker>, Node* node) : ItemTracker(node)
 {
-  node_->set_parent_graph_tracker(std::move(parent_graph_tracker));
+}
+
+Node const& NodeTracker::get_node() const
+{
+  return static_cast<Node const&>(*item_);
+}
+
+Node& NodeTracker::get_node()
+{
+  return static_cast<Node&>(*item_);
 }
 
 } // namespace cppgraphviz
