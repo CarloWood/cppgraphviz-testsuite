@@ -50,7 +50,7 @@ class NodeTracker
     node_ = node;
   }
 
-  void set_what(char const* what)
+  void set_what(std::string_view what)
   {
     node_ptr_->attribute_list().remove("what");
     node_ptr_->attribute_list().add({"what", what});

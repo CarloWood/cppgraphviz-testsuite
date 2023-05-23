@@ -43,7 +43,7 @@ class GraphTracker : std::enable_shared_from_this<GraphTracker>
     graph_ = graph;
   }
 
-  void set_what(char const* what)
+  void set_what(std::string_view what)
   {
     graph_ptr_->attribute_list().remove("what");
     graph_ptr_->attribute_list().add({"what", what});

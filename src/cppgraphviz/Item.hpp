@@ -31,6 +31,8 @@ class Item
   Graph& get_parent_graph() { return *parent_graph_tracker_; }
   Graph const& get_parent_graph() const { return *parent_graph_tracker_; }
 
+  bool has_parent() const { return static_cast<bool>(parent_graph_tracker_); }
+
  private:
   friend class NodeTracker;
   friend class GraphTracker;
@@ -43,7 +45,7 @@ class Item
   virtual void item_attributes(dot::AttributeList& list)
   {
     //FIXME: remove this.
-    //ASSERT(false);
+    ASSERT(false);
   }
 };
 

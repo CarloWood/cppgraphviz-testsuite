@@ -131,10 +131,8 @@ int main()
 
   Graph g0("g0");
 
-#if -0
   IndexedContainerSet<AIndex> container_set("AIndex");
   utils::Array<A, 3, AIndex> as = { {20, g0, "as[0]"}, {21, g0, "as[1]"}, {22, g0, "as[2]"} };
-#endif
 
   Dout(dc::notice, "Constructing b");
   B b(20, g0, "b");
@@ -146,7 +144,6 @@ int main()
   D d(container_set, g0, "d");
 #endif
 
-#if -0
   Dout(dc::notice, "Constructing b2 from b");
   B b2(b, "b2");
   b2.set_label("b2");
@@ -154,6 +151,7 @@ int main()
 
   C c2(c, "c2");
 
+#if -0
   {
     Dout(dc::notice, "Constructing b3");
     B b3(b, "b3");

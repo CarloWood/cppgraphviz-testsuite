@@ -13,7 +13,6 @@ class LabelNode : public Node
   {
     // Derive from LabelNode and override item_attributes to add a label, shape etc.
     list.add({"label", "<unknown LabelNode>"});
-    Node::item_attributes(list);
   }
 };
 
