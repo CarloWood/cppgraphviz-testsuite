@@ -23,7 +23,7 @@ class Node : public Item
   Node(std::weak_ptr<GraphTracker> root_graph, char const* what) :
     node_tracker_(NodeTracker::create(this)), Item(std::move(root_graph), this)
   {
-    DoutEntering(dc::notice, "Node(" << root_graph << ", \"" << what << "\") [" << this << "]");
+    DoutEntering(dc::notice, "Node(root_graph, \"" << what << "\") [" << this << "]");
     node_tracker_->set_what(what);
     get_parent_graph().add_node(node_tracker_);
   }

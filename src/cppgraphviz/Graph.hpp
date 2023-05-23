@@ -33,7 +33,7 @@ class Graph : public Item
   Graph(std::weak_ptr<GraphTracker> root_graph, char const* what) :
     graph_tracker_(GraphTracker::create(this)), Item(std::move(root_graph), this)
   {
-    DoutEntering(dc::notice, "Graph(" << root_graph << ", \"" << what << "\") [" << this << "]");
+    DoutEntering(dc::notice, "Graph(root_graph, \"" << what << "\") [" << this << "]");
     graph_tracker_->set_what(what);
     get_parent_graph().add_graph(graph_tracker_);
   }
