@@ -99,7 +99,8 @@ struct D : Class<D>
   TableNodePtr as_table_node_;
   IndexedContainerSet<AIndex>& as_container_set_;
 
-  D(IndexedContainerSet<AIndex>& as_container_set) : as_container_set_(as_container_set)
+  D(IndexedContainerSet<AIndex>& as_container_set, std::weak_ptr<GraphTracker> const& root_graph, char const* what) :
+    Class<D>(root_graph, what), as_container_set_(as_container_set)
   {
     // as_ --> TableNode --> IndexedContainerSet --> Graph
     as_table_node_->link_container(as_);
@@ -133,13 +134,11 @@ int main()
     Dout(dc::notice, "Constructing g0");
     Graph g0("g0");
 
-#if -0
     IndexedContainerSet<AIndex> container_set("AIndex");
     utils::Array<A, 3, AIndex> as = { {20, g0, "as[0]"}, {21, g0, "as[1]"}, {22, g0, "as[2]"} };
 
     Dout(dc::notice, "Constructing b");
     B b(20, g0, "b");
-#endif
 
     {
       Dout(dc::notice, "Constructing c");
@@ -158,7 +157,6 @@ int main()
         Dout(dc::notice, "Constructing c2");
         C c2(c, "c2");
 
-#if -0
         {
           Dout(dc::notice, "Constructing b3");
           B b3(b, "b3");
@@ -172,7 +170,6 @@ int main()
           b4.set_label("b4");
           Dout(dc::notice, "Destructing b4");
         }
-#endif
 
         Dout(dc::notice, "Calling write_dot");
         g0.write_dot(std::cout);
