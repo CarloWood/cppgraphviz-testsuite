@@ -8,7 +8,7 @@ template<typename T>
 class Class : public Graph
 {
  public:
-  Class(std::weak_ptr<GraphTracker> root_graph, char const* what) : Graph(root_graph, what)
+  Class(std::weak_ptr<GraphTracker> const& root_graph, char const* what) : Graph(root_graph, what)
   {
     DoutEntering(dc::notice, "Class<" << libcwd::type_info_of<T>().demangled_name() << ">(" <<
         root_graph << ", \"" << what << "\") [" << this << "]");

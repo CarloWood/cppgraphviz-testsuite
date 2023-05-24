@@ -15,7 +15,7 @@ struct A : RectangleNode
 {
   int m_;
 
-  A(int m, std::weak_ptr<GraphTracker> root_graph, char const* what) : RectangleNode(root_graph, what), m_(m) { }
+  A(int m, std::weak_ptr<GraphTracker> const& root_graph, char const* what) : RectangleNode(root_graph, what), m_(m) { }
 
   A(A const& other, char const* what) : RectangleNode(other, what), m_(other.m_) { }
   A(A&& other, char const* what) : RectangleNode(std::move(other), what), m_(other.m_) { }
@@ -32,7 +32,7 @@ struct B : RectangleNode
 {
   int m_;
 
-  B(int m, std::weak_ptr<GraphTracker> root_graph, char const* what) : RectangleNode(root_graph, what), m_(m) { }
+  B(int m, std::weak_ptr<GraphTracker> const& root_graph, char const* what) : RectangleNode(root_graph, what), m_(m) { }
 
   B(B const& other, char const* what) : RectangleNode(other, what), m_(other.m_) { }
   B(B&& other, char const* what) : RectangleNode(std::move(other), what), m_(other.m_) { }
@@ -50,7 +50,7 @@ struct C : Class<C>
   A a_;
   B b_;
 
-  C(int a, int b, std::weak_ptr<GraphTracker> root_graph, char const* what) :
+  C(int a, int b, std::weak_ptr<GraphTracker> const& root_graph, char const* what) :
     Class<C>(root_graph, what), a_(a, root_graph, "C::a_"), b_(b, root_graph, "C::b_")
   {
     DoutEntering(dc::notice, "C(" << a << ", " << b << ", " << root_graph << ", \"" << what << "\") [" << this << "]");
@@ -129,50 +129,60 @@ int main()
   Debug(if (!dc::tracked.is_on()) dc::tracked.on());
 #endif
 
-  Graph g0("g0");
-
-  IndexedContainerSet<AIndex> container_set("AIndex");
-  utils::Array<A, 3, AIndex> as = { {20, g0, "as[0]"}, {21, g0, "as[1]"}, {22, g0, "as[2]"} };
-
-  Dout(dc::notice, "Constructing b");
-  B b(20, g0, "b");
-
-  Dout(dc::notice, "Constructing c");
-  C c(13, 42, g0, "c");
+  {
+    Dout(dc::notice, "Constructing g0");
+    Graph g0("g0");
 
 #if -0
-  D d(container_set, g0, "d");
+    IndexedContainerSet<AIndex> container_set("AIndex");
+    utils::Array<A, 3, AIndex> as = { {20, g0, "as[0]"}, {21, g0, "as[1]"}, {22, g0, "as[2]"} };
+
+    Dout(dc::notice, "Constructing b");
+    B b(20, g0, "b");
 #endif
 
-  Dout(dc::notice, "Constructing b2 from b");
-  B b2(b, "b2");
-  b2.set_label("b2");
-  B b2m(std::move(b2), "b2m");
-
-  C c2(c, "c2");
+    {
+      Dout(dc::notice, "Constructing c");
+      C c(13, 42, g0, "c");
 
 #if -0
-  {
-    Dout(dc::notice, "Constructing b3");
-    B b3(b, "b3");
-    b3.set_label("b3");
-    //b3.initialize();
-//    Dout(dc::notice, "Adding b3 to g0");
-//    g0.insert(b3);
-    Dout(dc::notice, "Destructing b3");
-  }
+      D d(container_set, g0, "d");
 
-  {
-    Dout(dc::notice, "Constructing b4");
-    B b4(b, "b4");
-    b4.set_label("b4");
-    //b4.initialize();
-    Dout(dc::notice, "Destructing b4");
-  }
+      Dout(dc::notice, "Constructing b2 from b");
+      B b2(b, "b2");
+      b2.set_label("b2");
+      B b2m(std::move(b2), "b2m");
 #endif
 
-  Dout(dc::notice, "Calling write_dot");
-  g0.write_dot(std::cout);
+      {
+        Dout(dc::notice, "Constructing c2");
+        C c2(c, "c2");
+
+#if -0
+        {
+          Dout(dc::notice, "Constructing b3");
+          B b3(b, "b3");
+          b3.set_label("b3");
+          Dout(dc::notice, "Destructing b3");
+        }
+
+        {
+          Dout(dc::notice, "Constructing b4");
+          B b4(b, "b4");
+          b4.set_label("b4");
+          Dout(dc::notice, "Destructing b4");
+        }
+#endif
+
+        Dout(dc::notice, "Calling write_dot");
+        g0.write_dot(std::cout);
+
+        Dout(dc::notice, "Destructing c2");
+      }
+      Dout(dc::notice, "Destructing c");
+    }
+    Dout(dc::notice, "Destructing g0");
+  }
 
   Dout(dc::notice, "Leaving main.");
 }

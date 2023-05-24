@@ -23,7 +23,7 @@ class ItemTracker
     item_ = item;
   }
 
-  void set_parent_graph_tracker(utils::Badge<Graph, Node>, std::shared_ptr<GraphTracker> parent_graph_tracker);
+  void set_parent_graph_tracker(utils::Badge<Graph, Node>, std::weak_ptr<GraphTracker> parent_graph_tracker);
 
   // Automatical conversation to an Item reference.
   operator Item const&() const { return *item_; }

@@ -81,13 +81,13 @@ class GraphItem : public Item
 
   void add(ItemPtr const& item_ptr)
   {
-    DoutEntering(dc::notice, "dot::Graph::add(" << item_ptr.item().attribute_list().get_value("what") << " [" << item_ptr.item().dot_id() << "]) [" << this << " [" << attribute_list().get_value("what") << "]]");
+    DoutEntering(dc::notice, "dot::GraphItem::add(" << item_ptr.item().attribute_list().get_value("what") << " [" << item_ptr.item().dot_id() << "]) [" << this << " [" << attribute_list().get_value("what") << "]]");
     add_graph_item(&item_ptr.item());
   }
 
   void remove(ItemPtr const& item_ptr)
   {
-    DoutEntering(dc::notice, "dot::Graph::remove(" << item_ptr.item().attribute_list().get_value("what") << " [" << item_ptr.item().dot_id() << "]) [" << this << " [" << attribute_list().get_value("what") << "]]");
+    DoutEntering(dc::notice, "dot::GraphItem::remove(" << item_ptr.item().attribute_list().get_value("what") << " [" << item_ptr.item().dot_id() << "]) [" << this << " [" << attribute_list().get_value("what") << "]]");
     remove_graph_item(&item_ptr.item());
   }
 
