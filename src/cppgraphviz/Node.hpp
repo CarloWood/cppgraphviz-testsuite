@@ -19,6 +19,20 @@ class Node : public Item
   std::shared_ptr<NodeTracker> node_tracker_;           // Tracker of this Node.
 
  public:
+  // Create a new Node/NodeTracker pair for a class member.
+  // That means that Item should always find a parent graph tracker for this; if we don't then
+  // this is probably a temporary that will be moved or copied shortly after to the class member.
+  Node(char const* what) :
+    Item(this), node_tracker_(NodeTracker::create(this))
+  {
+    DoutEntering(dc::notice, "Node(root_graph, \"" << what << "\") [" << this << "]");
+    node_tracker_->set_what(what);
+    auto pgt = parent_graph_tracker();
+    // A temporary can't be added yet.
+    if (pgt)
+      pgt->get_graph().add_node(node_tracker_);
+  }
+
   // Create a new Node/NodeTracker pair.
   Node(std::weak_ptr<GraphTracker> const& root_graph, char const* what) :
     Item(root_graph, this), node_tracker_(NodeTracker::create(this))
@@ -73,6 +87,7 @@ class Node : public Item
   }
 
   operator std::weak_ptr<NodeTracker>() const { return node_tracker_; }
+  operator dot::NodePtr&() const { return node_tracker_->node_ptr(); }
 
   void initialize() override
   {

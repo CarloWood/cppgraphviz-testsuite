@@ -11,14 +11,23 @@
 
 using namespace cppgraphviz;
 
+#define WHAT(what) what
+#define COMMA_WHAT(what) , what
+
 struct A : RectangleNode
 {
   int m_;
 
-  A(int m, std::weak_ptr<GraphTracker> const& root_graph, char const* what) : RectangleNode(root_graph, what), m_(m) { }
+  A(int m, std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(char const* what)) : RectangleNode(root_graph COMMA_WHAT(what)), m_(m) { }
 
-  A(A const& other, char const* what) : RectangleNode(other, what), m_(other.m_) { }
-  A(A&& other, char const* what) : RectangleNode(std::move(other), what), m_(other.m_) { }
+  // Used for members of a class-- in that case it should not be necessary to pass the root graph.
+  A(int m COMMA_WHAT(char const* what)) : RectangleNode(WHAT(what)), m_(m) { }
+
+  A(A const& other COMMA_WHAT(char const* what)) : RectangleNode(other COMMA_WHAT(what)), m_(other.m_) { }
+  A(A&& other COMMA_WHAT(char const* what)) : RectangleNode(std::move(other) COMMA_WHAT(what)), m_(other.m_) { }
+
+  A(A const& other) : A(other, "default A copy") { }
+  A(A&& other) : A(std::move(other), "default A move") { }
 
   void item_attributes(dot::AttributeList& list) override
   {
@@ -32,10 +41,16 @@ struct B : RectangleNode
 {
   int m_;
 
-  B(int m, std::weak_ptr<GraphTracker> const& root_graph, char const* what) : RectangleNode(root_graph, what), m_(m) { }
+  B(int m, std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(char const* what)) : RectangleNode(root_graph COMMA_WHAT(what)), m_(m) { }
 
-  B(B const& other, char const* what) : RectangleNode(other, what), m_(other.m_) { }
-  B(B&& other, char const* what) : RectangleNode(std::move(other), what), m_(other.m_) { }
+  // Used for members of some class-- in that case it should not be necessary to pass the root graph.
+  B(int m COMMA_WHAT(char const* what)) : RectangleNode(WHAT(what)), m_(m) { }
+
+  B(B const& other COMMA_WHAT(char const* what)) : RectangleNode(other COMMA_WHAT(what)), m_(other.m_) { }
+  B(B&& other COMMA_WHAT(char const* what)) : RectangleNode(std::move(other) COMMA_WHAT(what)), m_(other.m_) { }
+
+  B(B const& other) : B(other, "default B copy") { }
+  B(B&& other) : B(std::move(other), "default B move") { }
 
   void item_attributes(dot::AttributeList& list) override
   {
@@ -50,23 +65,26 @@ struct C : Class<C>
   A a_;
   B b_;
 
-  C(int a, int b, std::weak_ptr<GraphTracker> const& root_graph, char const* what) :
-    Class<C>(root_graph, what), a_(a, root_graph, "C::a_"), b_(b, root_graph, "C::b_")
+  C(int a, int b, std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(char const* what)) :
+    Class<C>(root_graph COMMA_WHAT(what)), a_(a COMMA_WHAT("C::a_")), b_(b COMMA_WHAT("C::b_"))
   {
     DoutEntering(dc::notice, "C(" << a << ", " << b << ", " << root_graph << ", \"" << what << "\") [" << this << "]");
   }
 
-  C(C const& other, char const* what) : Class<C>(other, what),
+  C(C const& other COMMA_WHAT(char const* what)) : Class<C>(other COMMA_WHAT(what)),
     a_(other.a_, "C::a_"), b_(other.b_, "C::b_")
   {
-    DoutEntering(dc::notice, "C(C const& " << &other << ", \"" << what << "\") [" << this << "]");
+    DoutEntering(dc::notice, "C(C const& " << &other << WHAT(", \"" << what <<) "\") [" << this << "]");
   }
 
   C(C&& other, char const* what) : Class<C>(std::move(other), what),
     a_(std::move(other.a_), "C::a_"), b_(std::move(other.b_), "C::b_")
   {
-    DoutEntering(dc::notice, "C(C&& " << &other << ", \"" << what << "\") [" << this << "]");
+    DoutEntering(dc::notice, "C(C&& " << &other << WHAT(", \"" << what <<) "\") [" << this << "]");
   }
+
+  C(C const& other) : C(other, "default C copy") { }
+  C(C&& other) : C(std::move(other), "default C move") { }
 
   ~C()
   {
@@ -90,24 +108,21 @@ struct C : Class<C>
 struct ACategory;
 using AIndex = utils::ArrayIndex<ACategory>;
 
-#if -0
 struct D : Class<D>
 {
   utils::Array<A, 3, AIndex> as_ = { {1, "D::as_[0]"}, {2, "D::as_[1]"}, {3, "D::as_[2]"} };
   B b_{1000, "D::b_"};
 
-  TableNodePtr as_table_node_;
+  dot::TableNodePtr as_table_node_;
   IndexedContainerSet<AIndex>& as_container_set_;
 
-  D(IndexedContainerSet<AIndex>& as_container_set, std::weak_ptr<GraphTracker> const& root_graph, char const* what) :
-    Class<D>(root_graph, what), as_container_set_(as_container_set)
+  D(IndexedContainerSet<AIndex>& as_container_set, std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(char const* what)) :
+    Class<D>(root_graph COMMA_WHAT(what)), as_container_set_(as_container_set)
   {
     // as_ --> TableNode --> IndexedContainerSet --> Graph
+    as_table_node_->add_attribute({"what", "D::as_table_node_"});
     as_table_node_->link_container(as_);
     as_container_set_.add_container(as_table_node_);
-    Class::add_table_node_member(as_table_node_);
-    // Also add normal member b_.
-    Class::add_node_member(b_);
   }
 
  private:
@@ -120,7 +135,6 @@ struct D : Class<D>
     Class::item_attributes(list);
   }
 };
-#endif
 
 int main()
 {
@@ -144,14 +158,16 @@ int main()
       Dout(dc::notice, "Constructing c");
       C c(13, 42, g0, "c");
 
-#if -0
+      A ca(c.a_, "ca");
+      ca.set_label("ca");
+
       D d(container_set, g0, "d");
+      g0.graph_tracker()->graph_ptr()->insert(container_set);
 
       Dout(dc::notice, "Constructing b2 from b");
       B b2(b, "b2");
       b2.set_label("b2");
       B b2m(std::move(b2), "b2m");
-#endif
 
       {
         Dout(dc::notice, "Constructing c2");

@@ -40,7 +40,7 @@ class TableNodeItem : public Item
   {
     container_size_ = [&]() -> size_t { return container.size(); };
     container_reference_ = [&](size_t index) -> TableElement {
-      return container[static_cast<typename Container::index_type>(index)]; };
+      return static_cast<dot::NodePtr&>(container[static_cast<typename Container::index_type>(index)]); };
   }
 
   template<ConceptSizeTIndexableContainer Container>

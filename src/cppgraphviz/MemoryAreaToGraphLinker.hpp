@@ -73,7 +73,9 @@ class MemoryAreaToGraphLinker
 
  public:
   std::shared_ptr<GraphTracker> get_graph_tracker(std::shared_ptr<GraphTracker> const& default_graph, MemoryArea const& node_area) const;
+  std::shared_ptr<GraphTracker> get_graph_tracker(MemoryArea const& node_area) const;
   std::shared_ptr<GraphTracker> get_graph_tracker(std::weak_ptr<GraphTracker> weak_root_graph, Item* object) const;
+  std::shared_ptr<GraphTracker> get_graph_tracker(Item* object) const;
 
   void start_new_subgraph_for(MemoryArea memory_area, std::shared_ptr<GraphTracker> const& subgraph);
   void end_subgraph(MemoryArea node_area);

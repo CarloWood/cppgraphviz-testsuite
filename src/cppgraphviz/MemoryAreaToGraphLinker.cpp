@@ -50,6 +50,22 @@ std::shared_ptr<GraphTracker> MemoryAreaToGraphLinker::get_graph_tracker(
 }
 
 std::shared_ptr<GraphTracker> MemoryAreaToGraphLinker::get_graph_tracker(
+    MemoryArea const& node_area) const
+{
+  DoutEntering(dc::notice, "MemoryAreaToGraphLinker::get_graph_tracker(" << node_area << ")");
+
+  auto iter = memory_area_to_graph_map_.find(node_area);
+
+  // This can happen for example when creating a temporary in the constructor of a class;
+  // we just don't add those to any graph at all until they are moved (or copied) into
+  // a memory region that belongs to a managed Class.
+  if (iter == memory_area_to_graph_map_.end())
+    return {};
+
+  return iter->second.get_graph_tracker(iter->first.current_graph(), node_area);
+}
+
+std::shared_ptr<GraphTracker> MemoryAreaToGraphLinker::get_graph_tracker(
     std::weak_ptr<GraphTracker> weak_root_graph, Item* object) const
 {
   DoutEntering(dc::notice, "MemoryAreaToGraphLinker::get_graph_tracker(" << weak_root_graph << ", " << (void*)object << ")");
@@ -62,6 +78,17 @@ std::shared_ptr<GraphTracker> MemoryAreaToGraphLinker::get_graph_tracker(
   MemoryArea node_area(reinterpret_cast<char const*>(object), sizeof(Item));
 
   return get_graph_tracker(root_graph, node_area);
+}
+
+std::shared_ptr<GraphTracker> MemoryAreaToGraphLinker::get_graph_tracker(
+    Item* object) const
+{
+  DoutEntering(dc::notice, "MemoryAreaToGraphLinker::get_graph_tracker(" << (void*)object << ")");
+
+  // The size of the actual object is probably larger (Item is just a base class), but this will have to do.
+  MemoryArea node_area(reinterpret_cast<char const*>(object), sizeof(Item));
+
+  return get_graph_tracker(node_area);
 }
 
 void MemoryAreaToGraphLinker::start_new_subgraph_for(MemoryArea memory_area, std::shared_ptr<GraphTracker> const& subgraph)
