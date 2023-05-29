@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MemoryAreaToGraphLinker.hpp"
+#include "MemoryRegionToGraphLinker.hpp"
 #include "utils/Badge.h"
 #ifdef CWDEBUG
 #include "debug_ostream_operators.hpp"
@@ -17,7 +17,7 @@ class Item
   std::weak_ptr<GraphTracker> parent_graph_tracker_;    // The graph that this Item was added to.
 
   template<typename T> friend class Class;
-  static thread_local MemoryAreaToGraphLinker current_graph_linker_;
+  static thread_local MemoryRegionToGraphLinker current_graph_linker_;
 
  private:
   void extract_root_graph();

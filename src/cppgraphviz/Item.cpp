@@ -5,7 +5,7 @@
 namespace cppgraphviz {
 
 //static
-thread_local MemoryAreaToGraphLinker Item::current_graph_linker_;
+thread_local MemoryRegionToGraphLinker Item::current_graph_linker_;
 
 void Item::extract_root_graph()
 {
