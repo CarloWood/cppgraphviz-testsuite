@@ -4,18 +4,14 @@
 
 namespace cppgraphviz {
 
-NodeTracker::NodeTracker(utils::Badge<NodeTracker>, Node* node) : ItemTracker(node)
-{
-}
-
 Node const& NodeTracker::get_node() const
 {
-  return static_cast<Node const&>(*item_);
+  return *tracked_object_ptr_;
 }
 
 Node& NodeTracker::get_node()
 {
-  return static_cast<Node&>(*item_);
+  return *tracked_object_ptr_;
 }
 
 } // namespace cppgraphviz

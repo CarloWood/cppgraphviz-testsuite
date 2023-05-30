@@ -66,27 +66,27 @@ std::shared_ptr<GraphTracker> MemoryRegionToGraphLinker::get_graph_tracker(
 }
 
 std::shared_ptr<GraphTracker> MemoryRegionToGraphLinker::get_graph_tracker(
-    std::weak_ptr<GraphTracker> weak_root_graph, Item* object) const
+    std::weak_ptr<GraphTracker> weak_root_graph, void const* object) const
 {
-  DoutEntering(dc::notice, "MemoryRegionToGraphLinker::get_graph_tracker(" << weak_root_graph << ", " << (void*)object << ")");
+  DoutEntering(dc::notice, "MemoryRegionToGraphLinker::get_graph_tracker(" << weak_root_graph << ", " << object << ")");
 
   std::shared_ptr<GraphTracker> root_graph = weak_root_graph.lock();
   if (!root_graph)
     throw std::runtime_error("Adding a node while the root graph is already deleted.");
 
   // The size of the actual object is probably larger (Item is just a base class), but this will have to do.
-  MemoryRegion item_area(reinterpret_cast<char const*>(object), sizeof(Item));
+  MemoryRegion item_area(static_cast<char const*>(object), sizeof(ItemTemplate<GraphTracker>));
 
   return get_graph_tracker(root_graph, item_area);
 }
 
 std::shared_ptr<GraphTracker> MemoryRegionToGraphLinker::get_graph_tracker(
-    Item* object) const
+    void const* object) const
 {
-  DoutEntering(dc::notice, "MemoryRegionToGraphLinker::get_graph_tracker(" << (void*)object << ")");
+  DoutEntering(dc::notice, "MemoryRegionToGraphLinker::get_graph_tracker(" << object << ")");
 
   // The size of the actual object is probably larger (Item is just a base class), but this will have to do.
-  MemoryRegion item_area(reinterpret_cast<char const*>(object), sizeof(Item));
+  MemoryRegion item_area(reinterpret_cast<char const*>(object), sizeof(ItemTemplate<GraphTracker>));
 
   return get_graph_tracker(item_area);
 }

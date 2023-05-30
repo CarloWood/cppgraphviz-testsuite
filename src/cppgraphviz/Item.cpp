@@ -13,7 +13,7 @@ void Item::extract_root_graph()
   if (parent_graph_tracker)
   {
     // The parent_graph_tracker_ points to the tracker of the subgraph associated with the class containing this Node.
-    Graph const& subgraph = parent_graph_tracker->get_graph();
+    Graph const& subgraph = *parent_graph_tracker;
     // Get the root graph from that subgraph.
     root_graph_tracker_ = subgraph.root_graph_tracker();
   }

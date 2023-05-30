@@ -9,9 +9,9 @@ void Graph::add_node(std::weak_ptr<NodeTracker> weak_node_tracker)
   std::shared_ptr<NodeTracker> node_tracker = weak_node_tracker.lock();
   if (node_tracker)
   {
-    graph_tracker_->graph_ptr()->add(node_tracker->node_ptr());
+    tracker_->graph_ptr()->add(node_tracker->node_ptr());
     node_trackers_.push_back(std::move(weak_node_tracker));
-    node_tracker->set_parent_graph_tracker({}, graph_tracker_);
+    node_tracker->set_parent_graph_tracker({}, tracker_);
   }
 }
 
@@ -24,7 +24,7 @@ void Graph::remove_node(std::shared_ptr<NodeTracker>&& node_tracker)
         auto sp = wp.lock();
         return !sp || sp == node_tracker;
       });
-  graph_tracker_->graph_ptr()->remove(node_tracker->node_ptr());
+  tracker_->graph_ptr()->remove(node_tracker->node_ptr());
 }
 
 void Graph::add_graph(std::weak_ptr<GraphTracker> weak_graph_tracker)
@@ -32,9 +32,9 @@ void Graph::add_graph(std::weak_ptr<GraphTracker> weak_graph_tracker)
   std::shared_ptr<GraphTracker> graph_tracker = weak_graph_tracker.lock();
   if (graph_tracker)
   {
-    graph_tracker_->graph_ptr()->add(graph_tracker->graph_ptr());
+    tracker_->graph_ptr()->add(graph_tracker->graph_ptr());
     graph_trackers_.push_back(std::move(weak_graph_tracker));
-    graph_tracker->set_parent_graph_tracker({}, graph_tracker_);
+    graph_tracker->set_parent_graph_tracker({}, tracker_);
   }
 }
 
@@ -47,7 +47,7 @@ void Graph::remove_graph(std::shared_ptr<GraphTracker>&& graph_tracker)
         auto sp = wp.lock();
         return !sp || sp == graph_tracker;
       });
-  graph_tracker_->graph_ptr()->remove(graph_tracker->graph_ptr());
+  tracker_->graph_ptr()->remove(graph_tracker->graph_ptr());
 }
 
 void Graph::call_initialize_on_items() const
@@ -75,7 +75,7 @@ void Graph::call_initialize_on_items() const
 void Graph::write_dot(std::ostream& os) const
 {
   call_initialize_on_items();
-  graph_tracker_->graph_ptr()->write_dot(os);
+  tracker_->graph_ptr()->write_dot(os);
 }
 
 } // namespace cppgraphviz

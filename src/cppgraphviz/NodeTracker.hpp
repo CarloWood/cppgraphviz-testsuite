@@ -9,7 +9,6 @@ namespace cppgraphviz {
 
 class Graph;
 class GraphPtr;
-class Item;
 class Node;
 class GraphTracker;
 
@@ -32,19 +31,13 @@ class GraphTracker;
 // std::shared_ptr<NodeTracker> is still called a node_tracker
 // though).
 
-class NodeTracker : public ItemTracker
+class NodeTracker : public ItemTracker<Node>
 {
  private:
   dot::NodePtr node_ptr_;       // Unique pointer to the corresponding dot::NodeItem.
 
  public:
-  // Private constructor, called by create.
-  NodeTracker(utils::Badge<NodeTracker>, Node* node);
-
-  static std::shared_ptr<NodeTracker> create(Node* node)
-  {
-    return std::make_shared<NodeTracker>(utils::Badge<NodeTracker>{}, node);
-  }
+  NodeTracker(Node* node) : ItemTracker<Node>(node) { }
 
   void set_what(std::string_view what)
   {

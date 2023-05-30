@@ -2,12 +2,10 @@
 
 #include "ItemTracker.hpp"
 #include "dot/Graph.hpp"
-#include <utils/Badge.h>
 #include <memory>
 
 namespace cppgraphviz {
 
-class Item;
 class Graph;
 
 // GraphTracker objects can only be created by calling the static GraphTracker::create,
@@ -21,19 +19,14 @@ class Graph;
 // its GraphTracker object, and whenever the Graph is moved it adjusts the Graph*
 // in its tracker by calling set_graph.
 //
-class GraphTracker : public ItemTracker
+class GraphTracker : public ItemTracker<Graph>
 {
  private:
   dot::GraphPtr graph_ptr_;     // Unique pointer to the corresponding dot::GraphItem.
 
  public:
   // Private constructor, called by create.
-  GraphTracker(utils::Badge<GraphTracker>, Graph* graph);
-
-  static std::shared_ptr<GraphTracker> create(Graph* graph)
-  {
-    return std::make_shared<GraphTracker>(utils::Badge<GraphTracker>{}, graph);
-  }
+  GraphTracker(Graph* graph) : ItemTracker<Graph>(graph) { }
 
   void set_what(std::string_view what)
   {
@@ -42,9 +35,6 @@ class GraphTracker : public ItemTracker
   }
 
   // Accessors.
-  Graph const& get_graph() const;
-  Graph& get_graph();
-
   dot::GraphPtr const& graph_ptr() const { return graph_ptr_; }
   dot::GraphPtr& graph_ptr() { return graph_ptr_; }
 };

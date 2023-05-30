@@ -8,8 +8,6 @@
 
 namespace cppgraphviz {
 
-class NodeTracker;
-
 class Item
 {
  protected:
@@ -24,12 +22,10 @@ class Item
 
  public:
   // This is used by Graph when it is the root graph.
-  Item(utils::Badge<Graph>, std::weak_ptr<GraphTracker> const& root_graph_tracker) :
-    root_graph_tracker_(root_graph_tracker), parent_graph_tracker_{} { }
+  Item(std::weak_ptr<GraphTracker> root_graph_tracker) : root_graph_tracker_(std::move(root_graph_tracker)), parent_graph_tracker_{} { }
 
   // This is used by Node that is a member of a class.
-  Item(Item* object) :
-    parent_graph_tracker_(current_graph_linker_.get_graph_tracker(object))
+  Item(Item* object) : parent_graph_tracker_(current_graph_linker_.get_graph_tracker(object))
   {
     extract_root_graph();
   }
@@ -68,7 +64,7 @@ class Item
     std::shared_ptr<GraphTracker> parent_graph_tracker = parent_graph_tracker_.lock();
     // Don't call get_parent_graph if this Item doesn't have one.
     ASSERT(parent_graph_tracker);
-    return parent_graph_tracker->get_graph();
+    return *parent_graph_tracker;
   }
 
   Graph const& get_parent_graph() const
@@ -76,7 +72,7 @@ class Item
     std::shared_ptr<GraphTracker const> parent_graph_tracker = parent_graph_tracker_.lock();
     // Don't call get_parent_graph if this Item doesn't have one.
     ASSERT(parent_graph_tracker);
-    return parent_graph_tracker->get_graph();
+    return *parent_graph_tracker;
   }
 
   std::weak_ptr<GraphTracker> const& root_graph_tracker() const { return root_graph_tracker_; }
@@ -84,6 +80,7 @@ class Item
   virtual void initialize() = 0;
 
  private:
+  template<typename Tracked>
   friend class ItemTracker;
   void set_parent_graph_tracker(std::weak_ptr<GraphTracker>&& parent_graph_tracker)
   {
@@ -97,6 +94,22 @@ class Item
     //FIXME: remove this.
     ASSERT(false);
   }
+};
+
+template<typename Tracker>
+class ItemTemplate : public utils::TrackedObject<Tracker>, public Item
+{
+ public:
+  // This is used by Graph when it is the root graph.
+  ItemTemplate(utils::Badge<Graph>) : Item(this->tracker_) { }
+
+  // This is used by Node that is a member of a class.
+  ItemTemplate(Item* object) : Item(object) { }
+
+  // This is used by Node when it must be added to root_graph.
+  ItemTemplate(std::weak_ptr<GraphTracker> const& root_graph_tracker, Item* object) : Item(root_graph_tracker, object) { }
+
+  ItemTemplate(ItemTemplate&& other) : utils::TrackedObject<Tracker>(std::move(other)), Item(std::move(other)) { }
 };
 
 } // namespace cppgraphviz

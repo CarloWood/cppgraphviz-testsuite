@@ -15,7 +15,7 @@ class Class : public Graph
 
     // Class must be the first base class of T; therefore `this` should point to the beginning of T.
     Item::current_graph_linker_.start_new_subgraph_for(
-        {reinterpret_cast<char const*>(static_cast<T const*>(this)), sizeof(T)}, graph_tracker());
+        {reinterpret_cast<char const*>(static_cast<T const*>(this)), sizeof(T)}, tracker_);
   }
 
   Class(Class const& other, char const* what) : Graph(other, what)
@@ -25,7 +25,7 @@ class Class : public Graph
 
     // Class must be the first base class of T; therefore `this` should point to the beginning of T.
     Item::current_graph_linker_.start_new_subgraph_for(
-        {reinterpret_cast<char const*>(static_cast<T const*>(this)), sizeof(T)}, graph_tracker());
+        {reinterpret_cast<char const*>(static_cast<T const*>(this)), sizeof(T)}, tracker_);
   }
 
   // Moving is the same as copying in this context.
@@ -36,7 +36,7 @@ class Class : public Graph
   ~Class()
   {
     // Clean up.
-    Node::current_graph_linker_.end_subgraph({reinterpret_cast<char const*>(static_cast<T const*>(this)), sizeof(T)});
+    Item::current_graph_linker_.end_subgraph({reinterpret_cast<char const*>(static_cast<T const*>(this)), sizeof(T)});
   }
 
  protected:

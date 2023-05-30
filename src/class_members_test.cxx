@@ -162,7 +162,7 @@ int main()
       ca.set_label("ca");
 
       D d(container_set, g0, "d");
-      g0.graph_tracker()->graph_ptr()->insert(container_set);
+      g0.get_tracker()->graph_ptr()->insert(container_set);
 
       Dout(dc::notice, "Constructing b2 from b");
       B b2(b, "b2");

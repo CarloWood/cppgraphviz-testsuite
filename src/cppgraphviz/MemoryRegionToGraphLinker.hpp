@@ -6,7 +6,6 @@
 namespace cppgraphviz {
 using utils::has_print_on::operator<<;
 
-class Item;
 class MemoryRegionToGraphLinker;
 
 class MemoryRegionToGraph
@@ -74,8 +73,8 @@ class MemoryRegionToGraphLinker
  public:
   std::shared_ptr<GraphTracker> get_graph_tracker(std::shared_ptr<GraphTracker> const& default_graph, MemoryRegion const& item_area) const;
   std::shared_ptr<GraphTracker> get_graph_tracker(MemoryRegion const& item_area) const;
-  std::shared_ptr<GraphTracker> get_graph_tracker(std::weak_ptr<GraphTracker> weak_root_graph, Item* object) const;
-  std::shared_ptr<GraphTracker> get_graph_tracker(Item* object) const;
+  std::shared_ptr<GraphTracker> get_graph_tracker(std::weak_ptr<GraphTracker> weak_root_graph, void const* object) const;
+  std::shared_ptr<GraphTracker> get_graph_tracker(void const* object) const;
 
   void start_new_subgraph_for(MemoryRegion memory_region, std::shared_ptr<GraphTracker> const& subgraph);
   void end_subgraph(MemoryRegion item_area);
