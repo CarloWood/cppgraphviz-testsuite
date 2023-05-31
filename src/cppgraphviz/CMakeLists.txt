@@ -15,7 +15,6 @@ add_library(libcppgraphviz
   Node.hpp
   NodeTracker.cpp
   NodeTracker.hpp
-  debug_ostream_operators.cpp
   debug_ostream_operators.hpp
 )
 

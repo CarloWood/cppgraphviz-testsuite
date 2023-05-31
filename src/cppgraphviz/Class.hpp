@@ -14,8 +14,8 @@ class Class : public Graph
         root_graph << ", \"" << what << "\") [" << this << "]");
 
     // Class must be the first base class of T; therefore `this` should point to the beginning of T.
-    Item::current_graph_linker_.start_new_subgraph_for(
-        {reinterpret_cast<char const*>(static_cast<T const*>(this)), sizeof(T)}, tracker_);
+    Item::current_graph_linker_.register_new_memory_region_for(
+        {reinterpret_cast<char*>(static_cast<T*>(this)), sizeof(T)}, MemoryRegionOwner::tracker_);
   }
 
   Class(Class const& other, char const* what) : Graph(other, what)
@@ -24,8 +24,8 @@ class Class : public Graph
         &other << ", \"" << what << "\") [" << this << "]");
 
     // Class must be the first base class of T; therefore `this` should point to the beginning of T.
-    Item::current_graph_linker_.start_new_subgraph_for(
-        {reinterpret_cast<char const*>(static_cast<T const*>(this)), sizeof(T)}, tracker_);
+    Item::current_graph_linker_.register_new_memory_region_for(
+        {reinterpret_cast<char*>(static_cast<T*>(this)), sizeof(T)}, MemoryRegionOwner::tracker_);
   }
 
   // Moving is the same as copying in this context.
@@ -36,7 +36,7 @@ class Class : public Graph
   ~Class()
   {
     // Clean up.
-    Item::current_graph_linker_.end_subgraph({reinterpret_cast<char const*>(static_cast<T const*>(this)), sizeof(T)});
+    Item::current_graph_linker_.unregister_memory_region({reinterpret_cast<char*>(static_cast<T*>(this)), sizeof(T)});
   }
 
  protected:

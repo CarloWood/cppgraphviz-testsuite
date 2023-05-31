@@ -7,11 +7,11 @@ namespace cppgraphviz {
 class MemoryRegion
 {
  private:
-  char const* begin_;
+  char* begin_;
   char const* end_;
 
  public:
-  MemoryRegion(char const* begin, size_t size) : begin_(begin), end_(begin + size) { }
+  MemoryRegion(char* begin, size_t size) : begin_(begin), end_(begin + size) { }
 
   bool operator==(MemoryRegion const& other) const
   {
@@ -39,6 +39,9 @@ class MemoryRegion
     os << "[" << (void*)memory_region.begin_ << ", " << (void*)memory_region.end_ << ">";
     return os;
   }
+
+  // Accessor.
+  char* begin() const { return begin_; }
 };
 
 } // namespace cppgraphviz

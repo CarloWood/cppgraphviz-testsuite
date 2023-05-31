@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MemoryRegion.hpp"
+#include "MemoryRegionOwner.hpp"
 #include "GraphTracker.hpp"
 
 namespace cppgraphviz {
@@ -12,26 +12,27 @@ class MemoryRegionToOwner
 {
  private:
   MemoryRegion memory_region_;
-  std::shared_ptr<GraphTracker> current_graph_;
+  std::weak_ptr<MemoryRegionOwnerTracker> memory_region_owner_tracker_;
 
  private:
   friend class MemoryRegionToOwnerLinker;
-  // Use to construct a key for MemoryRegionToOwnerLinker::memory_region_to_graph_map_.
+  // Use to construct a key for MemoryRegionToOwnerLinker::memory_region_to_owner_map_.
   MemoryRegionToOwner(MemoryRegion const& memory_region) : memory_region_(memory_region) { }
   friend bool operator<(MemoryRegionToOwner const& lhs, MemoryRegionToOwner const& rhs) { return lhs.memory_region_ < rhs.memory_region_; }
 
  public:
-  MemoryRegionToOwner(MemoryRegion const& memory_region, std::shared_ptr<GraphTracker> current_graph) :
-    memory_region_(memory_region), current_graph_(std::move(current_graph)) { }
+  MemoryRegionToOwner(MemoryRegion const& memory_region, std::weak_ptr<MemoryRegionOwnerTracker> const& memory_region_owner_tracker) :
+    memory_region_(memory_region), memory_region_owner_tracker_(memory_region_owner_tracker) { }
 
-  MemoryRegionToOwner(MemoryRegionToOwner&& other) : memory_region_(other.memory_region_), current_graph_(std::move(other.current_graph_)) { }
+  MemoryRegionToOwner(MemoryRegionToOwner&& other) :
+    memory_region_(other.memory_region_), memory_region_owner_tracker_(std::move(other.memory_region_owner_tracker_)) { }
 
-  // Return current_graph_ if [object, object + size> falls inside memory_region_, otherwise return default_graph.
-  std::shared_ptr<GraphTracker> const& get_graph_tracker(
-      MemoryRegion const& memory_region_key, std::shared_ptr<GraphTracker> const& default_graph) const;
+  // Return memory_region_owner_tracker_ if [object, object + size> falls inside memory_region_,
+  // otherwise return default_memory_region_owner_tracker.
+  std::weak_ptr<MemoryRegionOwnerTracker> const& get_memory_region_owner_tracker(
+      MemoryRegion const& memory_region_key, std::weak_ptr<MemoryRegionOwnerTracker> const& default_memory_region_owner_tracker) const;
 
-  // Accessor.
-  std::shared_ptr<GraphTracker> current_graph() const { return current_graph_; }
+  void inform_owner(MemoryRegion const& used) const;
 
 #ifdef CWDEBUG
   void print_on(std::ostream& os) const;
@@ -64,22 +65,21 @@ class MemoryRegionToOwner
 class MemoryRegionToOwnerLinker
 {
  private:
-  std::map<MemoryRegionToOwner, MemoryRegionToOwnerLinker> memory_region_to_graph_map_;
+  std::map<MemoryRegionToOwner, MemoryRegionToOwnerLinker> memory_region_to_owner_map_;
 
  private:
   // Returns true if successful.
-  bool erase_memory_region_to_graph(MemoryRegion const& memory_region);
+  bool erase_memory_region_to_owner(MemoryRegion const& memory_region);
 
  public:
-  std::shared_ptr<GraphTracker> get_graph_tracker(std::shared_ptr<GraphTracker> const& default_graph, MemoryRegion const& item_area) const;
-  std::shared_ptr<GraphTracker> get_graph_tracker(MemoryRegion const& item_area) const;
-  std::shared_ptr<GraphTracker> get_graph_tracker(std::weak_ptr<GraphTracker> weak_root_graph, void const* object) const;
-  std::shared_ptr<GraphTracker> get_graph_tracker(void const* object) const;
+  void inform_owner_of(void* object) const;
+  void inform_owner_of(MemoryRegion const& memory_region) const;
+  void inform_owner_of(MemoryRegionToOwner const& default_owner, MemoryRegion const& memory_region) const;
 
-  void start_new_subgraph_for(MemoryRegion memory_region, std::shared_ptr<GraphTracker> const& subgraph);
-  void end_subgraph(MemoryRegion item_area);
+  void register_new_memory_region_for(MemoryRegion memory_region, std::weak_ptr<MemoryRegionOwnerTracker> const& owner);
+  void unregister_memory_region(MemoryRegion memory_region);
 
-  bool empty() const { return memory_region_to_graph_map_.empty(); }
+  bool empty() const { return memory_region_to_owner_map_.empty(); }
 
 #ifdef CWDEBUG
   void print_on_with_indentation(std::ostream& os, std::string indentation) const;

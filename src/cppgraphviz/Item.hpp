@@ -8,6 +8,8 @@
 
 namespace cppgraphviz {
 
+class Graph;
+
 class Item
 {
  protected:
@@ -24,19 +26,28 @@ class Item
   // This is used by Graph when it is the root graph.
   Item(std::weak_ptr<GraphTracker> root_graph_tracker) : root_graph_tracker_(std::move(root_graph_tracker)), parent_graph_tracker_{} { }
 
+  // The two constructors below call inform_owner_of which calls this function,
+  // to finish initialization, if the memory region owner of object could be found.
+  // It is also called by ItemTracker and Graph.
+  void set_parent_graph_tracker(std::weak_ptr<GraphTracker> parent_graph_tracker);
+
+ public:
   // This is used by Node that is a member of a class.
-  Item(Item* object) : parent_graph_tracker_(current_graph_linker_.get_graph_tracker(object))
+  Item(Item* object)
   {
+    current_graph_linker_.inform_owner_of(object);      // This sets parent_graph_tracker_.
     extract_root_graph();
   }
 
   // This is used by Node when it must be added to root_graph.
   Item(std::weak_ptr<GraphTracker> const& root_graph_tracker, Item* object) :
-    root_graph_tracker_(root_graph_tracker),
-    parent_graph_tracker_(
-        !root_graph_tracker.expired() ? current_graph_linker_.get_graph_tracker(root_graph_tracker, object)
-                                      : current_graph_linker_.get_graph_tracker(object))
+    root_graph_tracker_(root_graph_tracker)
   {
+    current_graph_linker_.inform_owner_of(object);      // This sets parent_graph_tracker_ if object is found in a registered memory region.
+    // If object does not fall into a registered memory region, then it has to be added to the root graph.
+    if (parent_graph_tracker_.use_count() == 0)
+      parent_graph_tracker_ = root_graph_tracker;
+
     if (root_graph_tracker_.use_count() == 0 && parent_graph_tracker_.use_count() > 0)
     {
       // The root graph is still unknown, but now we just initialized the member of a class.
@@ -79,21 +90,8 @@ class Item
 
   virtual void initialize() = 0;
 
- private:
-  template<typename Tracked>
-  friend class ItemTracker;
-  void set_parent_graph_tracker(std::weak_ptr<GraphTracker>&& parent_graph_tracker)
-  {
-    DoutEntering(dc::notice, "set_parent_graph_tracker(" << parent_graph_tracker << ") [" << this << "]");
-    parent_graph_tracker_ = std::move(parent_graph_tracker);
-  }
-
  protected:
-  virtual void item_attributes(dot::AttributeList& list)
-  {
-    //FIXME: remove this.
-    ASSERT(false);
-  }
+  virtual void item_attributes(dot::AttributeList& list) { }
 };
 
 template<typename Tracker>

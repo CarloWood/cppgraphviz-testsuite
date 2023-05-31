@@ -1,5 +1,6 @@
 #pragma once
 
+#include "MemoryRegionOwner.hpp"
 #include "GraphTracker.hpp"
 #include "NodeTracker.hpp"
 #include "Item.hpp"
@@ -7,16 +8,26 @@
 #include <memory>
 #ifdef CWDEBUG
 #include "debug_ostream_operators.hpp"
+#include "utils/has_print_on.h"
 #endif
 
 namespace cppgraphviz {
+#ifdef CWDEBUG
+using utils::has_print_on::operator<<;
+#endif
 
 template<typename T>
 class Class;
 
-class Graph : public ItemTemplate<GraphTracker>
+class Graph : public ItemTemplate<GraphTracker>, public MemoryRegionOwner
 {
+ public:
+  // Disambiguate the tracker() member function.
+  using ItemTemplate<GraphTracker>::tracker;
+
  private:
+  // Disambiguate the tracker_ member variable.
+  using ItemTemplate<GraphTracker>::tracker_;
   std::vector<std::weak_ptr<NodeTracker>> node_trackers_;       // The nodes that are added to this graph.
   std::vector<std::weak_ptr<GraphTracker>> graph_trackers_;     // The subgraphs that are added to this graph.
 
@@ -95,6 +106,19 @@ class Graph : public ItemTemplate<GraphTracker>
 
  private:
   void call_initialize_on_items() const;
+
+  // Implement virtual function of MemoryRegionOwner.
+  void on_memory_region_usage(MemoryRegion const& used) override
+  {
+    Item* item = reinterpret_cast<Item*>(used.begin());
+    std::weak_ptr<GraphTracker> subgraph_tracker = *this;
+    item->set_parent_graph_tracker(std::move(subgraph_tracker));
+  }
+
+#ifdef CWDEBUG
+ public:
+  void print_on(std::ostream& os) const override;
+#endif
 };
 
 } // namespace cppgraphviz

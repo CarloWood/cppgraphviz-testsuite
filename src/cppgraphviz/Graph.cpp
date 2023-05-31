@@ -11,13 +11,13 @@ void Graph::add_node(std::weak_ptr<NodeTracker> weak_node_tracker)
   {
     tracker_->graph_ptr()->add(node_tracker->node_ptr());
     node_trackers_.push_back(std::move(weak_node_tracker));
-    node_tracker->set_parent_graph_tracker({}, tracker_);
+    node_tracker->tracked_object().set_parent_graph_tracker(tracker_);
   }
 }
 
 void Graph::remove_node(std::shared_ptr<NodeTracker>&& node_tracker)
 {
-  node_tracker->set_parent_graph_tracker({}, {});
+  node_tracker->tracked_object().set_parent_graph_tracker({});
   // Erase node_tracker and any expired elements from node_trackers_.
   std::erase_if(node_trackers_,
       [&node_tracker](std::weak_ptr<NodeTracker> const& wp){
@@ -34,13 +34,13 @@ void Graph::add_graph(std::weak_ptr<GraphTracker> weak_graph_tracker)
   {
     tracker_->graph_ptr()->add(graph_tracker->graph_ptr());
     graph_trackers_.push_back(std::move(weak_graph_tracker));
-    graph_tracker->set_parent_graph_tracker({}, tracker_);
+    graph_tracker->tracked_object().set_parent_graph_tracker(tracker_);
   }
 }
 
 void Graph::remove_graph(std::shared_ptr<GraphTracker>&& graph_tracker)
 {
-  graph_tracker->set_parent_graph_tracker({}, {});
+  graph_tracker->tracked_object().set_parent_graph_tracker({});
   // Erase graph_tracker and any expired elements from graph_trackers_.
   std::erase_if(graph_trackers_,
       [&graph_tracker](std::weak_ptr<GraphTracker> const& wp){
@@ -77,5 +77,12 @@ void Graph::write_dot(std::ostream& os) const
   call_initialize_on_items();
   tracker_->graph_ptr()->write_dot(os);
 }
+
+#ifdef CWDEBUG
+void Graph::print_on(std::ostream& os) const
+{
+  os << '"' << tracker().graph_ptr().item().attribute_list().get("what", "<NO \"what\">") << '"';
+}
+#endif
 
 } // namespace cppgraphviz
