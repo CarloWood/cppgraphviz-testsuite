@@ -10,8 +10,8 @@ add_library(libcppgraphviz
   ItemTracker.hpp
   LabelNode.hpp
   MemoryRegion.hpp
-  MemoryRegionToGraphLinker.cpp
-  MemoryRegionToGraphLinker.hpp
+  MemoryRegionToOwnerLinker.cpp
+  MemoryRegionToOwnerLinker.hpp
   Node.hpp
   NodeTracker.cpp
   NodeTracker.hpp

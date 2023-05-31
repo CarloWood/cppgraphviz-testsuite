@@ -6,25 +6,25 @@
 namespace cppgraphviz {
 using utils::has_print_on::operator<<;
 
-class MemoryRegionToGraphLinker;
+class MemoryRegionToOwnerLinker;
 
-class MemoryRegionToGraph
+class MemoryRegionToOwner
 {
  private:
   MemoryRegion memory_region_;
   std::shared_ptr<GraphTracker> current_graph_;
 
  private:
-  friend class MemoryRegionToGraphLinker;
-  // Use to construct a key for MemoryRegionToGraphLinker::memory_region_to_graph_map_.
-  MemoryRegionToGraph(MemoryRegion const& memory_region) : memory_region_(memory_region) { }
-  friend bool operator<(MemoryRegionToGraph const& lhs, MemoryRegionToGraph const& rhs) { return lhs.memory_region_ < rhs.memory_region_; }
+  friend class MemoryRegionToOwnerLinker;
+  // Use to construct a key for MemoryRegionToOwnerLinker::memory_region_to_graph_map_.
+  MemoryRegionToOwner(MemoryRegion const& memory_region) : memory_region_(memory_region) { }
+  friend bool operator<(MemoryRegionToOwner const& lhs, MemoryRegionToOwner const& rhs) { return lhs.memory_region_ < rhs.memory_region_; }
 
  public:
-  MemoryRegionToGraph(MemoryRegion const& memory_region, std::shared_ptr<GraphTracker> current_graph) :
+  MemoryRegionToOwner(MemoryRegion const& memory_region, std::shared_ptr<GraphTracker> current_graph) :
     memory_region_(memory_region), current_graph_(std::move(current_graph)) { }
 
-  MemoryRegionToGraph(MemoryRegionToGraph&& other) : memory_region_(other.memory_region_), current_graph_(std::move(other.current_graph_)) { }
+  MemoryRegionToOwner(MemoryRegionToOwner&& other) : memory_region_(other.memory_region_), current_graph_(std::move(other.current_graph_)) { }
 
   // Return current_graph_ if [object, object + size> falls inside memory_region_, otherwise return default_graph.
   std::shared_ptr<GraphTracker> const& get_graph_tracker(
@@ -61,10 +61,10 @@ class MemoryRegionToGraph
 // ---
 //
 
-class MemoryRegionToGraphLinker
+class MemoryRegionToOwnerLinker
 {
  private:
-  std::map<MemoryRegionToGraph, MemoryRegionToGraphLinker> memory_region_to_graph_map_;
+  std::map<MemoryRegionToOwner, MemoryRegionToOwnerLinker> memory_region_to_graph_map_;
 
  private:
   // Returns true if successful.
