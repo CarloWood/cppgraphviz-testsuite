@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.14...3.26)
 
-project(cppgraphviz
+project(cppgraphviz-testsuite
         LANGUAGES CXX
-        DESCRIPTION "A collection of classes that allow to chart the relationship between C++ objects as a graph.")
+        DESCRIPTION "Testsuite for libcppgraphviz")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

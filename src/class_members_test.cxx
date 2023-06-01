@@ -11,8 +11,13 @@
 
 using namespace cppgraphviz;
 
+#ifdef CPPGRAPHVIZ_USE_WHAT
 #define WHAT(what) what
 #define COMMA_WHAT(what) , what
+#else
+#define WHAT(what)
+#define COMMA_WHAT(what)
+#endif
 
 struct A : RectangleNode
 {
@@ -23,11 +28,15 @@ struct A : RectangleNode
   // Used for members of a class-- in that case it should not be necessary to pass the root graph.
   A(int m COMMA_WHAT(char const* what)) : RectangleNode(WHAT(what)), m_(m) { }
 
+  // Copy constructor.
   A(A const& other COMMA_WHAT(char const* what)) : RectangleNode(other COMMA_WHAT(what)), m_(other.m_) { }
+  // Move constructor.
   A(A&& other COMMA_WHAT(char const* what)) : RectangleNode(std::move(other) COMMA_WHAT(what)), m_(other.m_) { }
 
+#ifdef CPPGRAPHVIZ_USE_WHAT
   A(A const& other) : A(other, "default A copy") { }
   A(A&& other) : A(std::move(other), "default A move") { }
+#endif
 
   void item_attributes(dot::AttributeList& list) override
   {
@@ -49,8 +58,10 @@ struct B : RectangleNode
   B(B const& other COMMA_WHAT(char const* what)) : RectangleNode(other COMMA_WHAT(what)), m_(other.m_) { }
   B(B&& other COMMA_WHAT(char const* what)) : RectangleNode(std::move(other) COMMA_WHAT(what)), m_(other.m_) { }
 
+#ifdef CPPGRAPHVIZ_USE_WHAT
   B(B const& other) : B(other, "default B copy") { }
   B(B&& other) : B(std::move(other), "default B move") { }
+#endif
 
   void item_attributes(dot::AttributeList& list) override
   {
@@ -65,26 +76,37 @@ struct C : Class<C>
   A a_;
   B b_;
 
+  // Constructor.
   C(int a, int b, std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(char const* what)) :
-    Class<C>(root_graph COMMA_WHAT(what)), a_(a COMMA_WHAT("C::a_")), b_(b COMMA_WHAT("C::b_"))
+    Class<C>(root_graph COMMA_WHAT(what)),
+    a_(a COMMA_WHAT("C::a_")),
+    b_(b COMMA_WHAT("C::b_"))
   {
     DoutEntering(dc::notice, "C(" << a << ", " << b << ", " << root_graph << ", \"" << what << "\") [" << this << "]");
   }
 
-  C(C const& other COMMA_WHAT(char const* what)) : Class<C>(other COMMA_WHAT(what)),
-    a_(other.a_, "C::a_"), b_(other.b_, "C::b_")
+  // Copy constructor.
+  C(C const& other COMMA_WHAT(char const* what)) :
+    Class<C>(other COMMA_WHAT(what)),
+    a_(other.a_ COMMA_WHAT("C::a_")),
+    b_(other.b_ COMMA_WHAT("C::b_"))
   {
     DoutEntering(dc::notice, "C(C const& " << &other << WHAT(", \"" << what <<) "\") [" << this << "]");
   }
 
-  C(C&& other, char const* what) : Class<C>(std::move(other), what),
-    a_(std::move(other.a_), "C::a_"), b_(std::move(other.b_), "C::b_")
+  // Move constructor.
+  C(C&& other COMMA_WHAT(char const* what)) :
+    Class<C>(std::move(other) COMMA_WHAT(what)),
+    a_(std::move(other.a_) COMMA_WHAT("C::a_")),
+    b_(std::move(other.b_) COMMA_WHAT("C::b_"))
   {
     DoutEntering(dc::notice, "C(C&& " << &other << WHAT(", \"" << what <<) "\") [" << this << "]");
   }
 
+#ifdef CPPGRAPHVIZ_USE_WHAT
   C(C const& other) : C(other, "default C copy") { }
   C(C&& other) : C(std::move(other), "default C move") { }
+#endif
 
   ~C()
   {
@@ -110,8 +132,11 @@ using AIndex = utils::ArrayIndex<ACategory>;
 
 struct D : Class<D>
 {
-  utils::Array<A, 3, AIndex> as_ = { {1, "D::as_[0]"}, {2, "D::as_[1]"}, {3, "D::as_[2]"} };
-  B b_{1000, "D::b_"};
+  utils::Array<A, 3, AIndex> as_ = {
+    {1 COMMA_WHAT("D::as_[0]")},
+    {2 COMMA_WHAT("D::as_[1]")},
+    {3 COMMA_WHAT("D::as_[2]")} };
+  B b_{1000 COMMA_WHAT("D::b_")};
 
   dot::TableNodePtr as_table_node_;
   IndexedContainerSet<AIndex>& as_container_set_;
@@ -146,43 +171,43 @@ int main()
 
   {
     Dout(dc::notice, "Constructing g0");
-    Graph g0("g0");
+    Graph g0{WHAT("g0")};
 
-    IndexedContainerSet<AIndex> container_set("AIndex");
-    utils::Array<A, 3, AIndex> as = { {20, g0, "as[0]"}, {21, g0, "as[1]"}, {22, g0, "as[2]"} };
+    IndexedContainerSet<AIndex> container_set{WHAT("AIndex")};
+    utils::Array<A, 3, AIndex> as = { {20, g0 COMMA_WHAT("as[0]")}, {21, g0 COMMA_WHAT("as[1]")}, {22, g0 COMMA_WHAT("as[2]")} };
 
     Dout(dc::notice, "Constructing b");
-    B b(20, g0, "b");
+    B b(20, g0 COMMA_WHAT("b"));
 
     {
       Dout(dc::notice, "Constructing c");
-      C c(13, 42, g0, "c");
+      C c(13, 42, g0 COMMA_WHAT("c"));
 
-      A ca(c.a_, "ca");
+      A ca(c.a_ COMMA_WHAT("ca"));
       ca.set_label("ca");
 
-      D d(container_set, g0, "d");
+      D d(container_set, g0 COMMA_WHAT("d"));
       g0.tracker().graph_ptr()->insert(container_set);
 
       Dout(dc::notice, "Constructing b2 from b");
-      B b2(b, "b2");
+      B b2(b COMMA_WHAT("b2"));
       b2.set_label("b2");
-      B b2m(std::move(b2), "b2m");
+      B b2m(std::move(b2) COMMA_WHAT("b2m"));
 
       {
         Dout(dc::notice, "Constructing c2");
-        C c2(c, "c2");
+        C c2(c COMMA_WHAT("c2"));
 
         {
           Dout(dc::notice, "Constructing b3");
-          B b3(b, "b3");
+          B b3(b COMMA_WHAT("b3"));
           b3.set_label("b3");
           Dout(dc::notice, "Destructing b3");
         }
 
         {
           Dout(dc::notice, "Constructing b4");
-          B b4(b, "b4");
+          B b4(b COMMA_WHAT("b4"));
           b4.set_label("b4");
           Dout(dc::notice, "Destructing b4");
         }
