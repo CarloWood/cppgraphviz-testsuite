@@ -1,4 +1,6 @@
 #pragma once
 
 #include "cwds/sys.h"
-#include "src/cppgraphviz/config.h"
+#ifdef HAVE_CPPGRAPHVIZ_CONFIG_H
+#include <cppgraphviz/config.h>
+#endif

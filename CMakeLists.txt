@@ -23,4 +23,5 @@ endif()
 
 include(AICxxSubmodules)
 
+add_subdirectory(cppgraphviz)
 add_subdirectory(src)
