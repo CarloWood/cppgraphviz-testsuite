@@ -1,12 +1,13 @@
 #include "sys.h"
-#include "cppgraphviz/RectangleNode.hpp"
-#include "cppgraphviz/Class.hpp"
-#include "cppgraphviz/IndexedContainerSet.hpp"
-#include "cppgraphviz/dot/Graph.hpp"
+#include "cppgraphviz/Array.h"
+#include "cppgraphviz/RectangleNode.h"
+#include "cppgraphviz/Class.h"
+#include "cppgraphviz/IndexedContainerSet.h"
+#include "cppgraphviz/dot/Graph.h"
 #include "utils/Array.h"
 #include "debug.h"
 #ifdef CWDEBUG
-#include "cppgraphviz/debug_ostream_operators.hpp"
+#include "cppgraphviz/debug_ostream_operators.h"
 #endif
 
 using namespace cppgraphviz;
@@ -174,7 +175,7 @@ int main()
     Graph g0{WHAT("g0")};
 
     IndexedContainerSet<AIndex> container_set{WHAT("AIndex")};
-    utils::Array<A, 3, AIndex> as = { {20, g0 COMMA_WHAT("as[0]")}, {21, g0 COMMA_WHAT("as[1]")}, {22, g0 COMMA_WHAT("as[2]")} };
+    cppgraphviz::Array<A, 3, AIndex> as = { {20, g0 COMMA_WHAT("as[0]")}, {21, g0 COMMA_WHAT("as[1]")}, {22, g0 COMMA_WHAT("as[2]")} };
 
     Dout(dc::notice, "Constructing b");
     B b(20, g0 COMMA_WHAT("b"));

@@ -1,6 +1,6 @@
 #include "sys.h"
-#include "cppgraphviz/Graph.hpp"
-#include "cppgraphviz/RectangleNode.hpp"
+#include "cppgraphviz/Graph.h"
+#include "cppgraphviz/RectangleNode.h"
 
 using namespace cppgraphviz;
 

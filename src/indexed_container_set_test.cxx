@@ -1,5 +1,5 @@
 #include "sys.h"
-#include "cppgraphviz/IndexedContainerSet.hpp"
+#include "cppgraphviz/IndexedContainerSet.h"
 #include <utils/Vector.h>
 #include <utils/Array.h>
 #include "debug.h"

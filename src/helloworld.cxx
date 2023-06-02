@@ -1,8 +1,8 @@
 #include "sys.h"
-#include "cppgraphviz/dot/Graph.hpp"
-#include "cppgraphviz/dot/Node.hpp"
-#include "cppgraphviz/dot/Edge.hpp"
-#include "cppgraphviz/dot/TableNode.hpp"
+#include "cppgraphviz/dot/Graph.h"
+#include "cppgraphviz/dot/Node.h"
+#include "cppgraphviz/dot/Edge.h"
+#include "cppgraphviz/dot/TableNode.h"
 #include "debug.h"
 #include <utils/Vector.h>
 #include <iostream>
