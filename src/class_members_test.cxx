@@ -4,7 +4,6 @@
 #include "cppgraphviz/Class.h"
 #include "cppgraphviz/IndexedContainerSet.h"
 #include "cppgraphviz/dot/Graph.h"
-#include "utils/Array.h"
 #include "debug.h"
 #ifdef CWDEBUG
 #include "cppgraphviz/debug_ostream_operators.h"
@@ -24,20 +23,45 @@ struct A : RectangleNode
 {
   int m_;
 
-  A(int m, std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(char const* what)) : RectangleNode(root_graph COMMA_WHAT(what)), m_(m) { }
+  A(int m, std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(char const* what)) : RectangleNode(root_graph COMMA_WHAT(what)), m_(m)
+  {
+    DoutEntering(dc::notice, "A(" << m << ", " << root_graph << ", \"" << what << "\") [" << this << "]");
+  }
 
   // Used for members of a class-- in that case it should not be necessary to pass the root graph.
-  A(int m COMMA_WHAT(char const* what)) : RectangleNode(WHAT(what)), m_(m) { }
+  A(int m COMMA_WHAT(char const* what)) : RectangleNode(WHAT(what)), m_(m)
+  {
+    DoutEntering(dc::notice, "A(" << m << ", \"" << what << "\") [" << this << "]");
+  }
 
   // Copy constructor.
-  A(A const& other COMMA_WHAT(char const* what)) : RectangleNode(other COMMA_WHAT(what)), m_(other.m_) { }
+  A(A const& other COMMA_WHAT(char const* what)) : RectangleNode(other COMMA_WHAT(what)), m_(other.m_)
+  {
+    DoutEntering(dc::notice, "A(A const& " << &other << ", \"" << what << "\") [" << this << "]");
+  }
+
   // Move constructor.
-  A(A&& other COMMA_WHAT(char const* what)) : RectangleNode(std::move(other) COMMA_WHAT(what)), m_(other.m_) { }
+  A(A&& other COMMA_WHAT(char const* what)) : RectangleNode(std::move(other) COMMA_WHAT(what)), m_(other.m_)
+  {
+    DoutEntering(dc::notice, "A(A&& " << &other << ", \"" << what << "\") [" << this << "]");
+  }
 
 #ifdef CPPGRAPHVIZ_USE_WHAT
-  A(A const& other) : A(other, "default A copy") { }
-  A(A&& other) : A(std::move(other), "default A move") { }
+  A(A const& other) : A(other, "default A copy")
+  {
+    DoutEntering(dc::notice, "A(A const& " << &other << ") [" << this << "]");
+  }
+
+  A(A&& other) : A(std::move(other), "default A move")
+  {
+    DoutEntering(dc::notice, "A(A&& " << &other << ") [" << this << "]");
+  }
 #endif
+
+  ~A()
+  {
+    DoutEntering(dc::notice, "~A() [" << this << "]");
+  }
 
   void item_attributes(dot::AttributeList& list) override
   {
@@ -133,17 +157,19 @@ using AIndex = utils::ArrayIndex<ACategory>;
 
 struct D : Class<D>
 {
-  utils::Array<A, 3, AIndex> as_ = {
-    {1 COMMA_WHAT("D::as_[0]")},
-    {2 COMMA_WHAT("D::as_[1]")},
-    {3 COMMA_WHAT("D::as_[2]")} };
+  cppgraphviz::Array<A, 3, AIndex> as_;
   B b_{1000 COMMA_WHAT("D::b_")};
 
   dot::TableNodePtr as_table_node_;
   IndexedContainerSet<AIndex>& as_container_set_;
 
   D(IndexedContainerSet<AIndex>& as_container_set, std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(char const* what)) :
-    Class<D>(root_graph COMMA_WHAT(what)), as_container_set_(as_container_set)
+    Class<D>(root_graph COMMA_WHAT(what)),
+    as_(root_graph, {
+      {1 COMMA_WHAT("D::as_[0]")},
+      {2 COMMA_WHAT("D::as_[1]")},
+      {3 COMMA_WHAT("D::as_[2]")} }),
+    as_container_set_(as_container_set)
   {
     // as_ --> TableNode --> IndexedContainerSet --> Graph
     as_table_node_->add_attribute({"what", "D::as_table_node_"});
@@ -175,8 +201,10 @@ int main()
     Graph g0{WHAT("g0")};
 
     IndexedContainerSet<AIndex> container_set{WHAT("AIndex")};
-    cppgraphviz::Array<A, 3, AIndex> as = { {20, g0 COMMA_WHAT("as[0]")}, {21, g0 COMMA_WHAT("as[1]")}, {22, g0 COMMA_WHAT("as[2]")} };
+    Dout(dc::notice, "Constructing as");
+    cppgraphviz::Array<A, 3, AIndex> as(g0, { {20 COMMA_WHAT("as[0]")}, {21 COMMA_WHAT("as[1]")}, {22 COMMA_WHAT("as[2]")} });
 
+#if 1
     Dout(dc::notice, "Constructing b");
     B b(20, g0 COMMA_WHAT("b"));
 
@@ -212,14 +240,15 @@ int main()
           b4.set_label("b4");
           Dout(dc::notice, "Destructing b4");
         }
-
+#endif
         Dout(dc::notice, "Calling write_dot");
         g0.write_dot(std::cout);
-
+#if 1
         Dout(dc::notice, "Destructing c2");
       }
       Dout(dc::notice, "Destructing c");
     }
+#endif
     Dout(dc::notice, "Destructing g0");
   }
 
