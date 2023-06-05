@@ -53,7 +53,7 @@ int main()
   g0->add_attribute({"what", "g0"});
   g0->set_concentrate(true);
 
-  IndexedContainerSet<AIndex> test1("AIndex", "test1");
+  IndexedContainerSet test1("AIndex", "test1");
   test1.add_container(table_A);
   test1.add_container(table_B);
   g0->insert(test1);

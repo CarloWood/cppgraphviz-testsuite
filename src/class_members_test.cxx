@@ -23,36 +23,36 @@ struct A : RectangleNode
 {
   int m_;
 
-  A(int m, std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(char const* what)) : RectangleNode(root_graph COMMA_WHAT(what)), m_(m)
+  A(int m, std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(std::string_view what)) : RectangleNode(root_graph COMMA_WHAT(what)), m_(m)
   {
     DoutEntering(dc::notice, "A(" << m << ", " << root_graph << ", \"" << what << "\") [" << this << "]");
   }
 
   // Used for members of a class-- in that case it should not be necessary to pass the root graph.
-  A(int m COMMA_WHAT(char const* what)) : RectangleNode(WHAT(what)), m_(m)
+  A(int m COMMA_WHAT(std::string_view what)) : RectangleNode(WHAT(what)), m_(m)
   {
     DoutEntering(dc::notice, "A(" << m << ", \"" << what << "\") [" << this << "]");
   }
 
   // Copy constructor.
-  A(A const& other COMMA_WHAT(char const* what)) : RectangleNode(other COMMA_WHAT(what)), m_(other.m_)
+  A(A const& other COMMA_WHAT(std::string_view what)) : RectangleNode(other COMMA_WHAT(what)), m_(other.m_)
   {
     DoutEntering(dc::notice, "A(A const& " << &other << ", \"" << what << "\") [" << this << "]");
   }
 
   // Move constructor.
-  A(A&& other COMMA_WHAT(char const* what)) : RectangleNode(std::move(other) COMMA_WHAT(what)), m_(other.m_)
+  A(A&& other COMMA_WHAT(std::string_view what)) : RectangleNode(std::move(other) COMMA_WHAT(what)), m_(other.m_)
   {
     DoutEntering(dc::notice, "A(A&& " << &other << ", \"" << what << "\") [" << this << "]");
   }
 
 #ifdef CPPGRAPHVIZ_USE_WHAT
-  A(A const& other) : A(other, "default A copy")
+  A(A const& other) : A(other, "A(A const&) of " + other.get_what())
   {
     DoutEntering(dc::notice, "A(A const& " << &other << ") [" << this << "]");
   }
 
-  A(A&& other) : A(std::move(other), "default A move")
+  A(A&& other) : A(std::move(other), "A(A&&) of " + other.get_what())
   {
     DoutEntering(dc::notice, "A(A&& " << &other << ") [" << this << "]");
   }
@@ -75,17 +75,17 @@ struct B : RectangleNode
 {
   int m_;
 
-  B(int m, std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(char const* what)) : RectangleNode(root_graph COMMA_WHAT(what)), m_(m) { }
+  B(int m, std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(std::string_view what)) : RectangleNode(root_graph COMMA_WHAT(what)), m_(m) { }
 
   // Used for members of some class-- in that case it should not be necessary to pass the root graph.
-  B(int m COMMA_WHAT(char const* what)) : RectangleNode(WHAT(what)), m_(m) { }
+  B(int m COMMA_WHAT(std::string_view what)) : RectangleNode(WHAT(what)), m_(m) { }
 
-  B(B const& other COMMA_WHAT(char const* what)) : RectangleNode(other COMMA_WHAT(what)), m_(other.m_) { }
-  B(B&& other COMMA_WHAT(char const* what)) : RectangleNode(std::move(other) COMMA_WHAT(what)), m_(other.m_) { }
+  B(B const& other COMMA_WHAT(std::string_view what)) : RectangleNode(other COMMA_WHAT(what)), m_(other.m_) { }
+  B(B&& other COMMA_WHAT(std::string_view what)) : RectangleNode(std::move(other) COMMA_WHAT(what)), m_(other.m_) { }
 
 #ifdef CPPGRAPHVIZ_USE_WHAT
-  B(B const& other) : B(other, "default B copy") { }
-  B(B&& other) : B(std::move(other), "default B move") { }
+  B(B const& other) : B(other, "B(B const&) of " + other.get_what()) { }
+  B(B&& other) : B(std::move(other), "B(B&&) of " + other.get_what()) { }
 #endif
 
   void item_attributes(dot::AttributeList& list) override
@@ -102,7 +102,7 @@ struct C : Class<C>
   B b_;
 
   // Constructor.
-  C(int a, int b, std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(char const* what)) :
+  C(int a, int b, std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(std::string_view what)) :
     Class<C>(root_graph COMMA_WHAT(what)),
     a_(a COMMA_WHAT("C::a_")),
     b_(b COMMA_WHAT("C::b_"))
@@ -111,7 +111,7 @@ struct C : Class<C>
   }
 
   // Copy constructor.
-  C(C const& other COMMA_WHAT(char const* what)) :
+  C(C const& other COMMA_WHAT(std::string_view what)) :
     Class<C>(other COMMA_WHAT(what)),
     a_(other.a_ COMMA_WHAT("C::a_")),
     b_(other.b_ COMMA_WHAT("C::b_"))
@@ -120,7 +120,7 @@ struct C : Class<C>
   }
 
   // Move constructor.
-  C(C&& other COMMA_WHAT(char const* what)) :
+  C(C&& other COMMA_WHAT(std::string_view what)) :
     Class<C>(std::move(other) COMMA_WHAT(what)),
     a_(std::move(other.a_) COMMA_WHAT("C::a_")),
     b_(std::move(other.b_) COMMA_WHAT("C::b_"))
@@ -129,8 +129,8 @@ struct C : Class<C>
   }
 
 #ifdef CPPGRAPHVIZ_USE_WHAT
-  C(C const& other) : C(other, "default C copy") { }
-  C(C&& other) : C(std::move(other), "default C move") { }
+  C(C const& other) : C(other, "C(C const&) of " + other.get_what()) { }
+  C(C&& other) : C(std::move(other), "C(C&&) of " + other.get_what()) { }
 #endif
 
   ~C()
@@ -155,26 +155,25 @@ struct C : Class<C>
 struct ACategory;
 using AIndex = utils::ArrayIndex<ACategory>;
 
+// Specialize cppgraphviz::get_index_label.
+template<>
+std::string cppgraphviz::get_index_label<AIndex>()
+{
+  return "AIndex";
+}
+
 struct D : Class<D>
 {
   cppgraphviz::Array<A, 3, AIndex> as_;
   B b_{1000 COMMA_WHAT("D::b_")};
 
-  dot::TableNodePtr as_table_node_;
-  IndexedContainerSet<AIndex>& as_container_set_;
-
-  D(IndexedContainerSet<AIndex>& as_container_set, std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(char const* what)) :
+  D(std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(std::string_view what)) :
     Class<D>(root_graph COMMA_WHAT(what)),
     as_(root_graph, {
       {1 COMMA_WHAT("D::as_[0]")},
       {2 COMMA_WHAT("D::as_[1]")},
-      {3 COMMA_WHAT("D::as_[2]")} }),
-    as_container_set_(as_container_set)
+      {3 COMMA_WHAT("D::as_[2]")} })
   {
-    // as_ --> TableNode --> IndexedContainerSet --> Graph
-    as_table_node_->add_attribute({"what", "D::as_table_node_"});
-    as_table_node_->link_container(as_);
-    as_container_set_.add_container(as_table_node_);
   }
 
  private:
@@ -200,7 +199,6 @@ int main()
     Dout(dc::notice, "Constructing g0");
     Graph g0{WHAT("g0")};
 
-    IndexedContainerSet<AIndex> container_set{WHAT("AIndex")};
     Dout(dc::notice, "Constructing as");
     cppgraphviz::Array<A, 3, AIndex> as(g0, { {20 COMMA_WHAT("as[0]")}, {21 COMMA_WHAT("as[1]")}, {22 COMMA_WHAT("as[2]")} });
 
@@ -215,8 +213,7 @@ int main()
       A ca(c.a_ COMMA_WHAT("ca"));
       ca.set_label("ca");
 
-      D d(container_set, g0 COMMA_WHAT("d"));
-      g0.tracker().graph_ptr()->insert(container_set);
+      D d(g0 COMMA_WHAT("d"));
 
       Dout(dc::notice, "Constructing b2 from b");
       B b2(b COMMA_WHAT("b2"));
