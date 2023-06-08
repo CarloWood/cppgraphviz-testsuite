@@ -108,6 +108,8 @@ struct C : Class<C>
     b_(b COMMA_WHAT("C::b_"))
   {
     DoutEntering(dc::notice, "C(" << a << ", " << b << ", " << root_graph << ", \"" << what << "\") [" << this << "]");
+    a_.set_label("a_");
+    b_.set_label("b_");
   }
 
   // Copy constructor.
@@ -142,7 +144,6 @@ struct C : Class<C>
   void item_attributes(dot::AttributeList& list) override
   {
     list += {
-      {"label", "C"},
       {"shape", "folder"},
       {"color", "blue"},
 //      {"style", "filled"},
@@ -172,7 +173,24 @@ struct D : Class<D>
     as_(root_graph, {
       {1 COMMA_WHAT("D::as_[0]")},
       {2 COMMA_WHAT("D::as_[1]")},
-      {3 COMMA_WHAT("D::as_[2]")} })
+      {3 COMMA_WHAT("D::as_[2]")} }
+      COMMA_WHAT(std::string("as_ of ") + std::string(what)))
+  {
+    as_.set_label("as_");
+    b_.set_label("b_");
+  }
+
+  D(D const& other COMMA_WHAT(std::string_view what)) :
+    Class<D>(other COMMA_WHAT(what)),
+    as_(other.as_),
+    b_(other.b_)
+  {
+  }
+
+  D(D&& other COMMA_WHAT(std::string_view what)) :
+    Class<D>(std::move(other) COMMA_WHAT(what)),
+    as_(std::move(other.as_)),
+    b_(std::move(other.b_))
   {
   }
 
@@ -180,7 +198,6 @@ struct D : Class<D>
   void item_attributes(dot::AttributeList& list) override
   {
     list += {
-      {"label", "D"},
       {"color", "red"},
     };
     Class::item_attributes(list);
@@ -200,29 +217,46 @@ int main()
     Graph g0{WHAT("g0")};
 
     Dout(dc::notice, "Constructing as");
-    cppgraphviz::Array<A, 3, AIndex> as(g0, { {20 COMMA_WHAT("as[0]")}, {21 COMMA_WHAT("as[1]")}, {22 COMMA_WHAT("as[2]")} });
+    cppgraphviz::Array<A, 3, AIndex> as(g0, { {20 COMMA_WHAT("as[0]")}, {21 COMMA_WHAT("as[1]")}, {22 COMMA_WHAT("as[2]")} } COMMA_WHAT("as"));
+    as.set_label("as");
+
+    cppgraphviz::Array<A, 3, AIndex> as2(std::move(as) COMMA_WHAT("as2"));
+    as2.set_label("as2");
+
+    as2[as2.ibegin() + 1].m_ += 100;
 
 #if 1
     Dout(dc::notice, "Constructing b");
     B b(20, g0 COMMA_WHAT("b"));
+    b.set_label("b");
 
     {
       Dout(dc::notice, "Constructing c");
       C c(13, 42, g0 COMMA_WHAT("c"));
+      c.set_label("c");
 
       A ca(c.a_ COMMA_WHAT("ca"));
       ca.set_label("ca");
 
       D d(g0 COMMA_WHAT("d"));
+      d.set_label("d");
+
+#if 1
+      D d2(std::move(d) COMMA_WHAT("d2"));
+      d2.set_label("d2");
+      d2.as_[d2.as_.ibegin() + 1].m_ += 100;
+#endif
 
       Dout(dc::notice, "Constructing b2 from b");
       B b2(b COMMA_WHAT("b2"));
       b2.set_label("b2");
       B b2m(std::move(b2) COMMA_WHAT("b2m"));
+      b2m.set_label("b2m");
 
       {
         Dout(dc::notice, "Constructing c2");
         C c2(c COMMA_WHAT("c2"));
+        c2.set_label("c2");
 
         {
           Dout(dc::notice, "Constructing b3");
