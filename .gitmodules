@@ -14,3 +14,6 @@
 	path = cppgraphviz
 	url = https://github.com/CarloWood/cppgraphviz.git
 	branch = master
+[submodule "threadsafe"]
+	path = threadsafe
+	url = https://github.com/CarloWood/ai-threadsafe.git
