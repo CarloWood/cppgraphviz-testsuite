@@ -17,3 +17,4 @@
 [submodule "threadsafe"]
 	path = threadsafe
 	url = https://github.com/CarloWood/ai-threadsafe.git
+	branch = master

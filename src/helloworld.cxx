@@ -31,114 +31,157 @@ int main()
   Debug(libcw_do.set_ostream(&std::cerr));
 
   dot::DigraphPtr g0;
-  g0->add_attribute({"what", "g0"});
+  dot::DigraphPtr::unlocked_type::wat g0_w(g0.item());
+  g0_w->add_attribute({"what", "g0"});
 
   dot::NodePtr n;
-  n->add_attribute({"what", "n"});
+  {
+    dot::NodePtr::unlocked_type::wat n_w(n.item());
+    n_w->add_attribute({"what", "n"});
 
-  g0->add(n);
+    //g0_w->add(n, n_w);
 
-  n->add_attribute({"style", "filled"});
-  n->add_attribute({"fillcolor", "green"});
-  n->add_attribute({"shape", "hexagon"});
+    n_w->add_attribute({"style", "filled"});
+    n_w->add_attribute({"fillcolor", "green"});
+    n_w->add_attribute({"shape", "hexagon"});
+    n_w->add_attribute({"label", "n"});
+  }
+  g0_w->add(n);
 
   dot::NodePtr n2;
-  n2->add_attribute({"what", "n2"});
-
-  n2->add_attribute({"label", "n2"});
+  {
+    dot::NodePtr::unlocked_type::wat n2_w(n2.item());
+    n2_w->add_attribute({"what", "n2"});
+    n2_w->add_attribute({"label", "n2"});
+  }
+  g0_w->add(n2);
 
   dot::EdgePtr e1(n, n);
-  e1->add_attribute({"what", "e1"});
+  {
+    dot::EdgePtr::unlocked_type::wat e1_w(e1.item());
+    e1_w->add_attribute({"what", "e1"});
+    e1_w->add_attribute({"label", "e1"});
+  }
+  g0_w->add(e1);
 
   dot::EdgePtr e2(n2, n);
-  e2->add_attribute({"what", "e2"});
-
-  g0->add(e1);
-  g0->add(e2);
-
-  e1->add_attribute({"label", "e1"});
-  e2->add_attribute({"label", "e2"});
-  n->add_attribute({"label", "n"});
-
-  g0->add(n2);
+  {
+    dot::EdgePtr::unlocked_type::wat e2_w(e2.item());
+    e2_w->add_attribute({"what", "e2"});
+    e2_w->add_attribute({"label", "e2"});
+  }
+  g0_w->add(e2);
 
   dot::NodePtr n10;
-  n10->add_attribute({"what", "n10"});
-
-  n10->add_attribute({"label", "n10"});
+  {
+    dot::NodePtr::unlocked_type::wat n10_w(n10.item());
+    n10_w->add_attribute({"what", "n10"});
+    n10_w->add_attribute({"label", "n10"});
+  }
 
   dot::NodePtr n11;
-  n11->add_attribute({"what", "n11"});
-
-  n11->add_attribute({"label", "n11"});
-  n11->add_attribute({"color", "purple"});
+  {
+    dot::NodePtr::unlocked_type::wat n11_w(n11.item());
+    n11_w->add_attribute({"what", "n11"});
+    n11_w->add_attribute({"label", "n11"});
+    n11_w->add_attribute({"color", "purple"});
+  }
 
   dot::EdgePtr e3(n10, n11);
-  e3->add_attribute({"what", "e3"});
-
-  e3->add_attribute({"label", "e3"});
+  {
+    dot::EdgePtr::unlocked_type::wat e3_w(e3.item());
+    e3_w->add_attribute({"what", "e3"});
+    e3_w->add_attribute({"label", "e3"});
+  }
 
   dot::GraphPtr g1;
-  g1->add_attribute({"what", "g1"});
+  {
+    dot::GraphPtr::unlocked_type::wat g1_w(g1.item());
+    g1_w->add_attribute({"what", "g1"});
+    g1_w->add_attribute({"label", "g1"});
 
-  g1->add_attribute({"label", "g1"});
-  g1->add(n10);
-  g1->add(n11);
-  g1->add(e3);
+    g1_w->add(n10);
+    g1_w->add(n11);
+    g1_w->add(e3);
 
-  g0->add(g1);
-  dot::EdgePtr e4;
-  e4->add_attribute({"what", "e4"});
-  g0->add(e4);
-  e4->set_nodes(n2, n10);
+    g0_w->add(g1, g1_w);
 
-  // node [style="filled", fillcolor="white"]
-  g0->add_node_attribute({"style", "filled"});
-  g0->add_node_attribute({"fillcolor", "white"});
-  // graph [label="g1", style="rounded", fillcolor="white", bgcolor="lightgrey"]
-  g1->add_attribute({"style", "rounded"});
-  g1->add_attribute({"fillcolor", "gray"});
-  g1->add_attribute({"bgcolor", "lightgrey"});
+    dot::EdgePtr e4;
+    dot::EdgePtr::unlocked_type::wat e4_w(e4.item());
+    e4_w->add_attribute({"what", "e4"});
+    g0_w->add(e4, e4_w);
+    e4_w->set_nodes(n2, n10);
 
+    // node [style="filled", fillcolor="white"]
+    g0_w->add_node_attribute({"style", "filled"});
+    g0_w->add_node_attribute({"fillcolor", "white"});
+    // graph [label="g1", style="rounded", fillcolor="white", bgcolor="lightgrey"]
+    g1_w->add_attribute({"style", "rounded"});
+    g1_w->add_attribute({"fillcolor", "gray"});
+    g1_w->add_attribute({"bgcolor", "lightgrey"});
+  }
+
+#if 1
   dot::EdgePtr e5;
-  e5->add_attribute({"what", "e5"});
-  g0->add(e5);
-  utils::Vector<A, AIndex> v1 = { {3}, {4}, {5} };
+  {
+    dot::EdgePtr::unlocked_type::wat e5_w(e5.item());
+    e5_w->add_attribute({"what", "e5"});
+    g0_w->add(e5, e5_w);
+  }
+
+  utils::Vector<A, AIndex> v1 = { 3, 4, 5 };
   std::array<char const*, 3> label = { "hello", "world", "foobar" };
   for (auto i = v1.ibegin(); i != v1.iend(); ++i)
   {
-    v1[i]->add_attribute({"what", label[i.get_value()]});
-    v1[i]->add_attribute({"label", label[i.get_value()]});
+    dot::NodePtr::unlocked_type::wat v1_i_w(v1[i].item());
+    v1_i_w->add_attribute({"what", label[i.get_value()]});
+    v1_i_w->add_attribute({"label", label[i.get_value()]});
   }
   AIndex last = v1.iend() - 1;
-  v1[last]->add_attribute({"bgcolor", "yellow"});
+  {
+    dot::NodePtr::unlocked_type::wat v1_last_w(v1[last].item());
+    v1_last_w->add_attribute({"bgcolor", "yellow"});
+  }
   AIndex second = last - 1;
 
   dot::TableNodePtr tableA;
-  tableA->add_attribute({"what", "tableA"});
-  tableA->add_attribute({"bgcolor", "lightblue"});
-  tableA->add_attribute({"color", "purple"});
-//  tableA->add_attribute({"fontname", "Arial"});
-//  tableA->add_attribute({"fontsize", "18"});
-  tableA->add_attribute({"fontcolor", "blue"});
-  v1[second]->add_attribute({"fontname", "Times New Roman"});
-  v1[second]->add_attribute({"fontsize", "12"});
-  v1[second]->add_attribute({"fontcolor", "red"});
-  tableA->link_container(v1);
-  g0->add(tableA);
-  e5->set_nodes(n11, tableA[1]);
+  {
+    dot::TableNodePtr::unlocked_type::wat tableA_w(tableA.item());
+    tableA_w->add_attribute({"what", "tableA"});
+    tableA_w->add_attribute({"bgcolor", "lightblue"});
+    tableA_w->add_attribute({"color", "purple"});
+  //  tableA_w->add_attribute({"fontname", "Arial"});
+  //  tableA_w->add_attribute({"fontsize", "18"});
+    tableA_w->add_attribute({"fontcolor", "blue"});
+    dot::NodePtr::unlocked_type::wat v1_second_w(v1[second].item());
+    v1_second_w->add_attribute({"fontname", "Times New Roman"});
+    v1_second_w->add_attribute({"fontsize", "12"});
+    v1_second_w->add_attribute({"fontcolor", "red"});
+    tableA_w->link_container(v1);
+  }
+
+  g0_w->add(tableA);
+  {
+    dot::EdgePtr::unlocked_type::wat e5_w(e5.item());
+    e5_w->set_nodes(n11, tableA[1]);
+  }
 
   utils::Vector<B, AIndex> v2 = { {6}, {7}, {8} };
   std::array<char const*, 3> label2 = { "first", "second", "third" };
   dot::TableNodePtr tableB;
-  tableB->add_attribute({"what", "tableB"});
-  tableB->link_container(v2);
+  {
+    dot::TableNodePtr::unlocked_type::wat tableB_w(tableB.item());
+    tableB_w->add_attribute({"what", "tableB"});
+    tableB_w->link_container(v2);
+  }
   for (auto i = v2.ibegin(); i != v2.iend(); ++i)
   {
-    v2[i]->add_attribute({"what", label2[i.get_value()]});
-    v2[i]->add_attribute({"label", label2[i.get_value()]});
+    dot::NodePtr::unlocked_type::wat v2_i_w(v2[i].item());
+    v2_i_w->add_attribute({"what", label2[i.get_value()]});
+    v2_i_w->add_attribute({"label", label2[i.get_value()]});
   }
-  g0->add(tableB);
 
-  g0->write_dot(std::cout);
+  g0_w->add(tableB);
+#endif
+  g0_w->write_dot(std::cout);
 }

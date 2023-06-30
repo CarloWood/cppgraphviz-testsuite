@@ -208,7 +208,7 @@ int main()
 {
   Debug(NAMESPACE_DEBUG::init());
   Debug(libcw_do.set_ostream(&std::cerr));
-#if TRACK_GRAPHDATA
+#if THREADSAFE_TRACK_UNLOCKED
   Debug(if (!dc::tracked.is_on()) dc::tracked.on());
 #endif
 
