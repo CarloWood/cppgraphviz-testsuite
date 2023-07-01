@@ -225,7 +225,6 @@ int main()
 
     as2[as2.ibegin() + 1].m_ += 100;
 
-#if 1
     Dout(dc::notice, "Constructing b");
     B b(20, g0 COMMA_WHAT("b"));
     b.set_label("b");
@@ -241,11 +240,9 @@ int main()
       D d(g0 COMMA_WHAT("d"));
       d.set_label("d");
 
-#if 1
       D d2(std::move(d) COMMA_WHAT("d2"));
       d2.set_label("d2");
       d2.as_[d2.as_.ibegin() + 1].m_ += 100;
-#endif
 
       Dout(dc::notice, "Constructing b2 from b");
       B b2(b COMMA_WHAT("b2"));
@@ -271,15 +268,12 @@ int main()
           b4.set_label("b4");
           Dout(dc::notice, "Destructing b4");
         }
-#endif
         Dout(dc::notice, "Calling write_dot");
         g0.write_dot(std::cout);
-#if 1
         Dout(dc::notice, "Destructing c2");
       }
       Dout(dc::notice, "Destructing c");
     }
-#endif
     Dout(dc::notice, "Destructing g0");
   }
 
