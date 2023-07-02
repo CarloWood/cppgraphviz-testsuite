@@ -23,7 +23,8 @@ struct A : RectangleNode
 {
   int m_;
 
-  A(int m, std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(std::string_view what)) : RectangleNode(root_graph COMMA_WHAT(what)), m_(m)
+  A(int m, std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(std::string_view what)) :
+    RectangleNode(root_graph COMMA_WHAT(what)), m_(m)
   {
     DoutEntering(dc::notice, "A(" << m << ", " << root_graph << ", \"" << what << "\") [" << this << "]");
   }
@@ -75,7 +76,8 @@ struct B : RectangleNode
 {
   int m_;
 
-  B(int m, std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(std::string_view what)) : RectangleNode(root_graph COMMA_WHAT(what)), m_(m) { }
+  B(int m, std::weak_ptr<GraphTracker> const& root_graph COMMA_WHAT(std::string_view what)) :
+    RectangleNode(root_graph COMMA_WHAT(what)), m_(m) { }
 
   // Used for members of some class-- in that case it should not be necessary to pass the root graph.
   B(int m COMMA_WHAT(std::string_view what)) : RectangleNode(WHAT(what)), m_(m) { }
