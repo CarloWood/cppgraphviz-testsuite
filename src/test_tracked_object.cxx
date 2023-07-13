@@ -1,11 +1,9 @@
 #include "sys.h"
 #include "debug.h"
-#include "threadsafe/TrackedObject.h"
 #include "threadsafe/ObjectTracker.h"
 #include <mutex>
 
-#define UNLOCKED_TYPE_IS_TYPEDEF 0
-#define TRACKER_IS_TYPEDEF 1
+// UNLOCKED_TYPE_IS_TYPEDEF and TRACKER_IS_TYPEDEF must be defined to 0 or 1 from the command line.
 
 // Forward declare the object that should be tracked and protected against concurrent access.
 class locked_A;

@@ -29,7 +29,7 @@ struct A : RectangleNode
     DoutEntering(dc::notice, "A(" << m << ", " << root_graph << ", \"" << what << "\") [" << this << "]");
   }
 
-  // Used for members of a class-- in that case it should not be necessary to pass the root graph.
+  // Used for members of a Class and/or elements of an Array-- in that case it should not be necessary to pass the root graph.
   A(int m COMMA_WHAT(std::string_view what)) : RectangleNode(WHAT(what)), m_(m)
   {
     DoutEntering(dc::notice, "A(" << m << ", \"" << what << "\") [" << this << "]");
