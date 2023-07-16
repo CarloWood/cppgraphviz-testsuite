@@ -36,27 +36,31 @@ struct A : RectangleNode
   }
 
   // Copy constructor.
-  A(A const& other COMMA_WHAT(std::string_view what)) : RectangleNode(other COMMA_WHAT(what)), m_(other.m_)
+  A(threadsafe::LockFinalCopy<A> other COMMA_WHAT(std::string_view what)) : RectangleNode(other COMMA_WHAT(what)), m_(other->m_)
   {
-    DoutEntering(dc::notice, "A(A const& " << &other << ", \"" << what << "\") [" << this << "]");
+    DoutEntering(dc::notice, "A(A const& " << other.operator->() << ", \"" << what << "\") [" << this << "]");
   }
+  A(A const& other COMMA_WHAT(std::string_view what)) : A(threadsafe::LockFinalCopy<A>{other} COMMA_WHAT(what)) { }
 
   // Move constructor.
-  A(A&& other COMMA_WHAT(std::string_view what)) : RectangleNode(std::move(other) COMMA_WHAT(what)), m_(other.m_)
+  A(threadsafe::LockFinalMove<A> other COMMA_WHAT(std::string_view what)) : RectangleNode(std::move(other) COMMA_WHAT(what)), m_(other->m_)
   {
-    DoutEntering(dc::notice, "A(A&& " << &other << ", \"" << what << "\") [" << this << "]");
+    DoutEntering(dc::notice, "A(A&& " << other.operator->() << ", \"" << what << "\") [" << this << "]");
   }
+  A(A&& other COMMA_WHAT(std::string_view what)) : A(threadsafe::LockFinalMove<A>{std::move(other)} COMMA_WHAT(what)) { }
 
 #ifdef CPPGRAPHVIZ_USE_WHAT
-  A(A const& other) : A(other, "A(A const&) of " + other.get_what())
+  A(threadsafe::LockFinalCopy<A> other) : A(other, "A(A const&) of " + other->get_what())
   {
-    DoutEntering(dc::notice, "A(A const& " << &other << ") [" << this << "]");
+    DoutEntering(dc::notice, "A(A const& " << other.operator->() << ") [" << this << "]");
   }
+  A(A const& other) : A(threadsafe::LockFinalCopy<A>{other}) { }
 
-  A(A&& other) : A(std::move(other), "A(A&&) of " + other.get_what())
+  A(threadsafe::LockFinalMove<A> other) : A(std::move(other), "A(A&&) of " + other->get_what())
   {
-    DoutEntering(dc::notice, "A(A&& " << &other << ") [" << this << "]");
+    DoutEntering(dc::notice, "A(A&& " << other.operator->() << ") [" << this << "]");
   }
+  A(A&& other) : A(threadsafe::LockFinalMove<A>{std::move(other)}) { }
 #endif
 
   ~A()
@@ -82,12 +86,16 @@ struct B : RectangleNode
   // Used for members of some class-- in that case it should not be necessary to pass the root graph.
   B(int m COMMA_WHAT(std::string_view what)) : RectangleNode(WHAT(what)), m_(m) { }
 
-  B(B const& other COMMA_WHAT(std::string_view what)) : RectangleNode(other COMMA_WHAT(what)), m_(other.m_) { }
-  B(B&& other COMMA_WHAT(std::string_view what)) : RectangleNode(std::move(other) COMMA_WHAT(what)), m_(other.m_) { }
+  B(threadsafe::LockFinalCopy<B> other COMMA_WHAT(std::string_view what)) : RectangleNode(other COMMA_WHAT(what)), m_(other->m_) { }
+  B(B const& other COMMA_WHAT(std::string_view what)) : B(threadsafe::LockFinalCopy<B>{other} COMMA_WHAT(what)) { }
+  B(threadsafe::LockFinalMove<B> other COMMA_WHAT(std::string_view what)) : RectangleNode(std::move(other) COMMA_WHAT(what)), m_(other->m_) { }
+  B(B&& other COMMA_WHAT(std::string_view what)) : B(threadsafe::LockFinalMove<B>{std::move(other)} COMMA_WHAT(what)) { }
 
 #ifdef CPPGRAPHVIZ_USE_WHAT
-  B(B const& other) : B(other, "B(B const&) of " + other.get_what()) { }
-  B(B&& other) : B(std::move(other), "B(B&&) of " + other.get_what()) { }
+  B(threadsafe::LockFinalCopy<B> other) : B(other, "B(B const&) of " + other->get_what()) { }
+  B(B const& other) : B(threadsafe::LockFinalCopy<B>{other}) { }
+  B(threadsafe::LockFinalMove<B> other) : B(std::move(other), "B(B&&) of " + other->get_what()) { }
+  B(B&& other) : B(threadsafe::LockFinalMove<B>{std::move(other)}) { }
 #endif
 
   void item_attributes(dot::AttributeList& list) override
@@ -115,26 +123,30 @@ struct C : Class<C>
   }
 
   // Copy constructor.
-  C(C const& other COMMA_WHAT(std::string_view what)) :
+  C(threadsafe::LockFinalCopy<C> other COMMA_WHAT(std::string_view what)) :
     Class<C>(other COMMA_WHAT(what)),
-    a_(other.a_ COMMA_WHAT("C::a_")),
-    b_(other.b_ COMMA_WHAT("C::b_"))
+    a_(other->a_ COMMA_WHAT("C::a_")),
+    b_(other->b_ COMMA_WHAT("C::b_"))
   {
-    DoutEntering(dc::notice, "C(C const& " << &other << WHAT(", \"" << what <<) "\") [" << this << "]");
+    DoutEntering(dc::notice, "C(C const& " << other.operator->() << WHAT(", \"" << what <<) "\") [" << this << "]");
   }
+  C(C const& other COMMA_WHAT(std::string_view what)) : C(threadsafe::LockFinalCopy<C>{other} COMMA_WHAT(what)) { }
 
   // Move constructor.
-  C(C&& other COMMA_WHAT(std::string_view what)) :
+  C(threadsafe::LockFinalMove<C> other COMMA_WHAT(std::string_view what)) :
     Class<C>(std::move(other) COMMA_WHAT(what)),
-    a_(std::move(other.a_) COMMA_WHAT("C::a_")),
-    b_(std::move(other.b_) COMMA_WHAT("C::b_"))
+    a_(std::move(other->a_) COMMA_WHAT("C::a_")),
+    b_(std::move(other->b_) COMMA_WHAT("C::b_"))
   {
-    DoutEntering(dc::notice, "C(C&& " << &other << WHAT(", \"" << what <<) "\") [" << this << "]");
+    DoutEntering(dc::notice, "C(C&& " << other.operator->() << WHAT(", \"" << what <<) "\") [" << this << "]");
   }
+  C(C&& other COMMA_WHAT(std::string_view what)) : C(threadsafe::LockFinalMove<C>{std::move(other)} COMMA_WHAT(what)) { }
 
 #ifdef CPPGRAPHVIZ_USE_WHAT
-  C(C const& other) : C(other, "C(C const&) of " + other.get_what()) { }
-  C(C&& other) : C(std::move(other), "C(C&&) of " + other.get_what()) { }
+  C(threadsafe::LockFinalCopy<C> other) : C(other, "C(C const&) of " + other->get_what()) { }
+  C(C const& other) : C(threadsafe::LockFinalCopy<C>{other}) { }
+  C(threadsafe::LockFinalMove<C> other) : C(std::move(other), "C(C&&) of " + other->get_what()) { }
+  C(C&& other) : C(threadsafe::LockFinalMove<C>{std::move(other)}) { }
 #endif
 
   ~C()
@@ -182,19 +194,21 @@ struct D : Class<D>
     b_.set_label("b_");
   }
 
-  D(D const& other COMMA_WHAT(std::string_view what)) :
+  D(threadsafe::LockFinalCopy<D> other COMMA_WHAT(std::string_view what)) :
     Class<D>(other COMMA_WHAT(what)),
-    as_(other.as_),
-    b_(other.b_)
+    as_(other->as_),
+    b_(other->b_)
   {
   }
+  D(D const& other COMMA_WHAT(std::string_view what)) : D(threadsafe::LockFinalCopy<D>{other} COMMA_WHAT(what)) { }
 
-  D(D&& other COMMA_WHAT(std::string_view what)) :
+  D(threadsafe::LockFinalMove<D> other COMMA_WHAT(std::string_view what)) :
     Class<D>(std::move(other) COMMA_WHAT(what)),
-    as_(std::move(other.as_)),
-    b_(std::move(other.b_))
+    as_(std::move(other->as_)),
+    b_(std::move(other->b_))
   {
   }
+  D(D&& other COMMA_WHAT(std::string_view what)) : D(threadsafe::LockFinalMove<D>{std::move(other)} COMMA_WHAT(what)) { }
 
  private:
   void item_attributes(dot::AttributeList& list) override

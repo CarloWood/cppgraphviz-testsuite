@@ -23,7 +23,7 @@ endif()
 
 include(AICxxSubmodules)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wundef")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wundef -fconcepts-diagnostics-depth=8")
 
 add_subdirectory(cppgraphviz)
 add_subdirectory(src)
