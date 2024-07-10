@@ -1,5 +1,6 @@
 #include "sys.h"
 #include "cppgraphviz/Array.h"
+#include "cppgraphviz/Vector.h"
 #include "cppgraphviz/RectangleNode.h"
 #include "cppgraphviz/Class.h"
 #include "cppgraphviz/IndexedContainerSet.h"
@@ -225,20 +226,89 @@ int main()
   Debug(NAMESPACE_DEBUG::init());
   Debug(libcw_do.set_ostream(&std::cerr));
 #if THREADSAFE_TRACK_UNLOCKED
-  Debug(if (!dc::tracked.is_on()) dc::tracked.on());
+  //Debug(if (!dc::tracked.is_on()) dc::tracked.on());
 #endif
 
   {
     Dout(dc::notice, "Constructing g0");
     Graph g0{WHAT("g0")};
 
+#if 0
+    A item1(42, "item1");
+    item1.set_label("item1");
+
+    A item2(42, g0, "item2");
+    item2.set_label("item2");
+
+    A item3(item1);
+    item3.set_label("item3");
+
+    A item4(item2);
+    item4.set_label("item4");
+
+    cppgraphviz::Array<A, 2, AIndex> array1(g0, { {42, "array1[0]"}, {43, "array1[1]"} }, "array1");
+    array1.set_label("array1");
+
+    ASSERT(!A::rat{array1[AIndex{0}]}->parent_graph_tracker());
+
+    cppgraphviz::Array<A, 3, AIndex> array2(g0, { item1, item2, array1[array1.ibegin()] }, "array2");
+    array2.set_label("array2");
+
+    ASSERT(!A::rat{array2[AIndex{0}]}->parent_graph_tracker());
+    ASSERT(!A::rat{array2[AIndex{1}]}->parent_graph_tracker());
+    ASSERT(!A::rat{array2[AIndex{2}]}->parent_graph_tracker());
+
+    cppgraphviz::Array<A, 3, AIndex> array3(g0, { array2[array2.ibegin()], array2[array2.ibegin() + 1], array2[array2.ibegin() + 2] }, "array3");
+    array3.set_label("array3");
+
+    ASSERT(!A::rat{array3[AIndex{0}]}->parent_graph_tracker());
+    ASSERT(!A::rat{array3[AIndex{1}]}->parent_graph_tracker());
+    ASSERT(!A::rat{array3[AIndex{2}]}->parent_graph_tracker());
+
+    cppgraphviz::Array<A, 2, AIndex> array4(array1);
+    array4.set_label("array4");
+
+    ASSERT(!A::rat{array4[AIndex{0}]}->parent_graph_tracker());
+    ASSERT(!A::rat{array4[AIndex{1}]}->parent_graph_tracker());
+
+    cppgraphviz::Array<A, 3, AIndex> array5(array2);
+    array5.set_label("array5");
+
+    ASSERT(!A::rat{array5[AIndex{0}]}->parent_graph_tracker());
+    ASSERT(!A::rat{array5[AIndex{1}]}->parent_graph_tracker());
+    ASSERT(!A::rat{array5[AIndex{2}]}->parent_graph_tracker());
+
+    cppgraphviz::Array<A, 3, AIndex> array6(array3);
+    array6.set_label("array6");
+
+    ASSERT(!A::rat{array6[AIndex{0}]}->parent_graph_tracker());
+    ASSERT(!A::rat{array6[AIndex{1}]}->parent_graph_tracker());
+    ASSERT(!A::rat{array6[AIndex{2}]}->parent_graph_tracker());
+#endif
+
     Dout(dc::notice, "Constructing as");
     cppgraphviz::Array<A, 3, AIndex> as(g0, { {20 COMMA_WHAT("as[0]")}, {21 COMMA_WHAT("as[1]")}, {22 COMMA_WHAT("as[2]")} } COMMA_WHAT("as"));
     as.set_label("as");
 
+#if 0
     cppgraphviz::Array<A, 3, AIndex> as2(std::move(as) COMMA_WHAT("as2"));
     as2.set_label("as2");
+#endif
 
+    Dout(dc::notice, "Constructing va");
+    cppgraphviz::Vector<A, AIndex> va(g0, { {30 COMMA_WHAT("va[0]")}, {31 COMMA_WHAT("va[1]")}, {32 COMMA_WHAT("va[2]")} } COMMA_WHAT("va"));
+    va.set_label("va");
+
+    for (int n = 33; n < 36; ++n)
+    {
+      std::string what = "va[" + std::to_string(n) + "]";
+      va.push_back({n, what});
+    }
+
+    Dout(dc::notice, "Calling write_dot");
+    g0.write_dot(std::cout);
+
+#if 0
     as2[as2.ibegin() + 1].m_ += 100;
 
     Dout(dc::notice, "Constructing b");
@@ -290,6 +360,7 @@ int main()
       }
       Dout(dc::notice, "Destructing c");
     }
+#endif
     Dout(dc::notice, "Destructing g0");
   }
 
